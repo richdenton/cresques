@@ -1,0 +1,5 @@
+.DS_Store
+.env
+log.txt
+node_modules/
+public/
