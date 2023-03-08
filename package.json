@@ -4,8 +4,7 @@
 	"description": "A modern MUD-like game server",
 	"main": "server.js",
 	"scripts": {
-		"start": "nohup node ./server.js >> log.txt",
-		"test": "node ./server.js"
+		"start": "node ./server.js"
 	},
 	"author": "Rich Denton",
 	"license": "MIT",

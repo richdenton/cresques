@@ -13,7 +13,7 @@ module.exports = {
 	deletePlayerError: 'Player could not be deleted.',
 	sessionExpired: 'Your session has expired. Please login to continue.',
 	emailInvalid: 'The email address you entered is not valid.',
-    emailMissing: 'No email address was supplied.',
+	emailMissing: 'No email address was supplied.',
 	passwordInvalid: 'Password must be between 8 and 16 characters.',
 	passswordMissing: 'No password was supplied.'
 };

@@ -1,5 +1,4 @@
 const config = require('../config/gameConfig');
-
 const Items = require('../models/items');
 const Rooms = require('../models/rooms');
 const EnemySpawns = require('../models/enemySpawns');
