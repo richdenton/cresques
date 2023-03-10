@@ -1,7 +1,7 @@
 class PlayerController {
 
-	static messageTypes = {
-		MOVEMENT: 0,
+	static messageActions = {
+		MOVE: 0,
 		ATTACK: 1,
 		SAY: 2,
 		YELL: 3
@@ -20,40 +20,78 @@ class PlayerController {
 
 		// Welcome the Player
 		this.socket.send(JSON.stringify({
-			type: PlayerController.messageTypes.MOVEMENT,
+			action: PlayerController.messageActions.MOVE,
 			room: this.gameController.rooms.get(this.player.roomId)
 		}));
 	}
 
 	/**
-	 * Handle WebSocket "message" events.
+	 * Handle incoming WebSocket "message" events.
 	 * @param {Object} data - The content that was received.
 	 * @param {Boolean} isBinary - Boolean to determine if the data is binary.
 	 */
 	handleMessage(data, isBinary) {
 		if (data) {
 			const message = JSON.parse(isBinary ? data : data.toString());
+			switch (message.action) {
 
-			// Move the Player
-			if (message.move !== undefined) {
-				const newRoomId = this.gameController.movePlayer(this.player, message.move);
-				if (newRoomId > 0) {
-					this.player.roomId = newRoomId;
-					this.socket.send(JSON.stringify({
-						type: PlayerController.messageTypes.MOVEMENT,
-						room: this.gameController.rooms.get(newRoomId)
-					}));
-				}
+				// Move the Player
+				case PlayerController.messageActions.MOVE:
+					const newRoomId = this.gameController.movePlayer(this.player, message.direction);
+					if (newRoomId > 0) {
+						this.player.roomId = newRoomId;
+						this.socket.send(JSON.stringify({
+							action: PlayerController.messageActions.MOVE,
+							room: this.gameController.rooms.get(newRoomId)
+						}));
+					}
+					break;
+
+				// Say something to the Room
+				case PlayerController.messageActions.SAY:
+					this.gameController.say(this.player, message.text);
+					break;
+
+				// Yell something to all nearby Room
+				case PlayerController.messageActions.YELL:
+					this.gameController.yell(this.player, message.text);
+					break;
 			}
 		}
 	}
 
 	/**
-	 * Handle WebSocket "close" events.
+	 * Handle incoming WebSocket "close" events.
 	 */
 	handleClose() {
 		this.socket.close();
 		this.gameController.removePlayerController(this);
+	}
+
+	/**
+	 * Send a text message to all Players in the sender's Room.
+	 * @param {Player} sender - The Player who sent the message.
+	 * @param {String} text - The content of the message.
+	 */
+	say(sender, text) {
+		this.socket.send(JSON.stringify({
+			action: PlayerController.messageActions.SAY,
+			sender: sender,
+			text: text
+		}));
+	}
+
+	/**
+	 * Send a text message to all Players in the sender's Room and any surrounding Rooms.
+	 * @param {Player} sender - The Player who sent the message.
+	 * @param {String} text - The content of the message.
+	 */
+	yell(sender, text) {
+		this.socket.send(JSON.stringify({
+			action: PlayerController.messageActions.YELL,
+			sender: sender,
+			text: text
+		}));
 	}
 }
 

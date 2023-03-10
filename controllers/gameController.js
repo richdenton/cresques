@@ -1,6 +1,7 @@
 const config = require('../config/gameConfig');
 const Items = require('../models/items');
 const Rooms = require('../models/rooms');
+const Species = require('../models/species');
 const EnemySpawns = require('../models/enemySpawns');
 const EnemyTemplates = require('../models/enemyTemplates');
 const Enemies = require('../models/enemies');
@@ -50,6 +51,7 @@ class GameController {
 	constructor() {
 		this.items = new Items();
 		this.rooms = new Rooms();
+		this.species = new Species();
 		this.enemySpawns = new EnemySpawns();
 		this.enemyTemplates = new EnemyTemplates();
 		this.enemies = new Enemies();
@@ -75,7 +77,7 @@ class GameController {
 	addPlayerController(playerController) {
 		this.playerControllers.push(playerController);
 		this.game.players.push(playerController.player);
-		Logger.log('Player ' + playerController.player.id + ' entered the game.', Logger.logTypes.INFO);
+		Logger.log(playerController.player.name + ' entered the game.', Logger.logTypes.INFO);
 	}
 
 	/**
@@ -84,7 +86,7 @@ class GameController {
 	 */
 	removePlayerController(playerController) {
 		this.playerControllers = this.playerControllers.filter(p => p !== playerController);
-		Logger.log('Player ' + playerController.player.id + ' left the game.', Logger.logTypes.INFO);
+		Logger.log(playerController.player.name + ' left the game.', Logger.logTypes.INFO);
 	}
 
 	/**
@@ -128,11 +130,37 @@ class GameController {
 			this.rooms.findById(player.roomId).removePlayer(player);
 			this.rooms.findById(newRoomId).addPlayer(player);
 			player.roomId = newRoomId;
-			Logger.log('Player ' + player.id + ' moved to Room ' + newRoomId + '.', Logger.logTypes.DEBUG);
+			Logger.log(player.name + ' moved to Room ' + newRoomId + '.', Logger.logTypes.DEBUG);
 		}
 
 		// Return the new Room ID
 		return newRoomId;
+	}
+
+	say(player, text) {
+		const currentRoomId = player.roomId;
+		this.playerControllers.forEach(function(playerController) {
+			if (playerController.player.roomId == currentRoomId) {
+				playerController.say(player, text);
+			}
+		});
+		Logger.log(player.name + ' says, \'' + text + '\'.', Logger.logTypes.DEBUG);
+	}
+
+	yell(player, text) {
+		const currentRoom = this.rooms.findById(player.roomId);
+		this.playerControllers.forEach(function(playerController) {
+			if (playerController.player.roomId == currentRoom.id
+				|| playerController.player.roomId == currentRoom.northRoomId
+				|| playerController.player.roomId == currentRoom.eastRoomId
+				|| playerController.player.roomId == currentRoom.southRoomId
+				|| playerController.player.roomId == currentRoom.westRoomId
+				|| playerController.player.roomId == currentRoom.upRoomId
+				|| playerController.player.roomId == currentRoom.downRoomId) {
+				playerController.yell(player, text);
+			}
+		});
+		Logger.log(player.name + ' yells, \'' + text + '\'.', Logger.logTypes.DEBUG);
 	}
 }
 

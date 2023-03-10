@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const GameController = require('./gameController');
+const Player = require('../models/player');
 const PlayerController = require('./playerController');
 const User = require('../models/user');
 const Users = require('../models/users');
@@ -23,6 +24,7 @@ class ServerController {
 		await this.users.load();
 		await this.gameController.items.load();
 		await this.gameController.rooms.load();
+		await this.gameController.species.load();
 		await this.gameController.enemySpawns.load();
 		await this.gameController.enemyTemplates.load();
 		this.gameController.enemies.init(this.gameController.enemySpawns, this.gameController.enemyTemplates, this.gameController.rooms);
@@ -83,7 +85,7 @@ class ServerController {
 				email: request.body.email,
 				password: bcrypt.hashSync(request.body.password, config.passwordSaltLength)
 			});
-			user = this.users.saveUser(user);
+			user = await this.users.saveUser(user);
 
 			// Verify the user was created
 			if (user.id < 1) {
@@ -191,11 +193,41 @@ class ServerController {
 			response.clearCookie('uid');
 
 			// Return the response
+			Logger.log('User ' + user.id + ' logged out.', Logger.logTypes.INFO);
 			return response.status(200).send({
 				message: strings.logoutSuccess
 			});
 		} catch (error) {
 			this.next(error);
+		}
+	}
+
+	/**
+	 * Lookup the list of available Species to choose from.
+	 * @param {Request} request - The request data with an access token.
+	 * @param {Response} response - The response to return any status to.
+	 * @return {Response} Response with a list of Players attached.
+	 */
+	async getSpecies(request, response) {
+		try {
+
+			// Get the currently logged in User
+			const user = this.getUserFromCookie(request);
+			if (user.id < 1) {
+				return response.status(500).send({
+					message: strings.unauthorized
+				});
+			}
+
+			// Find and return all Players owned by this User
+			const species = this.gameController.species.getAll();
+			return response.status(200).send(JSON.stringify({
+				species: species
+			}));
+		} catch (error) {
+			response.status(500).send({
+				message: error.message
+			});
 		}
 	}
 
@@ -245,13 +277,26 @@ class ServerController {
 				});
 			}
 
+			// todo: validate name and species
+
 			// Create and return a new Player
-			const player = new Player({
-				userId: user.id,
-				name: request.body.name,
-				speciesId: request.body.speciesId
-			});
-			player = this.gameController.players.savePlayer(player);
+			let player = new Player();
+			player.name = request.body.name;
+			player.userId = user.id;
+			player.speciesId = parseInt(request.body.speciesId);
+
+			// Determine starting location
+			const species = this.gameController.species.get(player.speciesId);
+			if (species.id) {
+				player.roomId = species.roomId;
+			} else {
+				return response.status(500).send(JSON.stringify({
+					message: strings.createPlayerError
+				}));
+			}
+
+			// Save and return the Player
+			player = await this.gameController.players.savePlayer(player);
 			if (player.id) {
 				return response.status(200).send(JSON.stringify({
 					player: player
