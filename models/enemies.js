@@ -27,6 +27,7 @@ class Enemies extends Entities {
 		enemySpawns.map.forEach(enemySpawn => {
 			const enemy = new Enemy();
 			enemy.loadTemplate(enemyTemplates.findById(enemySpawn.enemyId));
+			enemy.roomId = enemySpawn.roomId;
 			this.add(enemy);
 			const room = rooms.findById(enemySpawn.roomId);
 			room.addEnemy(enemy);

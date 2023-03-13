@@ -1,13 +1,6 @@
 const config = require('../config/gameConfig');
-const Items = require('../models/items');
-const Rooms = require('../models/rooms');
-const Species = require('../models/species');
-const EnemySpawns = require('../models/enemySpawns');
-const EnemyTemplates = require('../models/enemyTemplates');
-const Enemies = require('../models/enemies');
-const Players = require('../models/players');
-const PlayerInventories = require('../models/playerInventories');
 const Game = require('../models/game');
+const GameUtils = require('../utils/gameUtils');
 const Logger = require('../utils/logger');
 
 class GameController {
@@ -49,25 +42,24 @@ class GameController {
 	};
 
 	constructor() {
-		this.items = new Items();
-		this.rooms = new Rooms();
-		this.species = new Species();
-		this.enemySpawns = new EnemySpawns();
-		this.enemyTemplates = new EnemyTemplates();
-		this.enemies = new Enemies();
-		this.players = new Players();
-		this.playerInventories = new PlayerInventories();
 		this.playerControllers = [];
 		this.game = new Game();
+		//this.previous = GameUtils.getCurrentTimeMs();
 	}
 
 	/**
 	 * Start the main game loop.
 	 */
 	startGameLoop() {
-		setInterval(function(game) {
-			game.update();
-		}, config.refreshRate, this.game);
+		setInterval(function(playerControllers, game) {
+			//let now = GameUtils.getCurrentTimeMs();
+			//let delta = (now - this.previous) / 1000;
+			game.update(delta);
+			playerControllers.forEach(function(playerController) {
+				playerController.update(delta);
+			});
+			//this.previous = now;
+		}, config.refreshRate, this.playerControllers, this.game);
 	}
 
 	/**
@@ -76,7 +68,6 @@ class GameController {
 	 */
 	addPlayerController(playerController) {
 		this.playerControllers.push(playerController);
-		this.game.players.push(playerController.player);
 		Logger.log(playerController.player.name + ' entered the game.', Logger.logTypes.INFO);
 	}
 
@@ -90,14 +81,14 @@ class GameController {
 	}
 
 	/**
-	 * Move the Player to a new Room.
+	 * Move a Player to a new Room.
 	 * @param {Player} player - The Player to be moved.
 	 * @param {Number} direction - The direction to be moved. See roomDirections.
 	 */
 	movePlayer(player, direction) {
 
 		// Determine if the Player can move in this direction
-		const currentRoom = this.rooms.findById(player.roomId);
+		const currentRoom = this.game.rooms.findById(player.roomId);
 		let newRoomId = 0;
 		if (currentRoom.id) {
 			switch(direction) {
@@ -127,16 +118,37 @@ class GameController {
 
 		// Update the Game
 		if (newRoomId > 0) {
-			this.rooms.findById(player.roomId).removePlayer(player);
-			this.rooms.findById(newRoomId).addPlayer(player);
-			player.roomId = newRoomId;
-			Logger.log(player.name + ' moved to Room ' + newRoomId + '.', Logger.logTypes.DEBUG);
+			const newRoom = this.game.rooms.findById(newRoomId);
+			if (newRoom.id > 0) {
+				this.game.rooms.findById(player.roomId).removePlayer(player);
+				newRoom.addPlayer(player);
+				player.roomId = newRoomId;
+				Logger.log(player.name + ' moved to ' + newRoom.name + '.', Logger.logTypes.DEBUG);
+			}
 		}
 
 		// Return the new Room ID
 		return newRoomId;
 	}
 
+	/**
+	 * Handle a Player attacking an Enemy.
+	 * @param {Player} player - The Player who is attacking.
+	 * @param {Number} enemyId - The unique ID of the Enemy.
+	 */
+	attack(player, enemyId) {
+		const enemy = this.game.enemies.get(enemyId);
+		if (enemy.id > 0 && enemy.roomId === player.roomId) {
+			player.attacking = enemyId;
+			Logger.log(player.name + ' attacked ' + enemy.name + '.', Logger.logTypes.DEBUG);
+		}
+	}
+
+	/**
+	 * Handle a Player saying something to everyone else in their current Room.
+	 * @param {Player} player - The Player who sent the message.
+	 * @param {String} text - The content of the message.
+	 */
 	say(player, text) {
 		const currentRoomId = player.roomId;
 		this.playerControllers.forEach(function(playerController) {
@@ -147,8 +159,13 @@ class GameController {
 		Logger.log(player.name + ' says, \'' + text + '\'.', Logger.logTypes.DEBUG);
 	}
 
+	/**
+	 * Handle a Player yelling something to everyone in nearby Rooms.
+	 * @param {Player} player - The Player who sent the message.
+	 * @param {String} text - The content of the message.
+	 */
 	yell(player, text) {
-		const currentRoom = this.rooms.findById(player.roomId);
+		const currentRoom = this.game.rooms.findById(player.roomId);
 		this.playerControllers.forEach(function(playerController) {
 			if (playerController.player.roomId == currentRoom.id
 				|| playerController.player.roomId == currentRoom.exits.north

@@ -5,7 +5,6 @@ const package = require('./package.json');
 const webSocket = require('ws');
 
 const ServerController = require('./controllers/serverController');
-const GameController = require('./controllers/gameController');
 
 // Setup cookie handling
 const app = express();
@@ -43,5 +42,4 @@ wss.on('connection', serverController.openConnection.bind(serverController));
 serverController.loadDatabases();
 
 // Start the main game loop
-const gameController = new GameController();
-gameController.startGameLoop();
+serverController.startGameLoop();

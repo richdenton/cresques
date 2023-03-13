@@ -22,14 +22,21 @@ class ServerController {
 	 */
 	async loadDatabases() {
 		await this.users.load();
-		await this.gameController.items.load();
-		await this.gameController.rooms.load();
-		await this.gameController.species.load();
-		await this.gameController.enemySpawns.load();
-		await this.gameController.enemyTemplates.load();
-		this.gameController.enemies.init(this.gameController.enemySpawns, this.gameController.enemyTemplates, this.gameController.rooms);
-		await this.gameController.players.load();
-		await this.gameController.playerInventories.load(this.gameController.players, this.gameController.items);
+		await this.gameController.game.items.load();
+		await this.gameController.game.rooms.load();
+		await this.gameController.game.species.load();
+		await this.gameController.game.enemySpawns.load();
+		await this.gameController.game.enemyTemplates.load();
+		this.gameController.game.enemies.init(this.gameController.game.enemySpawns, this.gameController.game.enemyTemplates, this.gameController.game.rooms);
+		await this.gameController.game.players.load();
+		await this.gameController.game.playerInventories.load(this.gameController.game.players, this.gameController.game.items);
+	}
+
+	/**
+	 * Start the main game loop.
+	 */
+	startGameLoop() {
+		this.gameController.startGameLoop();
 	}
 
 	/**
@@ -249,7 +256,7 @@ class ServerController {
 			}
 
 			// Find and return all Players owned by this User
-			const players = this.gameController.players.findAllByUserId(user.id);
+			const players = this.gameController.game.players.findAllByUserId(user.id);
 			return response.status(200).send(JSON.stringify({
 				players: players
 			}));
@@ -288,6 +295,7 @@ class ServerController {
 			// Determine starting location
 			const species = this.gameController.species.get(player.speciesId);
 			if (species.id) {
+				player.health = species.health;
 				player.roomId = species.roomId;
 			} else {
 				return response.status(500).send(JSON.stringify({
@@ -296,7 +304,7 @@ class ServerController {
 			}
 
 			// Save and return the Player
-			player = await this.gameController.players.savePlayer(player);
+			player = await this.gameController.game.players.savePlayer(player);
 			if (player.id) {
 				return response.status(200).send(JSON.stringify({
 					player: player
@@ -331,7 +339,7 @@ class ServerController {
 			}
 
 			// Retrieve the Player ID from the request and attmept to delete
-			const success = this.gameController.players.deletePlayer(request.body.playerId);
+			const success = this.gameController.game.players.deletePlayer(request.body.playerId);
 			if (success) {
 				return response.status(200).send(JSON.stringify({
 					message: strings.deletePlayerSuccess
@@ -392,7 +400,7 @@ class ServerController {
 		}
 
 		// Get the currently active Player
-		const player = this.gameController.players.get(user.playerId);
+		const player = this.gameController.game.players.get(user.playerId);
 		if (player.id < 1) {
 			socket.close();
 			return;

@@ -134,6 +134,7 @@ CREATE TABLE `species` (
   `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `description` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
   `room_id` int NOT NULL,
+  `health` int NOT NULL,
   `strength` int NOT NULL,
   `stamina` int NOT NULL,
   `agility` int NOT NULL,

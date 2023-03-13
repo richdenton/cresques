@@ -42,10 +42,6 @@ class Player extends Entity {
 	removeItem(item) {
 		this.items = this.items.filter(i => i !== item);
 	}
-
-	move(roomId) {
-		this.roomId = roomId;
-	}
 }
 
 module.exports = Player;

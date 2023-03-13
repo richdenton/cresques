@@ -1,3 +1,5 @@
 module.exports = {
-	refreshRate: 2000
+	refreshRate: 1000,
+	experienceBase: 1000,
+	experiencePowerCurve: 3
 };

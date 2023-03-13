@@ -9,7 +9,7 @@ class Enemy extends Entity {
 	constructor() {
 		super();
 		this.templateId = 0;
-		this.room = 0;
+		this.roomId = 0;
 	}
 
 	/**

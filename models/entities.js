@@ -41,6 +41,10 @@ class Entities {
 		return this.map.get(id);
 	}
 
+	set(id, entity) {
+		this.map.set(id, entity);
+	}
+
 	/**
 	 * Find the next available index in the map.
 	 * @return {Number} The next avaiable ID.
