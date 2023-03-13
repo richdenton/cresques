@@ -102,22 +102,22 @@ class GameController {
 		if (currentRoom.id) {
 			switch(direction) {
 				case GameController.roomDirections.NORTH:
-					newRoomId = currentRoom.northRoomId;
+					newRoomId = currentRoom.exits.north;
 					break;
 				case GameController.roomDirections.EAST:
-					newRoomId = currentRoom.eastRoomId;
+					newRoomId = currentRoom.exits.east;
 					break;
 				case GameController.roomDirections.SOUTH:
-					newRoomId = currentRoom.southRoomId;
+					newRoomId = currentRoom.exits.south;
 					break;
 				case GameController.roomDirections.WEST:
-					newRoomId = currentRoom.westRoomId;
+					newRoomId = currentRoom.exits.west;
 					break;
 				case GameController.roomDirections.UP:
-					newRoomId = currentRoom.upRoomId;
+					newRoomId = currentRoom.exits.up;
 					break;
 				case GameController.roomDirections.DOWN:
-					newRoomId = currentRoom.downRoomId;
+					newRoomId = currentRoom.exits.down;
 					break;
 				default:
 					newRoomId = currentRoom.id;
@@ -151,12 +151,12 @@ class GameController {
 		const currentRoom = this.rooms.findById(player.roomId);
 		this.playerControllers.forEach(function(playerController) {
 			if (playerController.player.roomId == currentRoom.id
-				|| playerController.player.roomId == currentRoom.northRoomId
-				|| playerController.player.roomId == currentRoom.eastRoomId
-				|| playerController.player.roomId == currentRoom.southRoomId
-				|| playerController.player.roomId == currentRoom.westRoomId
-				|| playerController.player.roomId == currentRoom.upRoomId
-				|| playerController.player.roomId == currentRoom.downRoomId) {
+				|| playerController.player.roomId == currentRoom.exits.north
+				|| playerController.player.roomId == currentRoom.exits.east
+				|| playerController.player.roomId == currentRoom.exits.south
+				|| playerController.player.roomId == currentRoom.exits.west
+				|| playerController.player.roomId == currentRoom.exits.up
+				|| playerController.player.roomId == currentRoom.exits.down) {
 				playerController.yell(player, text);
 			}
 		});

@@ -11,7 +11,8 @@ class Species extends Entity {
 		super();
 		if (data) {
 			this.id = parseInt(data.id);
-			this.name = data.name
+			this.name = data.name;
+			this.description = data.description;
 			this.roomId = parseInt(data.room_id);
 			this.strength = parseInt(data.strength);
 			this.stamina = parseInt(data.stamina);
@@ -38,8 +39,7 @@ class SpeciesMap extends Entities {
 	getAll() {
 		let results = [];
 		this.map.forEach(result => {
-			const species = new Species(result);
-			results.push(species);
+			results.push(result);
 		});
 		return results;
 	}

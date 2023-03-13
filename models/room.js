@@ -9,16 +9,17 @@ class Room extends Entity {
 	 */
 	constructor(data) {
 		super();
+		this.exits = {};
 		if (data) {
 			this.id = parseInt(data.id);
 			this.name = data.name;
 			this.description = data.description;
-			this.northRoomId = parseInt(data.north);
-			this.eastRoomId = parseInt(data.east);
-			this.southRoomId = parseInt(data.south);
-			this.westRoomId = parseInt(data.west);
-			this.upRoomId = parseInt(data.up);
-			this.downRoomId = parseInt(data.down);
+			this.exits.north = parseInt(data.north);
+			this.exits.east = parseInt(data.east);
+			this.exits.south = parseInt(data.south);
+			this.exits.west = parseInt(data.west);
+			this.exits.up = parseInt(data.up);
+			this.exits.down = parseInt(data.down);
 		}
 		this.enemies = [];
 		this.players = [];
