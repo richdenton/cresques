@@ -18,7 +18,7 @@ class PlayerController {
 		this.handleMessage = this.socket.on('message', this.handleMessage.bind(this));
 		this.handleMessage = this.socket.on('close', this.handleClose.bind(this));
 
-		// Welcome the Player
+		// Enter the Room
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.MOVE,
 			room: this.gameController.game.rooms.get(this.player.roomId)
@@ -82,7 +82,7 @@ class PlayerController {
 		if (room.id > 0) {
 
 			// Notify of Enemy damage
-			room.enemies.forEach(function(enemy) {
+			room.enemies.forEach(enemy => {
 				if (enemy.damage) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ATTACK,
@@ -93,7 +93,7 @@ class PlayerController {
 			});
 
 			// Notify of Player damage
-			room.players.forEach(function(player) {
+			room.players.forEach(player => {
 				if (player.damage) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ATTACK,

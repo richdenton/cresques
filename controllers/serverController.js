@@ -9,6 +9,7 @@ const PlayerController = require('./playerController');
 const User = require('../models/user');
 const Users = require('../models/users');
 const Logger = require('../utils/logger');
+const GameUtils = require('../utils/gameUtils');
 
 class ServerController {
 
@@ -27,16 +28,9 @@ class ServerController {
 		await this.gameController.game.species.load();
 		await this.gameController.game.enemySpawns.load();
 		await this.gameController.game.enemyTemplates.load();
-		this.gameController.game.enemies.init(this.gameController.game.enemySpawns, this.gameController.game.enemyTemplates, this.gameController.game.rooms);
-		await this.gameController.game.players.load();
+		this.gameController.game.enemies.init(this.gameController.game.enemySpawns, this.gameController.game.enemyTemplates, this.gameController.game.species, this.gameController.game.rooms);
+		await this.gameController.game.players.load(this.gameController.game.species);
 		await this.gameController.game.playerInventories.load(this.gameController.game.players, this.gameController.game.items);
-	}
-
-	/**
-	 * Start the main game loop.
-	 */
-	startGameLoop() {
-		this.gameController.startGameLoop();
 	}
 
 	/**
@@ -50,7 +44,7 @@ class ServerController {
 		// Look for a valid access token cookie
 		let cookies = {};
 		if (request.headers.cookie) {
-			request.headers.cookie.split(';').forEach(function(cookie) {
+			request.headers.cookie.split(';').forEach(cookie => {
 				var parts = cookie.match(/(.*?)=(.*)$/);
 				cookies[parts[1].trim()] = (parts[2] || '').trim();
 			});
@@ -60,7 +54,7 @@ class ServerController {
 		if (cookies.access_token) {
 			jwt.verify(cookies.access_token, config.tokenSecret, (error, decoded) => {
 				if (decoded) {
-					user = this.users.findById(decoded.id);
+					user = this.users.get(decoded.id);
 				}
 			});
 		}
@@ -284,19 +278,25 @@ class ServerController {
 				});
 			}
 
-			// todo: validate name and species
+			// todo: validate name
 
-			// Create and return a new Player
+			// Create a new Player
 			let player = new Player();
 			player.name = request.body.name;
 			player.userId = user.id;
 			player.speciesId = parseInt(request.body.speciesId);
 
-			// Determine starting location
+			// Determine starting stats
 			const species = this.gameController.species.get(player.speciesId);
 			if (species.id) {
 				player.health = species.health;
+				player.strength = species.strength;
+				player.stamina = species.stamina;
+				player.agility = species.agility;
+				player.intelligence = species.intelligence;
 				player.roomId = species.roomId;
+				player.maxHealth = GameUtils.getMaxHealth(player, species);
+				player.level = 0;
 			} else {
 				return response.status(500).send(JSON.stringify({
 					message: strings.createPlayerError
@@ -304,7 +304,7 @@ class ServerController {
 			}
 
 			// Save and return the Player
-			player = await this.gameController.game.players.savePlayer(player);
+			player = await this.gameController.game.players.insertPlayer(player);
 			if (player.id) {
 				return response.status(200).send(JSON.stringify({
 					player: player

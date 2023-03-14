@@ -14,6 +14,7 @@ class Species extends Entity {
 			this.name = data.name;
 			this.description = data.description;
 			this.roomId = parseInt(data.room_id);
+			this.health = parseInt(data.health);
 			this.strength = parseInt(data.strength);
 			this.stamina = parseInt(data.stamina);
 			this.agility = parseInt(data.agility);
@@ -33,18 +34,6 @@ class SpeciesMap extends Entities {
 	}
 
 	/**
-	 * Retrieve all available Species.
-	 * @return {Array} A list of all Species entities.
-	 */
-	getAll() {
-		let results = [];
-		this.map.forEach(result => {
-			results.push(result);
-		});
-		return results;
-	}
-
-	/**
 	 * Initialize the Species map with data from the database.
 	 */
 	async load() {
@@ -59,6 +48,18 @@ class SpeciesMap extends Entities {
 				this.add(species);
 			});
 		});
+	}
+
+	/**
+	 * Retrieve all available Species.
+	 * @return {Array} A list of all Species entities.
+	 */
+	getAll() {
+		let results = [];
+		this.map.forEach(result => {
+			results.push(result);
+		});
+		return results;
 	}
 }
 

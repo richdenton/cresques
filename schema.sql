@@ -24,7 +24,7 @@ CREATE TABLE `enemy` (
   `stamina` int NOT NULL,
   `agility` int NOT NULL,
   `intelligence` int NOT NULL,
-  `experience` int NOT NULL,
+  `level` int NOT NULL,
   `money` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

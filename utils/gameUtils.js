@@ -12,11 +12,11 @@ class GameUtils {
 	}
 
 	/**
-	 * Calculate the curernt level of an Entity.
-	 * @param {Entity} entity - An Player or Enemy.
+	 * Calculate the current experience level of an Entity.
+	 * @param {Entity} entity - A Player or Enemy.
 	 * @return {Number} The level of the Entity.
 	 */
-	static getLevel(entity) {
+	static getExperienceLevel(entity) {
 		let level = 0;
 		while (entity.experience > (config.experienceBase * Math.pow(level + 1, config.experiencePowerCurve))) {
 			level++;
@@ -25,12 +25,55 @@ class GameUtils {
 	}
 
 	/**
-	 * Calculate damage on an Entity based on a D20 roll.
-	 * @param {Entity} entity - An Player or Enemy.
+	 * Calculate the max hit points of an Entity.
+	 * @param {Entity} entity - A Player or Enemy.
+	 * @param {Species} species - The Species of the Entity.
+	 * @return {Number} The max health of the Entity.
+	 */
+	static getMaxHealth(entity, species) {
+		return species.health + ((entity.stamina) / 10) * GameUtils.getExperienceLevel(entity);
+	}
+
+	/**
+	 * Use the difference between battling Entities to determing experience bonuses.
+	 * @param {Entity} attacker - A Player or Enemy.
+	 * @param {Entity} target - A Player or Enemy.
+	 * @return {Object} The threat level object. See gameConfig.threatScale.
+	 */
+	static getThreatLevel(attacker, target) {
+		let lastThreatLevel = 0,
+			levelDelta = target.level - attacker.level;
+		for (const currentThreatLevel in config.threatScale) {
+			if (lastThreatLevel) {
+				if (levelDelta <= config.threatScale[currentThreatLevel].levelDelta) {
+					return config.threatScale[currentThreatLevel];
+				}
+				if (levelDelta <= config.threatScale[lastThreatLevel].levelDelta) {
+					return config.threatScale[lastThreatLevel];
+				}
+			}
+			lastThreatLevel = currentThreatLevel;
+		}
+		return config.threatScale[lastThreatLevel];
+	}
+
+	/**
+	 * Calculate how much experience an Entity should earn after defeating their target.
+	 * @param {Entity} attacker - A Player or Enemy.
+	 * @param {Entity} target - A Player or Enemy.
+	 * @return {Object} The number of experienece points to reward.
+	 */
+	static getExperienceReward(attacker, target) {
+		return Math.floor(((attacker.level * 5) + config.experiencePerMob) * GameUtils.getThreatLevel(attacker, target).multiplier);
+	}
+
+	/**
+	 * Calculate the damage an Entity produces based on a D20 roll.
+	 * @param {Entity} entity - A Player or Enemy.
 	 * @return {Number} The damage to be dealt.
 	 */
-	static calculateDamage(entity) {
-		return Math.floor(Math.random() * 20 + 1) + Math.floor(GameUtils.getLevel(entity) / 2)
+	static rollDamage(entity) {
+		return Math.floor(Math.random() * 20 + 1) + Math.floor(GameUtils.getExperienceLevel(entity) / 2)
 	}
 }
 

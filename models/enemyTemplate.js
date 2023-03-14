@@ -18,7 +18,7 @@ class EnemyTemplate extends Entity {
 		this.stamina = parseInt(data.stamina);
 		this.agility = parseInt(data.agility);
 		this.intelligence = parseInt(data.intelligence);
-		this.experience = parseInt(data.experience);
+		this.level = parseInt(data.level);
 		this.money = parseInt(data.money);
 	}
 }

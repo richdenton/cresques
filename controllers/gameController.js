@@ -44,7 +44,7 @@ class GameController {
 	constructor() {
 		this.playerControllers = [];
 		this.game = new Game();
-		//this.previous = GameUtils.getCurrentTimeMs();
+		this.previous = GameUtils.getCurrentTimeMs();
 	}
 
 	/**
@@ -52,13 +52,13 @@ class GameController {
 	 */
 	startGameLoop() {
 		setInterval(function(playerControllers, game) {
-			//let now = GameUtils.getCurrentTimeMs();
-			//let delta = (now - this.previous) / 1000;
+			let now = GameUtils.getCurrentTimeMs();
+			let delta = (now - this.previous) / 1000;
 			game.update(delta);
-			playerControllers.forEach(function(playerController) {
+			playerControllers.forEach(playerController => {
 				playerController.update(delta);
 			});
-			//this.previous = now;
+			this.previous = now;
 		}, config.refreshRate, this.playerControllers, this.game);
 	}
 
@@ -88,7 +88,7 @@ class GameController {
 	movePlayer(player, direction) {
 
 		// Determine if the Player can move in this direction
-		const currentRoom = this.game.rooms.findById(player.roomId);
+		const currentRoom = this.game.rooms.get(player.roomId);
 		let newRoomId = 0;
 		if (currentRoom.id) {
 			switch(direction) {
@@ -118,9 +118,9 @@ class GameController {
 
 		// Update the Game
 		if (newRoomId > 0) {
-			const newRoom = this.game.rooms.findById(newRoomId);
+			const newRoom = this.game.rooms.get(newRoomId);
 			if (newRoom.id > 0) {
-				this.game.rooms.findById(player.roomId).removePlayer(player);
+				this.game.rooms.get(player.roomId).removePlayer(player);
 				newRoom.addPlayer(player);
 				player.roomId = newRoomId;
 				Logger.log(player.name + ' moved to ' + newRoom.name + '.', Logger.logTypes.DEBUG);
@@ -151,7 +151,7 @@ class GameController {
 	 */
 	say(player, text) {
 		const currentRoomId = player.roomId;
-		this.playerControllers.forEach(function(playerController) {
+		this.playerControllers.forEach(playerController => {
 			if (playerController.player.roomId == currentRoomId) {
 				playerController.say(player, text);
 			}
@@ -165,8 +165,8 @@ class GameController {
 	 * @param {String} text - The content of the message.
 	 */
 	yell(player, text) {
-		const currentRoom = this.game.rooms.findById(player.roomId);
-		this.playerControllers.forEach(function(playerController) {
+		const currentRoom = this.game.rooms.get(player.roomId);
+		this.playerControllers.forEach(playerController => {
 			if (playerController.player.roomId == currentRoom.id
 				|| playerController.player.roomId == currentRoom.exits.north
 				|| playerController.player.roomId == currentRoom.exits.east

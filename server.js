@@ -42,4 +42,4 @@ wss.on('connection', serverController.openConnection.bind(serverController));
 serverController.loadDatabases();
 
 // Start the main game loop
-serverController.startGameLoop();
+serverController.gameController.startGameLoop();

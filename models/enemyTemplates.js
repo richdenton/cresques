@@ -1,6 +1,5 @@
 const Entities = require('./entities');
 const EnemyTemplate = require('./enemyTemplate');
-const Rooms = require('./rooms');
 
 class EnemyTemplates extends Entities {
 

@@ -42,26 +42,6 @@ class Room extends Entity {
 	}
 
 	/**
-	 * Determine if an Enemy is in the Room.
-	 * @param {String} name - The name of the Enemy to locate.
-	 */
-	findEnemy(name) {
-		const find = matchFunction => {
-			for (let enemy of this.enemies) {
-				if (enemy[matchFunction].bind(enemy, name)()) {
-					return enemy;
-				}
-			}
-			return 0;
-		};
-		let result = find('matchFull');
-		if (!result) {
-			result = find('matchPartial');
-		}
-		return result;
-	}
-
-	/**
 	 * Add a Player to the Room.
 	 * @param {Player} player - The Player to add.
 	 */

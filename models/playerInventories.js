@@ -23,8 +23,8 @@ class PlayerInventories extends Entities {
 		await super.load('inventory', (results) => {
 			results.forEach(result => {
 				const playerInventory = new PlayerInventory(result);
-				let player = players.findById(playerInventory.playerId);
-				const item = items.findById(playerInventory.itemId);
+				let player = players.get(playerInventory.playerId);
+				const item = items.get(playerInventory.itemId);
 				player.addItem(item);
 				this.add(playerInventory);
 			});

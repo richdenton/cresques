@@ -25,7 +25,7 @@ class Enemy extends Entity {
 		this.stamina = template.stamina;
 		this.agility = template.agility;
 		this.intelligence = template.intelligence;
-		this.experience = template.experience;
+		this.level = template.level;
 		this.money = template.money;
 	}
 }

@@ -32,12 +32,12 @@ class Game {
 
 		// Handle Enemy attacks
 		this.enemies.map.forEach(enemy => {
-			enemy.damage = 0;
 			if (enemy.attacking) {
+				enemy.damage = 0;
 				const player = this.players.get(enemy.attacking);
 				if (player.id > 0 && enemy.roomId === player.roomId) {
 					if (player.health > 0) {
-						player.damage = GameUtils.calculateDamage(enemy);
+						player.damage = GameUtils.rollDamage(enemy);
 						player.health = Math.max(0, player.health - player.damage);
 						player.attacking = enemy.id;
 					} else {
@@ -53,18 +53,21 @@ class Game {
 
 		// Handle Player attacks
 		this.players.map.forEach(player => {
-			player.damage = 0;
 			if (player.attacking) {
+				player.damage = 0;
 				const enemy = this.enemies.get(player.attacking);
 				if (enemy.id > 0 && player.roomId === enemy.roomId) {
 					if (enemy.health > 0) {
-						enemy.damage = GameUtils.calculateDamage(player);
+						enemy.damage = GameUtils.rollDamage(player);
 						enemy.health = Math.max(0, enemy.health - enemy.damage);
 						enemy.attacking = player.id;
 					} else {
 						player.attacking = 0;
 						enemy.damage = 0;
 						enemy.attacking = 0;
+
+						// Reward experience
+						player.experience += GameUtils.getExperienceReward(player, enemy);
 					}
 				} else {
 					player.attacking = 0;

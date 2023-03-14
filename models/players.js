@@ -1,6 +1,7 @@
 const DatabaseController = require('../controllers/databaseController');
 const Entities = require('./entities');
 const Player = require('./player');
+const GameUtils = require('../utils/gameUtils');
 
 class Players extends Entities {
 
@@ -14,8 +15,9 @@ class Players extends Entities {
 
 	/**
 	 * Initialize the Player map with data from the database.
+	 * @param {Entities} species - The map of Species to help initialize Player stats.
 	 */
-	async load() {
+	async load(species) {
 
 		// Remove old data
 		this.map.clear();
@@ -23,7 +25,14 @@ class Players extends Entities {
 		// Retrieve all Players from the database
 		await super.load('player', (results) => {
 			results.forEach(result => {
-				const player = new Player(result);
+				let player = new Player(result);
+				const playerSpecies = species.get(player.speciesId);
+				player.strength += playerSpecies.strength;
+				player.stamina += playerSpecies.stamina;
+				player.agility += playerSpecies.agility;
+				player.intelligence += playerSpecies.intelligence;
+				player.maxHealth = GameUtils.getMaxHealth(player, playerSpecies);
+				player.level = GameUtils.getExperienceLevel(player);
 				this.add(player);
 			});
 		});
@@ -45,11 +54,11 @@ class Players extends Entities {
 	}
 
 	/**
-	 * Save a Player to the database.
+	 * Insert a Player into the database.
 	 * @param {Player} player - The Player to write to the database.
 	 * @return {Player} The Player with a new ID.
 	 */
-	async savePlayer(player) {
+	async insertPlayer(player) {
 		const results = await DatabaseController.pool.query('INSERT INTO player (user_id, name, species_id, health) VALUES (?, ?, ?);', [player.userId, player.name, player.speciesId, player.health]);
 		player.id = results[0].insertId;
 		if (player.id) {
@@ -59,7 +68,7 @@ class Players extends Entities {
 	}
 
 	/**
-	 * Delete a Player to the database.
+	 * Delete a Player from the database.
 	 * @param {Player} player - The Player to remove from the database.
 	 * @return {Boolean} Whether or not the deletion was a success.
 	 */
