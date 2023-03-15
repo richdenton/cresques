@@ -1,6 +1,5 @@
 const config = require('../config/gameConfig');
 const Game = require('../models/game');
-const GameUtils = require('../utils/gameUtils');
 const Logger = require('../utils/logger');
 
 class GameController {
@@ -44,7 +43,6 @@ class GameController {
 	constructor() {
 		this.playerControllers = [];
 		this.game = new Game();
-		this.previous = GameUtils.getCurrentTimeMs();
 	}
 
 	/**
@@ -52,13 +50,10 @@ class GameController {
 	 */
 	startGameLoop() {
 		setInterval(function(playerControllers, game) {
-			let now = GameUtils.getCurrentTimeMs();
-			let delta = (now - this.previous) / 1000;
-			game.update(delta);
+			game.update();
 			playerControllers.forEach(playerController => {
-				playerController.update(delta);
+				playerController.update();
 			});
-			this.previous = now;
 		}, config.refreshRate, this.playerControllers, this.game);
 	}
 
@@ -120,9 +115,8 @@ class GameController {
 		if (newRoomId > 0) {
 			const newRoom = this.game.rooms.get(newRoomId);
 			if (newRoom.id > 0) {
-				this.game.rooms.get(player.roomId).removePlayer(player);
+				currentRoom.removePlayer(player);
 				newRoom.addPlayer(player);
-				player.roomId = newRoomId;
 				Logger.log(player.name + ' moved to ' + newRoom.name + '.', Logger.logTypes.DEBUG);
 			}
 		}
@@ -140,7 +134,7 @@ class GameController {
 		const enemy = this.game.enemies.get(enemyId);
 		if (enemy.id > 0 && enemy.roomId === player.roomId) {
 			player.attacking = enemyId;
-			Logger.log(player.name + ' attacked ' + enemy.name + '.', Logger.logTypes.DEBUG);
+			Logger.log(player.name + ' attacked "' + enemy.name + '".', Logger.logTypes.DEBUG);
 		}
 	}
 

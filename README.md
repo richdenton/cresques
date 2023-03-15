@@ -8,7 +8,9 @@ Currently, Cresques is quite limited. Over time, I hope to expand it to include 
 - [x] User authentication
 - [x] Multiple players per user
 - [x] Player movement within the world
-- [x] Local and World chattting
-- [ ] Combat
+- [x] Local and global chat
+- [x] Combat
+- [ ] Item handling
 - [ ] Merchants
 - [ ] Questing
+- [ ] Dynamic environments

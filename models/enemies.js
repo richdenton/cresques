@@ -30,11 +30,12 @@ class Enemies extends Entities {
 			let enemy = new Enemy();
 			enemy.loadTemplate(enemyTemplates.get(enemySpawn.enemyId));
 			enemy.roomId = enemySpawn.roomId;
+			enemy.respawnTime = enemySpawn.respawnTime;
 			const enemySpecies = species.get(enemy.speciesId);
-			enemy.strength += enemySpecies.strength;
-			enemy.stamina += enemySpecies.stamina;
-			enemy.agility += enemySpecies.agility;
-			enemy.intelligence += enemySpecies.intelligence;
+			enemy.strengthBase = enemySpecies.strength;
+			enemy.staminaBase = enemySpecies.stamina;
+			enemy.agilityBase = enemySpecies.agility;
+			enemy.intelligenceBase = enemySpecies.intelligence;
 			enemy.maxHealth = GameUtils.getMaxHealth(enemy, enemySpecies);
 			this.add(enemy);
 			const room = rooms.get(enemySpawn.roomId);

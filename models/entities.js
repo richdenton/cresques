@@ -38,7 +38,7 @@ class Entities {
 	 * @return {Entity} The Entity or undefined.
 	 */
 	get(id) {
-		return this.map.get(id);
+		return this.map.get(id) || {};
 	}
 
 	/**

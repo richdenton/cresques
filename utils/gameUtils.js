@@ -31,7 +31,7 @@ class GameUtils {
 	 * @return {Number} The max health of the Entity.
 	 */
 	static getMaxHealth(entity, species) {
-		return species.health + ((entity.stamina) / 10) * GameUtils.getExperienceLevel(entity);
+		return Math.floor(species.health + ((entity.stamina + species.stamina) / 10) * entity.level);
 	}
 
 	/**

@@ -27,12 +27,12 @@ class Players extends Entities {
 			results.forEach(result => {
 				let player = new Player(result);
 				const playerSpecies = species.get(player.speciesId);
-				player.strength += playerSpecies.strength;
-				player.stamina += playerSpecies.stamina;
-				player.agility += playerSpecies.agility;
-				player.intelligence += playerSpecies.intelligence;
-				player.maxHealth = GameUtils.getMaxHealth(player, playerSpecies);
+				player.strengthBase = playerSpecies.strength;
+				player.staminaBase = playerSpecies.stamina;
+				player.agilityBase = playerSpecies.agility;
+				player.intelligenceBase = playerSpecies.intelligence;
 				player.level = GameUtils.getExperienceLevel(player);
+				player.maxHealth = GameUtils.getMaxHealth(player, playerSpecies);
 				this.add(player);
 			});
 		});
@@ -65,6 +65,16 @@ class Players extends Entities {
 			this.add(player);
 		}
 		return player;
+	}
+
+	/**
+	 * Update a Player in the database.
+	 * @param {Player} player - The Player to write to the database.
+	 * @return {Boolean} Whether or not the update was a success.
+	 */
+	async updatePlayer(player) {
+		const results = await DatabaseController.pool.query('UPDATE player SET health=?, strength=?, stamina=?, agility=?, intelligence=?, experience=?, money=?, room_id=? WHERE id=?;', [player.health, player.strength, player.stamina, player.agility, player.intelligence, player.experience, player.money, player.roomId, player.id]);
+		return results.affectedRows > 0;
 	}
 
 	/**

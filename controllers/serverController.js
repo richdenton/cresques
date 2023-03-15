@@ -290,13 +290,13 @@ class ServerController {
 			const species = this.gameController.species.get(player.speciesId);
 			if (species.id) {
 				player.health = species.health;
-				player.strength = species.strength;
-				player.stamina = species.stamina;
-				player.agility = species.agility;
-				player.intelligence = species.intelligence;
+				player.strengthBase = species.strength;
+				player.staminaBase = species.stamina;
+				player.agilityBase = species.agility;
+				player.intelligenceBase = species.intelligence;
 				player.roomId = species.roomId;
-				player.maxHealth = GameUtils.getMaxHealth(player, species);
 				player.level = 0;
+				player.maxHealth = GameUtils.getMaxHealth(player, species);
 			} else {
 				return response.status(500).send(JSON.stringify({
 					message: strings.createPlayerError
