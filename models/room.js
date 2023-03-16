@@ -31,7 +31,6 @@ class Room extends Entity {
 	 */
 	addEnemy(enemy) {
 		this.enemies.push(enemy);
-		enemy.moved = true;
 	}
 
 	/**
@@ -51,7 +50,6 @@ class Room extends Entity {
 			this.players.push(player);
 		}
 		player.roomId = this.id;
-		player.moved = true;
 	}
 
 	/**

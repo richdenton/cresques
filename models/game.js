@@ -32,11 +32,9 @@ class Game {
 	update() {
 		const now = GameUtils.getCurrentTimeMs();
 
-		// Handle Enemy changes
+		// Handle Enemy Respawns
 		this.enemies.map.forEach(enemy => {
-			enemy.moved = false;
-
-			// Respawns
+			enemy.damage = 0;
 			if (enemy.killTime > 0 && now > enemy.killTime + enemy.respawnTime) {
 
 				// Respawn Enemy in the Room
@@ -52,11 +50,51 @@ class Game {
 				enemy.killTime = 0;
 				enemy.health = enemy.maxHealth;
 			}
+		});
 
-			// Combat
+		// Handle Player Respawns
+		this.players.map.forEach(player => {
+			player.moved = false;
+			player.damage = 0
+			if (player.health < 1 && player.isActive) {
+
+				// End any existing combat
+				player.attacking = 0;
+
+				// Remove Player from the current Room
+				let room = this.rooms.get(player.roomId);
+				if (room.id > 0) {
+					room.removePlayer(player);
+					Logger.log(player.name + ' was removed from ' + room.name + '.', Logger.logTypes.DEBUG);
+				} else {
+					Logger.log(player.name + ' is not in a room.', Logger.logTypes.ERROR);
+				}
+
+				// Respawn Player in Species starting Room
+				const species = this.species.get(player.speciesId);
+				if (species.id > 0) {
+					room = this.rooms.get(species.roomId);
+					if (room.id > 0) {
+						player.moved = true;
+						room.addPlayer(player);
+						Logger.log(player.name + ' respawned in ' + room.name + '.', Logger.logTypes.DEBUG);
+					} else {
+						Logger.log('Could not respawn ' + player.name + ' (missing room).', Logger.logTypes.ERROR);
+					}
+				} else {
+					Logger.log('Could not respawn ' + player.name + ' (missing species).', Logger.logTypes.ERROR);
+				}
+
+				// Reset Player stats
+				player.health = player.maxHealth;
+				// todo: apply penalties
+			}
+		});
+
+		// Handle Enemy Combat
+		this.enemies.map.forEach(enemy => {
 			if (enemy.attacking) {
 				if (enemy.health > 0) {
-					enemy.damage = 0;
 					const player = this.players.get(enemy.attacking);
 					if (player.id > 0 && enemy.roomId === player.roomId) {
 						if (player.health > 0) {
@@ -70,7 +108,6 @@ class Game {
 
 							// End combat
 							enemy.attacking = 0;
-							player.damage = 0;
 							player.attacking = 0;
 							Logger.log(player.name + ' died.', Logger.logTypes.DEBUG);
 						}
@@ -83,48 +120,10 @@ class Game {
 			}
 		});
 
-		// Handle Player changes
+		// Handle Player Combat
 		this.players.map.forEach(player => {
-			player.moved = false;
-
-			// Respawns
-			if (player.health < 1) {
-
-				// End any existing combat
-				player.attacking = 0;
-
-				// Remove Player from the current Room
-				let room = this.rooms.get(player.roomId);
-				if (room.id > 0) {
-					room.removePlayer(player);
-					Logger.log(player.name + ' was removed from ' + room.name + '.', Logger.logTypes.DEBUG);
-				} else {
-					Logger.log(player.name + ' is not in a Room.', Logger.logTypes.ERROR);
-				}
-
-				// Respawn Player in Species starting Room
-				const species = this.species.get(player.speciesId);
-				if (species.id > 0) {
-					room = this.rooms.get(species.roomId);
-					if (room.id > 0) {
-						room.addPlayer(player);
-						Logger.log(player.name + ' respawned in ' + room.name + '.', Logger.logTypes.DEBUG);
-					} else {
-						Logger.log('Could not respawn ' + player.name + ' (missing Room).', Logger.logTypes.ERROR);
-					}
-				} else {
-					Logger.log('Could not respawn ' + player.name + ' (missing Species).', Logger.logTypes.ERROR);
-				}
-
-				// Reset Player stats
-				player.health = player.maxHealth;
-				// todo: apply penalties
-			}
-
-			// Combat
 			if (player.attacking) {
 				if (player.health > 0) {
-					player.damage = 0;
 					const enemy = this.enemies.get(player.attacking);
 					if (enemy.id > 0 && player.roomId === enemy.roomId) {
 						if (enemy.health > 0) {
@@ -138,7 +137,6 @@ class Game {
 
 							// End combat
 							player.attacking = 0;
-							enemy.damage = 0;
 							enemy.attacking = 0;
 							Logger.log('"' + enemy.name + '" (' + enemy.id + ') died.', Logger.logTypes.DEBUG);
 

@@ -62,6 +62,7 @@ class GameController {
 	 * @param {PlayerController} playerController - The PlayerController to be added.
 	 */
 	addPlayerController(playerController) {
+		playerController.player.isActive = true;
 		this.playerControllers.push(playerController);
 		Logger.log(playerController.player.name + ' entered the game.', Logger.logTypes.INFO);
 	}
@@ -71,6 +72,7 @@ class GameController {
 	 * @param {PlayerController} playerController - The PlayerController to be removed.
 	 */
 	removePlayerController(playerController) {
+		playerController.player.isActive = false;
 		this.playerControllers = this.playerControllers.filter(p => p !== playerController);
 		Logger.log(playerController.player.name + ' left the game.', Logger.logTypes.INFO);
 	}
@@ -80,7 +82,7 @@ class GameController {
 	 * @param {Player} player - The Player to be moved.
 	 * @param {Number} direction - The direction to be moved. See roomDirections.
 	 */
-	movePlayer(player, direction) {
+	move(player, direction) {
 
 		// Determine if the Player can move in this direction
 		const currentRoom = this.game.rooms.get(player.roomId);
@@ -111,35 +113,37 @@ class GameController {
 			}
 		}
 
-		// Update the Game
+		// Check if the new Room is valid
 		if (newRoomId > 0) {
 			const newRoom = this.game.rooms.get(newRoomId);
 			if (newRoom.id > 0) {
+
+				// Update the Game
 				currentRoom.removePlayer(player);
 				newRoom.addPlayer(player);
 				Logger.log(player.name + ' moved to ' + newRoom.name + '.', Logger.logTypes.DEBUG);
+
+				// Update Players
+				this.playerControllers.forEach(playerController => {
+					if (playerController.player.id === player.id) {
+						playerController.move(newRoom);
+					} else {
+						if (playerController.player.roomId === currentRoom.id) {
+							playerController.leave(player);
+						}
+						if (playerController.player.roomId === newRoom.id) {
+							playerController.enter(player);
+						}
+					}
+				});
+			} else {
+				Logger.log('Could not move ' + player.name + '.', Logger.logTypes.ERROR);
 			}
 		}
-
-		// Return the new Room ID
-		return newRoomId;
 	}
 
 	/**
-	 * Handle a Player attacking an Enemy.
-	 * @param {Player} player - The Player who is attacking.
-	 * @param {Number} enemyId - The unique ID of the Enemy.
-	 */
-	attack(player, enemyId) {
-		const enemy = this.game.enemies.get(enemyId);
-		if (enemy.id > 0 && enemy.roomId === player.roomId) {
-			player.attacking = enemyId;
-			Logger.log(player.name + ' attacked "' + enemy.name + '".', Logger.logTypes.DEBUG);
-		}
-	}
-
-	/**
-	 * Handle a Player saying something to everyone else in their current Room.
+	 * Handle a Player saying something to everyone in the current Room.
 	 * @param {Player} player - The Player who sent the message.
 	 * @param {String} text - The content of the message.
 	 */
@@ -172,6 +176,19 @@ class GameController {
 			}
 		});
 		Logger.log(player.name + ' yells, \'' + text + '\'.', Logger.logTypes.DEBUG);
+	}
+
+	/**
+	 * Handle a Player attacking an Enemy.
+	 * @param {Player} player - The Player who is attacking.
+	 * @param {Number} enemyId - The unique ID of the Enemy.
+	 */
+	attack(player, enemyId) {
+		const enemy = this.game.enemies.get(enemyId);
+		if (enemy.id > 0 && enemy.roomId === player.roomId) {
+			player.attacking = enemyId;
+			Logger.log(player.name + ' attacked "' + enemy.name + '".', Logger.logTypes.DEBUG);
+		}
 	}
 }
 

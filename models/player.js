@@ -23,7 +23,7 @@ class Player extends Entity {
 			this.money = parseInt(data.money);
 			this.roomId = parseInt(data.room_id);
 		}
-		this.socket = 0;
+		this.isActive = false;
 		this.items = [];
 	}
 

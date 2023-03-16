@@ -2,11 +2,17 @@ class PlayerController {
 
 	static messageActions = {
 		MOVE: 0,
-		ATTACK: 1,
-		SAY: 2,
-		YELL: 3,
-		DEATH: 4,
-		ENTER: 5
+		ENTER: 1,
+		LEAVE: 2,
+		SAY: 3,
+		YELL: 4,
+		ATTACK: 5,
+		DIE: 6
+	};
+
+	static attackTypes = {
+		PLAYER: 0,
+		ENEMY: 1
 	};
 
 	/**
@@ -24,10 +30,11 @@ class PlayerController {
 		this.handleClose = this.socket.on('close', this.handleClose.bind(this));
 
 		// Enter the Room
-		this.socket.send(JSON.stringify({
-			action: PlayerController.messageActions.MOVE,
-			room: this.gameController.game.rooms.get(this.player.roomId)
-		}));
+		const room = this.gameController.game.rooms.get(this.player.roomId);
+		if (room.id > 0) {
+			room.addPlayer(this.player);
+			this.move(room);
+		}
 	}
 
 	/**
@@ -42,21 +49,7 @@ class PlayerController {
 
 				// Move the Player
 				case PlayerController.messageActions.MOVE:
-					const newRoomId = this.gameController.movePlayer(this.player, message.direction);
-					if (newRoomId > 0) {
-						const newRoom = this.gameController.game.rooms.get(newRoomId);
-						if (newRoom.id > 0) {
-							this.socket.send(JSON.stringify({
-								action: PlayerController.messageActions.MOVE,
-								room: newRoom
-							}));
-						}
-					}
-					break;
-
-				// Attack an Enemy
-				case PlayerController.messageActions.ATTACK:
-					this.gameController.attack(this.player, message.enemyId);
+					this.gameController.move(this.player, message.direction);
 					break;
 
 				// Say something to the Room
@@ -67,6 +60,11 @@ class PlayerController {
 				// Yell something to all nearby Rooms
 				case PlayerController.messageActions.YELL:
 					this.gameController.yell(this.player, message.text);
+					break;
+
+				// Attack an Enemy
+				case PlayerController.messageActions.ATTACK:
+					this.gameController.attack(this.player, message.enemyId);
 					break;
 			}
 		}
@@ -96,57 +94,96 @@ class PlayerController {
 				if (enemy.damage) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ATTACK,
-						enemyId: enemy.id,
-						damage: enemy.damage
+						attacker: {
+							type: PlayerController.attackTypes.PLAYER,
+							id: enemy.attacking
+						},
+						defender: {
+							type: PlayerController.attackTypes.ENEMY,
+							id: enemy.id,
+							damage: enemy.damage
+						}
 					}));
 				}
 
 				// Death
 				if (enemy.health < 1) {
 					socket.send(JSON.stringify({
-						action: PlayerController.messageActions.DEATH,
-						enemy: enemy
-					}));
-				}
-
-				// Movement
-				if (enemy.moved) {
-					socket.send(JSON.stringify({
-						action: PlayerController.messageActions.ENTER,
-						enemy: enemy
+						action: PlayerController.messageActions.DIE,
+						enemyId: enemy.id
 					}));
 				}
 			});
 
-			// Notify about Player changes
+			// Notify about other Player changes
 			room.players.forEach(player => {
+
+				// Movement
+				if (player.moved) {
+					socket.send(JSON.stringify({
+						action: PlayerController.messageActions.MOVE,
+						room: room
+					}));
+				}
 
 				// Combat
 				if (player.damage) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ATTACK,
-						playerId: player.id,
-						damage: player.damage
+						attacker: {
+							type: PlayerController.attackTypes.PLAYER,
+							id: player.attacking
+						},
+						defender: {
+							type: PlayerController.attackTypes.ENEMY,
+							id: player.id,
+							damage: player.damage
+						}
 					}));
 				}
 
 				// Death
 				if (player.health < 1) {
 					socket.send(JSON.stringify({
-						action: PlayerController.messageActions.DEATH,
-						player: player
-					}));
-				}
-
-				// Movement
-				if (player.moved && player.id !== this.player.id) {
-					socket.send(JSON.stringify({
-						action: PlayerController.messageActions.ENTER,
-						player: player
+						action: PlayerController.messageActions.DIE,
+						playerId: player.id
 					}));
 				}
 			});
 		}
+	}
+
+	/**
+	 * Player entered a new Room.
+	 * @param {Room} room - The Room the Player entered.
+	 */
+	move(room) {
+		this.socket.send(JSON.stringify({
+			action: PlayerController.messageActions.MOVE,
+			room: room
+		}));
+	}
+
+	/**
+	 * Another Player entered the Room.
+	 * @param {Player} player - The Player who entered.
+	 */
+	enter(player) {
+		this.socket.send(JSON.stringify({
+			action: PlayerController.messageActions.ENTER,
+			playerId: player.id
+		}));
+	}
+
+	/**
+	 * Another Player left the Room.
+	 * @param {Player} player - The Player who left.
+	 */
+	leave(player) {
+		this.socket.send(JSON.stringify({
+			action: PlayerController.messageActions.LEAVE,
+			playerId: player.id
+		}));
 	}
 
 	/**
@@ -157,7 +194,7 @@ class PlayerController {
 	say(sender, text) {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.SAY,
-			sender: sender,
+			senderId: sender.id,
 			text: text
 		}));
 	}
@@ -170,7 +207,7 @@ class PlayerController {
 	yell(sender, text) {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.YELL,
-			sender: sender,
+			senderId: sender.id,
 			text: text
 		}));
 	}
