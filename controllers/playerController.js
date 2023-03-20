@@ -10,7 +10,7 @@ class PlayerController {
 		DIE: 6
 	};
 
-	static attackTypes = {
+	static entityType = {
 		PLAYER: 0,
 		ENEMY: 1
 	};
@@ -81,8 +81,9 @@ class PlayerController {
 
 	/**
 	 * Notify Player of any changes in the Game.
+	 * @param {Number} now - The current time in milliseconds.
 	 */
-	update() {
+	update(now) {
 		const room = this.gameController.game.rooms.get(this.player.roomId),
 			socket = this.socket;
 		if (room.id > 0) {
@@ -90,16 +91,24 @@ class PlayerController {
 			// Notify about Enemy changes
 			room.enemies.forEach(enemy => {
 
+				// Enter / Respawn
+				if (enemy.newRoomId && enemy.newRoomId === this.player.roomId) {
+					socket.send(JSON.stringify({
+						action: PlayerController.messageActions.ENTER,
+						enemy: enemy
+					}));
+				}
+
 				// Combat
 				if (enemy.damage) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ATTACK,
 						attacker: {
-							type: PlayerController.attackTypes.PLAYER,
+							type: PlayerController.entityType.PLAYER,
 							id: enemy.attacking
 						},
 						defender: {
-							type: PlayerController.attackTypes.ENEMY,
+							type: PlayerController.entityType.ENEMY,
 							id: enemy.id,
 							damage: enemy.damage
 						}
@@ -107,10 +116,17 @@ class PlayerController {
 				}
 
 				// Death
-				if (enemy.health < 1) {
+				if (enemy.killTime === now) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.DIE,
-						enemyId: enemy.id
+						attacker: {
+							type: PlayerController.entityType.PLAYER,
+							id: enemy.attacking
+						},
+						corpse: {
+							type: PlayerController.entityType.ENEMY,
+							id: enemy.id
+						}
 					}));
 				}
 			});
@@ -118,11 +134,26 @@ class PlayerController {
 			// Notify about other Player changes
 			room.players.forEach(player => {
 
-				// Movement
-				if (player.moved) {
+				// Enter / Respawn
+				if (player.newRoomId && player.newRoomId === this.player.roomId) {
+					if (player.id === this.player.id) {
+						socket.send(JSON.stringify({
+							action: PlayerController.messageActions.MOVE,
+							room: room
+						}));
+					} else {
+						socket.send(JSON.stringify({
+							action: PlayerController.messageActions.ENTER,
+							player: player
+						}));
+					}
+				}
+
+				// Leave
+				if (player.oldRoomId && player.oldRoomId === this.player.roomId && player.id !== this.player.id) {
 					socket.send(JSON.stringify({
-						action: PlayerController.messageActions.MOVE,
-						room: room
+						action: PlayerController.messageActions.LEAVE,
+						playerId: player.id
 					}));
 				}
 
@@ -131,11 +162,11 @@ class PlayerController {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ATTACK,
 						attacker: {
-							type: PlayerController.attackTypes.PLAYER,
+							type: PlayerController.entityType.PLAYER,
 							id: player.attacking
 						},
 						defender: {
-							type: PlayerController.attackTypes.ENEMY,
+							type: PlayerController.entityType.ENEMY,
 							id: player.id,
 							damage: player.damage
 						}
@@ -143,10 +174,17 @@ class PlayerController {
 				}
 
 				// Death
-				if (player.health < 1) {
+				if (player.killTime === now) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.DIE,
-						playerId: player.id
+						attacker: {
+							type: PlayerController.entityType.ENEMY,
+							id: player.attacking
+						},
+						corpse: {
+							type: PlayerController.entityType.PLAYER,
+							id: player.id
+						}
 					}));
 				}
 			});
@@ -171,7 +209,7 @@ class PlayerController {
 	enter(player) {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.ENTER,
-			playerId: player.id
+			player: player
 		}));
 	}
 

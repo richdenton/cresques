@@ -31,6 +31,7 @@ class Room extends Entity {
 	 */
 	addEnemy(enemy) {
 		this.enemies.push(enemy);
+		enemy.roomId = this.id;
 	}
 
 	/**
@@ -39,6 +40,7 @@ class Room extends Entity {
 	 */
 	removeEnemy(enemy) {
 		this.enemies = this.enemies.filter(e => e !== enemy);
+		enemy.roomId = 0;
 	}
 
 	/**

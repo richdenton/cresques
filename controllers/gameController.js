@@ -1,5 +1,6 @@
 const config = require('../config/gameConfig');
 const Game = require('../models/game');
+const GameUtils = require('../utils/gameUtils');
 const Logger = require('../utils/logger');
 
 class GameController {
@@ -50,9 +51,10 @@ class GameController {
 	 */
 	startGameLoop() {
 		setInterval(function(playerControllers, game) {
-			game.update();
+			const now = GameUtils.getCurrentTimeMs();
+			game.update(now);
 			playerControllers.forEach(playerController => {
-				playerController.update();
+				playerController.update(now);
 			});
 		}, config.refreshRate, this.playerControllers, this.game);
 	}

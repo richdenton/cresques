@@ -1,5 +1,6 @@
 module.exports = {
 	refreshRate: 1000,
+	playerRespawnTime: 10000,
 	experienceBase: 1000,
 	experiencePowerCurve: 3,
 	experiencePerMob: 50,

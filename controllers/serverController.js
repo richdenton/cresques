@@ -375,8 +375,9 @@ class ServerController {
 
 			// Set Player as active
 			user.playerId = parseInt(request.body.playerId);
+			const player = this.gameController.game.players.get(user.playerId);
 			return response.status(200).send(JSON.stringify({
-				message: strings.loginPlayerSuccess
+				player: player
 			}));
 		} catch (error) {
 			response.status(500).send({
