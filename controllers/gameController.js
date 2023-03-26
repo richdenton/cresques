@@ -50,13 +50,13 @@ class GameController {
 	 * Start the main game loop.
 	 */
 	startGameLoop() {
-		setInterval(function(playerControllers, game) {
+		setInterval(function(_this) {
 			const now = GameUtils.getCurrentTimeMs();
-			game.update(now);
-			playerControllers.forEach(playerController => {
+			_this.game.update(now);
+			_this.playerControllers.forEach(playerController => {
 				playerController.update(now);
 			});
-		}, config.refreshRate, this.playerControllers, this.game);
+		}, config.refreshRate, this);
 	}
 
 	/**
@@ -75,7 +75,7 @@ class GameController {
 	 */
 	removePlayerController(playerController) {
 		playerController.player.isActive = false;
-		this.playerControllers = this.playerControllers.filter(p => p !== playerController);
+		this.playerControllers = this.playerControllers.filter(pc => pc.player.id !== playerController.player.id);
 		Logger.log(playerController.player.name + ' left the game.', Logger.logTypes.INFO);
 	}
 

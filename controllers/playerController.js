@@ -71,7 +71,7 @@ class PlayerController {
 	}
 
 	/**
-	 * Handle incoming WebSocket "close" events.
+	 * Handle WebSocket "close" events to explicitly terminate connections.
 	 */
 	handleClose() {
 		this.socket.close();

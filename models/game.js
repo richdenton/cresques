@@ -121,7 +121,7 @@ class Game {
 				}
 
 				// Respawn the Player
-				if (player.killTime && now > player.killTime + config.playerRespawnTime) {
+				if (player.isActive && (!player.killTime || now > player.killTime + config.playerRespawnTime)) {
 
 					// Remove Player from the current Room
 					let room = this.rooms.get(player.roomId);
