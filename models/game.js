@@ -33,6 +33,11 @@ class Game {
 	 */
 	update(now) {
 
+		// Reset Player damage from last update
+		this.players.map.forEach(player => {
+			player.damage = 0;
+		});
+
 		// Handle Enemy updates
 		this.enemies.map.forEach(enemy => {
 
@@ -46,6 +51,7 @@ class Game {
 				// End any existing combat
 				if (enemy.attacking) {
 					enemy.attacking = 0;
+					enemy.damageTotals.clear();
 				}
 
 				// Remove Enemy from the current Room
@@ -67,7 +73,7 @@ class Game {
 					if (room.id) {
 						enemy.newRoomId = room.id;
 						room.addEnemy(enemy);
-						Logger.log('"' + enemy.name + '" (' + enemy.id + ' respawned in ' + room.name + '.', Logger.logTypes.DEBUG);
+						Logger.log('"' + enemy.name + '" (' + enemy.id + ') respawned in ' + room.name + '.', Logger.logTypes.DEBUG);
 					} else {
 						Logger.log('Could not respawn "' + enemy.name + '" (' + enemy.id + ') due to missing room.', Logger.logTypes.ERROR);
 					}
@@ -100,6 +106,7 @@ class Game {
 
 					// End combat
 					enemy.attacking = 0;
+					enemy.damageTotals.clear();
 				}
 			}
 		});
@@ -108,7 +115,6 @@ class Game {
 		this.players.map.forEach(player => {
 
 			// Reset actions from last update
-			player.damage = 0
 			player.newRoomId = 0;
 			player.oldRoomId = 0;
 
@@ -164,8 +170,11 @@ class Game {
 					// Roll for damage
 					enemy.damage = GameUtils.rollDamage(player);
 					enemy.health = Math.max(0, enemy.health - enemy.damage);
-					enemy.attacking = player.id;
 					Logger.log(player.name + ' hit "' + enemy.name + '" (' + enemy.id + ') for ' + enemy.damage + ' damage.', Logger.logTypes.DEBUG);
+
+					// Determine if this attack should change who the Enemy is targetting
+					enemy.damageTotals.set(player.id, (enemy.damageTotals.get(player.id) || 0) + enemy.damage);
+					enemy.attacking = [...enemy.damageTotals.entries()].reduce((accumulator, currentValue) => currentValue[1] > accumulator[1] ? currentValue : accumulator)[0];
 
 					// Check if the Enemy has died
 					if (enemy.health < 1) {
@@ -178,7 +187,7 @@ class Game {
 					}
 				} else {
 
-					// End comvat
+					// End combat
 					player.attacking = 0;
 				}
 			}

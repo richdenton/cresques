@@ -162,11 +162,11 @@ class PlayerController {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ATTACK,
 						attacker: {
-							type: PlayerController.entityType.PLAYER,
+							type: PlayerController.entityType.ENEMY,
 							id: player.attacking
 						},
 						defender: {
-							type: PlayerController.entityType.ENEMY,
+							type: PlayerController.entityType.PLAYER,
 							id: player.id,
 							damage: player.damage
 						}

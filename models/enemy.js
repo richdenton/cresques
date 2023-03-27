@@ -10,6 +10,7 @@ class Enemy extends Entity {
 		super();
 		this.templateId = 0;
 		this.roomId = 0;
+		this.damageTotals = new Map();
 	}
 
 	/**

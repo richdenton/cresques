@@ -25,5 +25,6 @@ module.exports = {
 			levelDelta: 3,
 			multiplier: 2.0
 		}
-	}
+	},
+	inventoryBaseSize: 10
 };
