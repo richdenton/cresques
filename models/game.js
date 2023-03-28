@@ -5,6 +5,7 @@ const Species = require('../models/species');
 const EnemySpawns = require('../models/enemySpawns');
 const EnemyTemplates = require('../models/enemyTemplates');
 const Enemies = require('../models/enemies');
+const EnemyInventories = require('../models/enemyInventories');
 const Players = require('../models/players');
 const PlayerInventories = require('../models/playerInventories');
 const GameUtils = require('../utils/gameUtils');
@@ -23,6 +24,7 @@ class Game {
 		this.enemySpawns = new EnemySpawns();
 		this.enemyTemplates = new EnemyTemplates();
 		this.enemies = new Enemies();
+		this.enemyInventories = new EnemyInventories();
 		this.players = new Players();
 		this.playerInventories = new PlayerInventories();
 	}
@@ -184,6 +186,15 @@ class Game {
 						// Reward the Player
 						player.experience += GameUtils.getExperienceReward(player, enemy);
 						player.level = GameUtils.getExperienceLevel(player);
+
+						// Drop loot
+						if (enemy.items || enemy.money) {
+							enemy.drops = {
+								playerId: player.id,
+								items: enemy.items,
+								money: enemy.money
+							};
+						}
 					}
 				} else {
 

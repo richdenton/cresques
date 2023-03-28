@@ -13,6 +13,8 @@ class PlayerInventories extends Entities {
 
 	/**
 	 * Initialize the PlayerInventory map with data from the database.
+	 * @param {Players} players - Map of initialized Players.
+	 * @param {Items} items - Map of initialized Items.
 	 */
 	async load(players, items) {
 

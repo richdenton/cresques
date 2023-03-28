@@ -11,6 +11,7 @@ class Enemy extends Entity {
 		this.templateId = 0;
 		this.roomId = 0;
 		this.damageTotals = new Map();
+		this.items = [];
 	}
 
 	/**
@@ -28,6 +29,22 @@ class Enemy extends Entity {
 		this.intelligence = template.intelligence;
 		this.level = template.level;
 		this.money = template.money;
+	}
+
+	/**
+	 * Add an Item to the Enemy.
+	 * @param {item} item - The Item to add.
+	 */
+	addItem(item) {
+		this.items.push(item);
+	}
+
+	/**
+	 * Remove an Item from the Enemy.
+	 * @param {item} item - The Item to remove.
+	 */
+	removeItem(item) {
+		this.items = this.items.filter(i => i !== item);
 	}
 }
 

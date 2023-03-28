@@ -125,7 +125,8 @@ class PlayerController {
 						},
 						corpse: {
 							type: PlayerController.entityType.ENEMY,
-							id: enemy.id
+							id: enemy.id,
+							drops: enemy.drops
 						}
 					}));
 				}

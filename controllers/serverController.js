@@ -29,6 +29,7 @@ class ServerController {
 		await this.gameController.game.enemySpawns.load();
 		await this.gameController.game.enemyTemplates.load();
 		this.gameController.game.enemies.init(this.gameController.game.enemySpawns, this.gameController.game.enemyTemplates, this.gameController.game.species, this.gameController.game.rooms);
+		await this.gameController.game.enemyInventories.load(this.gameController.game.enemies, this.gameController.game.items);
 		await this.gameController.game.players.load(this.gameController.game.species);
 		await this.gameController.game.playerInventories.load(this.gameController.game.players, this.gameController.game.items);
 	}

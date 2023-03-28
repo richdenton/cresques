@@ -73,7 +73,7 @@ class GameUtils {
 	 * @return {Number} The damage to be dealt.
 	 */
 	static rollDamage(entity) {
-		return Math.floor(Math.random() * 20 + 1) + Math.floor(GameUtils.getExperienceLevel(entity) / 2)
+		return Math.floor(Math.random() * 20 + 1) + Math.floor(GameUtils.getExperienceLevel(entity) / 2);
 	}
 }
 
