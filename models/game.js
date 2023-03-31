@@ -83,6 +83,7 @@ class Game {
 					// Reset Enemy stats
 					enemy.killTime = 0;
 					enemy.health = enemy.maxHealth;
+					enemy.drops = {};
 				}
 			}
 
@@ -191,7 +192,7 @@ class Game {
 						if (enemy.items || enemy.money) {
 							enemy.drops = {
 								playerId: player.id,
-								items: enemy.items,
+								items: [...enemy.items],
 								money: enemy.money
 							};
 						}

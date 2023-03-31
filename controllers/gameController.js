@@ -192,6 +192,40 @@ class GameController {
 			Logger.log(player.name + ' attacked "' + enemy.name + '".', Logger.logTypes.DEBUG);
 		}
 	}
+
+	/**
+	 * Handle a Player taking an Item from a Room.
+	 * @param {Player} player - The Player who is taking the Item.
+	 * @param {Number} itemId - The unique ID of the Item.
+	 */
+	take(player, itemId) {
+		const room = this.game.rooms.get(player.roomId);
+		if (room.id > 0) {
+
+			// Check Enemy loot
+			room.enemies.forEach(enemy => {
+				if (enemy.drops && enemy.drops.playerId === player.id) {
+					for (let i = 0; i < enemy.drops.items.length; i++) {
+						const item = enemy.drops.items[i];
+						if (item.id === itemId) {
+
+							// Update the Game
+							player.addItem(item);
+							enemy.drops.items.splice(i);
+
+							// Update Players
+							this.playerControllers.forEach(playerController => {
+								playerController.take(player, item);
+							});
+							break;
+						}
+					}
+				}
+			});
+		} else {
+			Logger.log(player.name + ' is not in a room.', Logger.logTypes.ERROR);
+		}
+	}
 }
 
 module.exports = GameController;
