@@ -8,7 +8,8 @@ class PlayerController {
 		YELL: 4,
 		ATTACK: 5,
 		DIE: 6,
-		TAKE: 7
+		TAKE: 7,
+		DROP: 8
 	};
 
 	static entityType = {
@@ -72,11 +73,6 @@ class PlayerController {
 				case PlayerController.messageActions.TAKE:
 					this.gameController.take(this.player, message.itemId);
 					break;
-
-				// Drop an Item
-				case PlayerController.messageActions.DROP:
-					this.gameController.take(this.player, message.itemId);
-					break;
 			}
 		}
 	}
@@ -136,8 +132,7 @@ class PlayerController {
 						},
 						corpse: {
 							type: PlayerController.entityType.ENEMY,
-							id: enemy.id,
-							drops: enemy.drops
+							id: enemy.id
 						}
 					}));
 				}
@@ -197,6 +192,17 @@ class PlayerController {
 							type: PlayerController.entityType.PLAYER,
 							id: player.id
 						}
+					}));
+				}
+			});
+
+			// Notify about Item changes
+			room.items.forEach(item => {
+				if (item.dropTime === now && item.playerId === this.player.id) {
+					socket.send(JSON.stringify({
+						action: PlayerController.messageActions.DROP,
+						enemyId: item.enemyId,
+						item: item
 					}));
 				}
 			});

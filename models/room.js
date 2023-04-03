@@ -23,6 +23,7 @@ class Room extends Entity {
 		}
 		this.enemies = [];
 		this.players = [];
+		this.items = [];
 	}
 
 	/**
@@ -61,6 +62,22 @@ class Room extends Entity {
 	removePlayer(player) {
 		this.players = this.players.filter(p => p !== player);
 		player.roomId = 0;
+	}
+
+	/**
+	 * Add an Item to the Room.
+	 * @param {item} item - The Item to add.
+	 */
+	addItem(item) {
+		this.items.push(item);
+	}
+
+	/**
+	 * Remove an Item from the Room.
+	 * @param {item} item - The Item to remove.
+	 */
+	removeItem(item) {
+		this.items = this.items.filter(i => i !== item);
 	}
 }
 

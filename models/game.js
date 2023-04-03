@@ -83,7 +83,6 @@ class Game {
 					// Reset Enemy stats
 					enemy.killTime = 0;
 					enemy.health = enemy.maxHealth;
-					enemy.drops = {};
 				}
 			}
 
@@ -189,12 +188,14 @@ class Game {
 						player.level = GameUtils.getExperienceLevel(player);
 
 						// Drop loot
-						if (enemy.items || enemy.money) {
-							enemy.drops = {
-								playerId: player.id,
-								items: [...enemy.items],
-								money: enemy.money
-							};
+						if (enemy.items) {
+							const room = this.rooms.get(player.roomId);
+							enemy.items.forEach(item => {
+								item.dropTime = now;
+								item.enemyId = enemy.id;
+								item.playerId = player.id;
+								room.addItem(item);
+							});
 						}
 					}
 				} else {

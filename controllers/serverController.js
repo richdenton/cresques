@@ -221,7 +221,7 @@ class ServerController {
 				});
 			}
 
-			// Find and return all Players owned by this User
+			// Return all possible Species
 			const species = this.gameController.species.getAll();
 			return response.status(200).send(JSON.stringify({
 				species: species

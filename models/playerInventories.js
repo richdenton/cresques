@@ -1,4 +1,6 @@
+const DatabaseController = require('../controllers/databaseController');
 const Entities = require('./entities');
+const Item = require('./item');
 const PlayerInventory = require('./playerInventory');
 
 class PlayerInventories extends Entities {
@@ -26,7 +28,8 @@ class PlayerInventories extends Entities {
 			results.forEach(result => {
 				const playerInventory = new PlayerInventory(result);
 				let player = players.get(playerInventory.playerId);
-				const item = items.get(playerInventory.itemId);
+				let item = new Item(items.get(playerInventory.itemId));
+				item.saved = true;
 				player.addItem(item);
 				this.add(playerInventory);
 			});

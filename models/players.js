@@ -73,7 +73,38 @@ class Players extends Entities {
 	 * @return {Boolean} Whether or not the update was a success.
 	 */
 	async updatePlayer(player) {
+
+		// Update Player
 		const results = await DatabaseController.pool.query('UPDATE player SET health=?, strength=?, stamina=?, agility=?, intelligence=?, experience=?, money=?, room_id=? WHERE id=?;', [player.health, player.strength, player.stamina, player.agility, player.intelligence, player.experience, player.money, player.roomId, player.id]);
+
+		// Update Inventory
+		if (player.items.length) {
+
+			// Sort all Items by their save status since the last update
+			let oldItems = [],
+				newItems = [];
+			player.items.forEach(item => {
+				if (item.saved) {
+					oldItems.push(item.id);
+				} else {
+					newItems.push([player.id, item.id]);
+				}
+			});
+
+			// Remove any Items that the Player no longer has
+			if (oldItems.length) {
+				await DatabaseController.pool.query('DELETE FROM inventory WHERE player_id=? AND item_id NOT IN (?)', [ player.id, oldItems ]);
+			}
+
+			// Add any new Items the Player received since the last update
+			if (newItems.length) {
+				await DatabaseController.pool.query('INSERT INTO inventory (player_id, item_id) VALUES ?', [ newItems ]);
+			}
+
+			// Mark all local Items as being saved to the database
+			player.items.forEach(item => { item.saved = true; });
+		}
+
 		return results.affectedRows > 0;
 	}
 

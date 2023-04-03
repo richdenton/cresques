@@ -201,27 +201,25 @@ class GameController {
 	take(player, itemId) {
 		const room = this.game.rooms.get(player.roomId);
 		if (room.id > 0) {
+			const item = room.items.find(i => i.id === itemId);
+			if (item.id > 0) {
+				if (item.playerId === player.id) {
 
-			// Check Enemy loot
-			room.enemies.forEach(enemy => {
-				if (enemy.drops && enemy.drops.playerId === player.id) {
-					for (let i = 0; i < enemy.drops.items.length; i++) {
-						const item = enemy.drops.items[i];
-						if (item.id === itemId) {
+					// Update the Game
+					player.addItem(item);
+					room.removeItem(item);
+					Logger.log(player.name + ' picked up ' + item.name + '.', Logger.logTypes.DEBUG);
 
-							// Update the Game
-							player.addItem(item);
-							enemy.drops.items.splice(i);
-
-							// Update Players
-							this.playerControllers.forEach(playerController => {
-								playerController.take(player, item);
-							});
-							break;
-						}
-					}
+					// Update Players
+					this.playerControllers.forEach(playerController => {
+						playerController.take(player, item);
+					});
+				} else {
+					Logger.log('Item ' + itemId + ' does not belong to ' + player.name + '.', Logger.logTypes.ERROR);
 				}
-			});
+			} else {
+				Logger.log('Item ' + itemId + ' not found in ' + room.name + '.', Logger.logTypes.ERROR);
+			}
 		} else {
 			Logger.log(player.name + ' is not in a room.', Logger.logTypes.ERROR);
 		}
