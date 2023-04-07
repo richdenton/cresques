@@ -38,6 +38,7 @@ class Game {
 		// Reset Player damage from last update
 		this.players.map.forEach(player => {
 			player.damage = 0;
+			player.attacker = 0;
 		});
 
 		// Handle Enemy updates
@@ -45,6 +46,7 @@ class Game {
 
 			// Reset actions from last update
 			enemy.damage = 0;
+			enemy.attacker = 0;
 			enemy.newRoomId = 0;
 
 			// Check if the Enemy has died
@@ -96,6 +98,7 @@ class Game {
 					// Roll for damage
 					player.damage = GameUtils.rollDamage(enemy);
 					player.health = Math.max(0, player.health - player.damage);
+					player.attacker = enemy.id;
 					player.attacking = enemy.id;
 					Logger.log('"' + enemy.name + '" (' + enemy.id + ') hit ' + player.name + ' for ' + player.damage + ' damage.', Logger.logTypes.DEBUG);
 
@@ -172,6 +175,7 @@ class Game {
 					// Roll for damage
 					enemy.damage = GameUtils.rollDamage(player);
 					enemy.health = Math.max(0, enemy.health - enemy.damage);
+					enemy.attacker = player.id;
 					Logger.log(player.name + ' hit "' + enemy.name + '" (' + enemy.id + ') for ' + enemy.damage + ' damage.', Logger.logTypes.DEBUG);
 
 					// Determine if this attack should change who the Enemy is targetting

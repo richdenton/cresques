@@ -112,27 +112,12 @@ class PlayerController {
 						action: PlayerController.messageActions.ATTACK,
 						attacker: {
 							type: PlayerController.entityType.PLAYER,
-							id: enemy.attacking
+							id: enemy.attacker
 						},
 						defender: {
 							type: PlayerController.entityType.ENEMY,
 							id: enemy.id,
 							damage: enemy.damage
-						}
-					}));
-				}
-
-				// Death
-				if (enemy.killTime === now) {
-					socket.send(JSON.stringify({
-						action: PlayerController.messageActions.DIE,
-						attacker: {
-							type: PlayerController.entityType.PLAYER,
-							id: enemy.attacking
-						},
-						corpse: {
-							type: PlayerController.entityType.ENEMY,
-							id: enemy.id
 						}
 					}));
 				}
@@ -170,7 +155,7 @@ class PlayerController {
 						action: PlayerController.messageActions.ATTACK,
 						attacker: {
 							type: PlayerController.entityType.ENEMY,
-							id: player.attacking
+							id: player.attacker
 						},
 						defender: {
 							type: PlayerController.entityType.PLAYER,
@@ -191,6 +176,23 @@ class PlayerController {
 						corpse: {
 							type: PlayerController.entityType.PLAYER,
 							id: player.id
+						}
+					}));
+				}
+			});
+
+			// Notify about Enemy deaths
+			room.enemies.forEach(enemy => {
+				if (enemy.killTime === now) {
+					socket.send(JSON.stringify({
+						action: PlayerController.messageActions.DIE,
+						attacker: {
+							type: PlayerController.entityType.PLAYER,
+							id: enemy.attacking
+						},
+						corpse: {
+							type: PlayerController.entityType.ENEMY,
+							id: enemy.id
 						}
 					}));
 				}
