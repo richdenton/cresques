@@ -86,60 +86,64 @@ class GameController {
 	 */
 	move(player, direction) {
 
-		// Determine if the Player can move in this direction
-		const currentRoom = this.game.rooms.get(player.roomId);
-		let newRoomId = 0;
-		if (currentRoom.id) {
-			switch(direction) {
-				case GameController.roomDirections.NORTH:
-					newRoomId = currentRoom.exits.north;
-					break;
-				case GameController.roomDirections.EAST:
-					newRoomId = currentRoom.exits.east;
-					break;
-				case GameController.roomDirections.SOUTH:
-					newRoomId = currentRoom.exits.south;
-					break;
-				case GameController.roomDirections.WEST:
-					newRoomId = currentRoom.exits.west;
-					break;
-				case GameController.roomDirections.UP:
-					newRoomId = currentRoom.exits.up;
-					break;
-				case GameController.roomDirections.DOWN:
-					newRoomId = currentRoom.exits.down;
-					break;
-				default:
-					newRoomId = currentRoom.id;
-					break;
+		// Determine if the Player can move
+		if (player.health > 0 && !player.attacking && !player.encumbered) {
+
+			// Determine if the direction is available
+			const currentRoom = this.game.rooms.get(player.roomId);
+			let newRoomId = 0;
+			if (currentRoom.id) {
+				switch(direction) {
+					case GameController.roomDirections.NORTH:
+						newRoomId = currentRoom.exits.north;
+						break;
+					case GameController.roomDirections.EAST:
+						newRoomId = currentRoom.exits.east;
+						break;
+					case GameController.roomDirections.SOUTH:
+						newRoomId = currentRoom.exits.south;
+						break;
+					case GameController.roomDirections.WEST:
+						newRoomId = currentRoom.exits.west;
+						break;
+					case GameController.roomDirections.UP:
+						newRoomId = currentRoom.exits.up;
+						break;
+					case GameController.roomDirections.DOWN:
+						newRoomId = currentRoom.exits.down;
+						break;
+					default:
+						newRoomId = currentRoom.id;
+						break;
+				}
 			}
-		}
 
-		// Check if the new Room is valid
-		if (newRoomId > 0) {
-			const newRoom = this.game.rooms.get(newRoomId);
-			if (newRoom.id > 0) {
+			// Check if the new Room is valid
+			if (newRoomId > 0) {
+				const newRoom = this.game.rooms.get(newRoomId);
+				if (newRoom.id > 0) {
 
-				// Update the Game
-				currentRoom.removePlayer(player);
-				newRoom.addPlayer(player);
-				Logger.log(player.name + ' moved to ' + newRoom.name + '.', Logger.logTypes.DEBUG);
+					// Update the Game
+					currentRoom.removePlayer(player);
+					newRoom.addPlayer(player);
+					Logger.log(player.name + ' moved to ' + newRoom.name + '.', Logger.logTypes.DEBUG);
 
-				// Update Players
-				this.playerControllers.forEach(playerController => {
-					if (playerController.player.id === player.id) {
-						playerController.move(newRoom);
-					} else {
-						if (playerController.player.roomId === currentRoom.id) {
-							playerController.leave(player);
+					// Update Players
+					this.playerControllers.forEach(playerController => {
+						if (playerController.player.id === player.id) {
+							playerController.move(newRoom);
+						} else {
+							if (playerController.player.roomId === currentRoom.id) {
+								playerController.leave(player);
+							}
+							if (playerController.player.roomId === newRoom.id) {
+								playerController.enter(player);
+							}
 						}
-						if (playerController.player.roomId === newRoom.id) {
-							playerController.enter(player);
-						}
-					}
-				});
-			} else {
-				Logger.log('Could not move ' + player.name + '.', Logger.logTypes.ERROR);
+					});
+				} else {
+					Logger.log('Could not move ' + player.name + '.', Logger.logTypes.ERROR);
+				}
 			}
 		}
 	}

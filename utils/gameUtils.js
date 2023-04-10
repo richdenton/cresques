@@ -75,6 +75,15 @@ class GameUtils {
 	static rollDamage(entity) {
 		return Math.floor(Math.random() * 20 + 1) + Math.floor(GameUtils.getExperienceLevel(entity) / 2);
 	}
+
+	/**
+	 * Calculate how much weight a Player can hold.
+	 * @param {Player} player - The Player to check.
+	 * @return {Number} The total weight a Player can hold before becoming encumbered.
+	 */
+	static getMaxWeight(player) {
+		return player.strength * config.staminaMultiplier;
+	}
 }
 
 module.exports = GameUtils;

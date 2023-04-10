@@ -1,6 +1,7 @@
 module.exports = {
 	refreshRate: 1000,
 	playerRespawnTime: 10000,
+	meleeAttackTime: 2000,
 	experienceBase: 1000,
 	experiencePowerCurve: 3,
 	experiencePerMob: 50,
@@ -26,5 +27,5 @@ module.exports = {
 			multiplier: 2.0
 		}
 	},
-	inventoryBaseSize: 10
+	staminaMultiplier: 5
 };

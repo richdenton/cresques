@@ -35,10 +35,11 @@ class Game {
 	 */
 	update(now) {
 
-		// Reset Player damage from last update
+		// Reset Player properties from last update
 		this.players.map.forEach(player => {
 			player.damage = 0;
 			player.attacker = 0;
+			player.encumbered = player.items.length > GameUtils.getMaxWeight(player);
 		});
 
 		// Handle Enemy updates
@@ -95,17 +96,22 @@ class Game {
 				const player = this.players.get(enemy.attacking);
 				if (player.id && player.health && player.roomId === enemy.roomId) {
 
-					// Roll for damage
-					player.damage = GameUtils.rollDamage(enemy);
-					player.health = Math.max(0, player.health - player.damage);
-					player.attacker = enemy.id;
-					player.attacking = enemy.id;
-					Logger.log('"' + enemy.name + '" (' + enemy.id + ') hit ' + player.name + ' for ' + player.damage + ' damage.', Logger.logTypes.DEBUG);
+					// Check if Enemy is ready to attack
+					if ((enemy.nextAttackTime || 0) < now) {
 
-					// Check if the Player has died
-					if (player.health < 1) {
-						player.killTime = now;
-						Logger.log(player.name + ' died.', Logger.logTypes.DEBUG);
+						// Roll for damage
+						player.damage = GameUtils.rollDamage(enemy);
+						player.health = Math.max(0, player.health - player.damage);
+						player.attacker = enemy.id;
+						player.attacking = enemy.id;
+						enemy.nextAttackTime = now + config.meleeAttackTime;
+						Logger.log('"' + enemy.name + '" (' + enemy.id + ') hit ' + player.name + ' for ' + player.damage + ' damage.', Logger.logTypes.DEBUG);
+
+						// Check if the Player has died
+						if (player.health < 1) {
+							player.killTime = now;
+							Logger.log(player.name + ' died.', Logger.logTypes.DEBUG);
+						}
 					}
 				} else {
 
@@ -172,34 +178,39 @@ class Game {
 				const enemy = this.enemies.get(player.attacking);
 				if (enemy.id && enemy.health && enemy.roomId === player.roomId) {
 
-					// Roll for damage
-					enemy.damage = GameUtils.rollDamage(player);
-					enemy.health = Math.max(0, enemy.health - enemy.damage);
-					enemy.attacker = player.id;
-					Logger.log(player.name + ' hit "' + enemy.name + '" (' + enemy.id + ') for ' + enemy.damage + ' damage.', Logger.logTypes.DEBUG);
+					// Check if Plyer is ready to attack
+					if ((player.nextAttackTime || 0) < now) {
 
-					// Determine if this attack should change who the Enemy is targetting
-					enemy.damageTotals.set(player.id, (enemy.damageTotals.get(player.id) || 0) + enemy.damage);
-					enemy.attacking = [...enemy.damageTotals.entries()].reduce((accumulator, currentValue) => currentValue[1] > accumulator[1] ? currentValue : accumulator)[0];
+						// Roll for damage
+						enemy.damage = GameUtils.rollDamage(player);
+						enemy.health = Math.max(0, enemy.health - enemy.damage);
+						enemy.attacker = player.id;
+						player.nextAttackTime = now + config.meleeAttackTime;
+						Logger.log(player.name + ' hit "' + enemy.name + '" (' + enemy.id + ') for ' + enemy.damage + ' damage.', Logger.logTypes.DEBUG);
 
-					// Check if the Enemy has died
-					if (enemy.health < 1) {
-						enemy.killTime = now;
-						Logger.log('"' + enemy.name + '" (' + enemy.id + ') died.', Logger.logTypes.DEBUG);
+						// Determine if this attack should change who the Enemy is targetting
+						enemy.damageTotals.set(player.id, (enemy.damageTotals.get(player.id) || 0) + enemy.damage);
+						enemy.attacking = [...enemy.damageTotals.entries()].reduce((accumulator, currentValue) => currentValue[1] > accumulator[1] ? currentValue : accumulator)[0];
 
-						// Reward the Player
-						player.experience += GameUtils.getExperienceReward(player, enemy);
-						player.level = GameUtils.getExperienceLevel(player);
+						// Check if the Enemy has died
+						if (enemy.health < 1) {
+							enemy.killTime = now;
+							Logger.log('"' + enemy.name + '" (' + enemy.id + ') died.', Logger.logTypes.DEBUG);
 
-						// Drop loot
-						if (enemy.items) {
-							const room = this.rooms.get(player.roomId);
-							enemy.items.forEach(item => {
-								item.dropTime = now;
-								item.enemyId = enemy.id;
-								item.playerId = player.id;
-								room.addItem(item);
-							});
+							// Reward the Player
+							player.experience += GameUtils.getExperienceReward(player, enemy);
+							player.level = GameUtils.getExperienceLevel(player);
+
+							// Drop loot
+							if (enemy.items) {
+								const room = this.rooms.get(player.roomId);
+								enemy.items.forEach(item => {
+									item.dropTime = now;
+									item.enemyId = enemy.id;
+									item.playerId = player.id;
+									room.addItem(item);
+								});
+							}
 						}
 					}
 				} else {
