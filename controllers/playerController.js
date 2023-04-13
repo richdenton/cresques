@@ -9,7 +9,8 @@ class PlayerController {
 		ATTACK: 5,
 		DIE: 6,
 		TAKE: 7,
-		DROP: 8
+		DROP: 8,
+		EQUIP: 9
 	};
 
 	static entityType = {
@@ -72,6 +73,16 @@ class PlayerController {
 				// Take an Item
 				case PlayerController.messageActions.TAKE:
 					this.gameController.take(this.player, message.itemId);
+					break;
+
+				// Drop an Item
+				case PlayerController.messageActions.DROP:
+					this.gameController.drop(this.player, message.itemId);
+					break;
+
+				// Equip an Item
+				case PlayerController.messageActions.EQUIP:
+					this.gameController.equip(this.player, message.itemId);
 					break;
 			}
 		}
@@ -278,6 +289,19 @@ class PlayerController {
 	take(player, item) {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.TAKE,
+			playerId: player.id,
+			item: item
+		}));
+	}
+
+	/**
+	 * Player dropped up an Item.
+	 * @param {Player} player - The Player who dropped the Item.
+	 * @param {Item} item - The Item that was dropped.
+	 */
+	drop(player, item) {
+		this.socket.send(JSON.stringify({
+			action: PlayerController.messageActions.DROP,
 			playerId: player.id,
 			item: item
 		}));

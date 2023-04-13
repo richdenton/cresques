@@ -27,5 +27,5 @@ module.exports = {
 			multiplier: 2.0
 		}
 	},
-	staminaMultiplier: 5
+	strengthMultiplier: 5
 };

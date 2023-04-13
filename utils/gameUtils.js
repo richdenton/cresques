@@ -73,6 +73,7 @@ class GameUtils {
 	 * @return {Number} The damage to be dealt.
 	 */
 	static rollDamage(entity) {
+		// todo: add equipment bonuses
 		return Math.floor(Math.random() * 20 + 1) + Math.floor(GameUtils.getExperienceLevel(entity) / 2);
 	}
 
@@ -82,7 +83,13 @@ class GameUtils {
 	 * @return {Number} The total weight a Player can hold before becoming encumbered.
 	 */
 	static getMaxWeight(player) {
-		return player.strength * config.staminaMultiplier;
+		// todo: add equipment bonuses
+		return (player.strengthBase + player.strength) * config.strengthMultiplier;
+	}
+
+	static getNextAttackTime(entity) {
+		// todo: add equipment bonuses
+		return config.meleeAttackTime;
 	}
 }
 

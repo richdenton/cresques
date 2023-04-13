@@ -104,7 +104,7 @@ class Game {
 						player.health = Math.max(0, player.health - player.damage);
 						player.attacker = enemy.id;
 						player.attacking = enemy.id;
-						enemy.nextAttackTime = now + config.meleeAttackTime;
+						enemy.nextAttackTime = now + GameUtils.getNextAttackTime(enemy);
 						Logger.log('"' + enemy.name + '" (' + enemy.id + ') hit ' + player.name + ' for ' + player.damage + ' damage.', Logger.logTypes.DEBUG);
 
 						// Check if the Player has died
@@ -185,7 +185,7 @@ class Game {
 						enemy.damage = GameUtils.rollDamage(player);
 						enemy.health = Math.max(0, enemy.health - enemy.damage);
 						enemy.attacker = player.id;
-						player.nextAttackTime = now + config.meleeAttackTime;
+						player.nextAttackTime = now + GameUtils.getNextAttackTime(player);
 						Logger.log(player.name + ' hit "' + enemy.name + '" (' + enemy.id + ') for ' + enemy.damage + ' damage.', Logger.logTypes.DEBUG);
 
 						// Determine if this attack should change who the Enemy is targetting

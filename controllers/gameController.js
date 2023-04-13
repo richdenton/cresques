@@ -121,7 +121,7 @@ class GameController {
 			// Check if the new Room is valid
 			if (newRoomId > 0) {
 				const newRoom = this.game.rooms.get(newRoomId);
-				if (newRoom.id > 0) {
+				if (newRoom) {
 
 					// Update the Game
 					currentRoom.removePlayer(player);
@@ -191,7 +191,7 @@ class GameController {
 	 */
 	attack(player, enemyId) {
 		const enemy = this.game.enemies.get(enemyId);
-		if (enemy.id > 0 && enemy.roomId === player.roomId) {
+		if (enemy && enemy.roomId === player.roomId) {
 			player.attacking = enemyId;
 			Logger.log(player.name + ' attacked "' + enemy.name + '".', Logger.logTypes.DEBUG);
 		}
@@ -204,10 +204,10 @@ class GameController {
 	 */
 	take(player, itemId) {
 		const room = this.game.rooms.get(player.roomId);
-		if (room.id > 0) {
+		if (room) {
 			const item = room.items.find(i => i.id === itemId);
-			if (item.id > 0) {
-				if (item.playerId === player.id) {
+			if (item) {
+				if ((item.playerId || player.id) === player.id) {
 
 					// Update the Game
 					player.addItem(item);
@@ -227,6 +227,57 @@ class GameController {
 		} else {
 			Logger.log(player.name + ' is not in a room.', Logger.logTypes.ERROR);
 		}
+	}
+
+	/**
+	 * Handle a Player dropping an Item in a Room.
+	 * @param {Player} player - The Player who is dropping the Item.
+	 * @param {Number} itemId - The unique ID of the Item.
+	 */
+	drop(player, itemId) {
+		const room = this.game.rooms.get(player.roomId);
+		if (room) {
+			const item = player.items.find(i => i.id === itemId);
+			if (item) {
+
+				// Update the Game
+				room.addItem(item);
+				player.removeItem(item);
+				Logger.log(player.name + ' dropped ' + item.name + '.', Logger.logTypes.DEBUG);
+
+				// Update Players
+				this.playerControllers.forEach(playerController => {
+					playerController.drop(player, item);
+				});
+			} else {
+				Logger.log(player.name + ' is not carrying item ' + itemId + '.', Logger.logTypes.ERROR);
+			}
+		} else {
+			Logger.log(player.name + ' is not in a room.', Logger.logTypes.ERROR);
+		}
+	}
+
+	/**
+	 * Handle a Player equipping an Item from their Inventory.
+	 * @param {Player} player - The Player who is equipping the Item.
+	 * @param {Number} itemId - The unique ID of the Item.
+	 */
+	equip(player, itemId) {
+
+		// Equip the new Item
+		const item = player.items.find(i => i.id === itemId);
+		if (item) {
+			item.equipped = true;
+		} else {
+			Logger.log(player.name + ' is not carrying item ' + itemId + '.', Logger.logTypes.ERROR);
+		}
+
+		// Unequip previous Item(s) from that slot
+		player.items.forEach(oldItem => {
+			if (oldItem.slot === item.slot) {
+				oldItem.equipped = false;
+			}
+		});
 	}
 }
 
