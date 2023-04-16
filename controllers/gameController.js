@@ -5,42 +5,6 @@ const Logger = require('../utils/logger');
 
 class GameController {
 
-	static itemTypes = {
-		ARMOR: 0,
-		WEAPON: 1,
-		CONSUMABLE: 2
-	};
-
-	static itemRarities = {
-		COMMON: 0,
-		UNCOMMON: 1,
-		RARE: 2,
-		EPIC: 3
-	};
-
-	static itemSlots = {
-		HEAD: 0,
-		CHEST: 1,
-		ARMS: 2,
-		LEGS: 3
-	};
-
-	static roomDirections = {
-		NORTH: 0,
-		EAST: 1,
-		SOUTH: 2,
-		WEST: 3,
-		UP: 4,
-		DOWN: 5
-	};
-
-	static playerAttributes = {
-		STRENGTH: 0,
-		STAMINA: 1,
-		AGILITY: 2,
-		INTELLIGENCE: 3
-	};
-
 	constructor() {
 		this.playerControllers = [];
 		this.game = new Game();
@@ -94,22 +58,22 @@ class GameController {
 			let newRoomId = 0;
 			if (currentRoom.id) {
 				switch(direction) {
-					case GameController.roomDirections.NORTH:
+					case config.roomDirections.NORTH:
 						newRoomId = currentRoom.exits.north;
 						break;
-					case GameController.roomDirections.EAST:
+					case config.roomDirections.EAST:
 						newRoomId = currentRoom.exits.east;
 						break;
-					case GameController.roomDirections.SOUTH:
+					case config.roomDirections.SOUTH:
 						newRoomId = currentRoom.exits.south;
 						break;
-					case GameController.roomDirections.WEST:
+					case config.roomDirections.WEST:
 						newRoomId = currentRoom.exits.west;
 						break;
-					case GameController.roomDirections.UP:
+					case config.roomDirections.UP:
 						newRoomId = currentRoom.exits.up;
 						break;
-					case GameController.roomDirections.DOWN:
+					case config.roomDirections.DOWN:
 						newRoomId = currentRoom.exits.down;
 						break;
 					default:
@@ -264,20 +228,22 @@ class GameController {
 	 */
 	equip(player, itemId) {
 
-		// Equip the new Item
+		// Ensure the Player has possession of the Item
 		const item = player.items.find(i => i.id === itemId);
 		if (item) {
+
+			// Unequip previous Item(s) from this slot
+			player.items.forEach(oldItem => {
+				if (oldItem.slot === item.slot) {
+					oldItem.equipped = false;
+				}
+			});
+
+			// Equip the new Item
 			item.equipped = true;
 		} else {
 			Logger.log(player.name + ' is not carrying item ' + itemId + '.', Logger.logTypes.ERROR);
 		}
-
-		// Unequip previous Item(s) from that slot
-		player.items.forEach(oldItem => {
-			if (oldItem.slot === item.slot) {
-				oldItem.equipped = false;
-			}
-		});
 	}
 }
 

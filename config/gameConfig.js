@@ -27,5 +27,20 @@ module.exports = {
 			multiplier: 2.0
 		}
 	},
-	strengthMultiplier: 5
+	strengthMultiplier: 5,
+	roomDirections: {
+		NORTH: 0,
+		EAST: 1,
+		SOUTH: 2,
+		WEST: 3,
+		UP: 4,
+		DOWN: 5
+	},
+	itemSlots: {
+		WEAPON: 0,
+		HEAD: 1,
+		CHEST: 2,
+		ARMS: 3,
+		LEGS: 4
+	}
 };

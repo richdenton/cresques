@@ -87,7 +87,7 @@ class Players extends Entities {
 				if (item.saved) {
 					oldItems.push(item.id);
 				} else {
-					newItems.push([player.id, item.id]);
+					newItems.push([player.id, item.id, item.equipped]);
 				}
 			});
 
@@ -98,7 +98,7 @@ class Players extends Entities {
 
 			// Add any new Items the Player received since the last update
 			if (newItems.length) {
-				await DatabaseController.pool.query('INSERT INTO inventory (player_id, item_id) VALUES ?', [ newItems ]);
+				await DatabaseController.pool.query('INSERT INTO inventory (player_id, item_id, equipped) VALUES ?', [ newItems ]);
 			}
 
 			// Mark all local Items as being saved to the database

@@ -29,6 +29,7 @@ class PlayerInventories extends Entities {
 				const playerInventory = new PlayerInventory(result);
 				let player = players.get(playerInventory.playerId);
 				let item = new Item(items.get(playerInventory.itemId));
+				item.equipped = playerInventory.equipped;
 				item.saved = true;
 				player.addItem(item);
 				this.add(playerInventory);

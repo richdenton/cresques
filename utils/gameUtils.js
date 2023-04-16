@@ -73,8 +73,8 @@ class GameUtils {
 	 * @return {Number} The damage to be dealt.
 	 */
 	static rollDamage(entity) {
-		// todo: add equipment bonuses
-		return Math.floor(Math.random() * 20 + 1) + Math.floor(GameUtils.getExperienceLevel(entity) / 2);
+		const weapon = entity.items.find(i => i.equipped && i.slot === config.itemSlots.WEAPON);
+		return Math.floor(Math.random() * 20 + 1) + (weapon ? Math.floor(weapon.strength / 2) : 0) + Math.floor(GameUtils.getExperienceLevel(entity) / 2);
 	}
 
 	/**
@@ -83,13 +83,23 @@ class GameUtils {
 	 * @return {Number} The total weight a Player can hold before becoming encumbered.
 	 */
 	static getMaxWeight(player) {
-		// todo: add equipment bonuses
-		return (player.strengthBase + player.strength) * config.strengthMultiplier;
+		let armorBonus = 0;
+		player.items.find(i => {
+			if (i.equipped && (i.slot === config.itemSlots.HEAD || i.slot === config.itemSlots.CHEST || i.slot === config.itemSlots.ARMS || i.slot === config.itemSlots.LEGS)) {
+				armorBonus += i.strength;
+			}
+		});
+		return (player.strengthBase + player.strength + armorBonus) * config.strengthMultiplier;
 	}
 
+	/**
+	 * Calculate the next time the Entity can attack.
+	 * @param {Entity} entity - A Player or Enemy.
+	 * @return {Number} The number of milliseconds until the Entity can attack again.
+	 */
 	static getNextAttackTime(entity) {
-		// todo: add equipment bonuses
-		return config.meleeAttackTime;
+		const weapon = entity.items.find(i => i.equipped && i.slot === config.itemSlots.WEAPON);
+		return config.meleeAttackTime - (entity.agility * 20) - (weapon ? weapon.agility * 10 : 0);
 	}
 }
 
