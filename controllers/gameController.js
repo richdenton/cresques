@@ -231,16 +231,7 @@ class GameController {
 		// Ensure the Player has possession of the Item
 		const item = player.items.find(i => i.id === itemId);
 		if (item) {
-
-			// Unequip previous Item(s) from this slot
-			player.items.forEach(oldItem => {
-				if (oldItem.slot === item.slot) {
-					oldItem.equipped = false;
-				}
-			});
-
-			// Equip the new Item
-			item.equipped = true;
+			player.equipItem(item);
 		} else {
 			Logger.log(player.name + ' is not carrying item ' + itemId + '.', Logger.logTypes.ERROR);
 		}

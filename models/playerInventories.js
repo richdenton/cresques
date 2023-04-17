@@ -1,4 +1,3 @@
-const DatabaseController = require('../controllers/databaseController');
 const Entities = require('./entities');
 const Item = require('./item');
 const PlayerInventory = require('./playerInventory');
@@ -29,7 +28,10 @@ class PlayerInventories extends Entities {
 				const playerInventory = new PlayerInventory(result);
 				let player = players.get(playerInventory.playerId);
 				let item = new Item(items.get(playerInventory.itemId));
-				item.equipped = playerInventory.equipped;
+				if (playerInventory.slot > -1) {
+					player.equipment[item.slot] = item.id;
+					item.equipped = true;
+				}
 				item.saved = true;
 				player.addItem(item);
 				this.add(playerInventory);

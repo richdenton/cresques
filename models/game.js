@@ -205,10 +205,11 @@ class Game {
 							if (enemy.items) {
 								const room = this.rooms.get(player.roomId);
 								enemy.items.forEach(item => {
-									item.dropTime = now;
-									item.enemyId = enemy.id;
-									item.playerId = player.id;
-									room.addItem(item);
+									const newItem = JSON.parse(JSON.stringify(item));
+									newItem.dropTime = now;
+									newItem.enemyId = enemy.id;
+									newItem.playerId = player.id;
+									room.addItem(newItem);
 								});
 							}
 						}

@@ -15,6 +15,8 @@ class Item extends Entity {
 			this.type = parseInt(data.type);
 			this.rarity = parseInt(data.rarity);
 			this.slot = parseInt(data.slot);
+			this.damage = parseInt(data.damage);
+			this.delay = parseInt(data.delay);
 			this.strength = parseInt(data.strength);
 			this.stamina = parseInt(data.stamina);
 			this.agility = parseInt(data.agility);

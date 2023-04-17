@@ -1,3 +1,4 @@
+const config = require('../config/gameConfig');
 const Entity = require('./entity');
 
 class Player extends Entity {
@@ -25,6 +26,7 @@ class Player extends Entity {
 		}
 		this.isActive = false;
 		this.items = [];
+		this.equipment = {};
 	}
 
 	/**
@@ -41,6 +43,25 @@ class Player extends Entity {
 	 */
 	removeItem(item) {
 		this.items = this.items.filter(i => i !== item);
+	}
+
+	/**
+	 * Add (or replace) an Item in the Player's list of equipment.
+	 * @param {item} item - The Item to equip.
+	 */
+	equipItem(item) {
+
+		// Unequip previous Item
+		const oldItem = this.items.find(i => i.id === this.equipment[item.slot]);
+		if (oldItem) {
+			oldItem.equipped = false;
+			oldItem.saved = false;
+		}
+
+		// Equip the new Item
+		this.equipment[item.slot] = item.id;
+		item.equipped = true;
+		item.saved = false;
 	}
 }
 

@@ -73,8 +73,8 @@ class GameUtils {
 	 * @return {Number} The damage to be dealt.
 	 */
 	static rollDamage(entity) {
-		const weapon = entity.items.find(i => i.equipped && i.slot === config.itemSlots.WEAPON);
-		return Math.floor(Math.random() * 20 + 1) + (weapon ? Math.floor(weapon.strength / 2) : 0) + Math.floor(GameUtils.getExperienceLevel(entity) / 2);
+		const weapon = entity.items.find(i => i.id === entity.equipment ? entity.equipment[config.itemSlots.WEAPON] : -1);
+		return Math.floor(Math.random() * 20 + 1) + (weapon ? weapon.damage : 0) + Math.floor(GameUtils.getExperienceLevel(entity) / 2);
 	}
 
 	/**
@@ -84,9 +84,10 @@ class GameUtils {
 	 */
 	static getMaxWeight(player) {
 		let armorBonus = 0;
-		player.items.find(i => {
-			if (i.equipped && (i.slot === config.itemSlots.HEAD || i.slot === config.itemSlots.CHEST || i.slot === config.itemSlots.ARMS || i.slot === config.itemSlots.LEGS)) {
-				armorBonus += i.strength;
+		Object.keys(player.equipment).forEach(itemId => {
+			const item = player.items.find(i => i.id === itemId);
+			if (item) {
+				armorBonus += item.strength;
 			}
 		});
 		return (player.strengthBase + player.strength + armorBonus) * config.strengthMultiplier;
@@ -98,8 +99,8 @@ class GameUtils {
 	 * @return {Number} The number of milliseconds until the Entity can attack again.
 	 */
 	static getNextAttackTime(entity) {
-		const weapon = entity.items.find(i => i.equipped && i.slot === config.itemSlots.WEAPON);
-		return config.meleeAttackTime - (entity.agility * 20) - (weapon ? weapon.agility * 10 : 0);
+		const weapon = entity.items.find(i => i.id === entity.equipment ? entity.equipment[config.itemSlots.WEAPON] : -1);
+		return weapon ? weapon.delay : config.meleeDelay;
 	}
 }
 

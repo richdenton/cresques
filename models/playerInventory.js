@@ -11,7 +11,7 @@ class PlayerInventory extends Entity {
 		super();
 		this.playerId = parseInt(data.player_id);
 		this.itemId = parseInt(data.item_id);
-		this.equipped = data.equipped.readInt8() === 1;
+		this.slot = parseInt(data.slot);
 	}
 }
 

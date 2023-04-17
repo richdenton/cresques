@@ -53,6 +53,8 @@ CREATE TABLE `item` (
   `type` int NOT NULL,
   `rarity` int NOT NULL,
   `slot` int NOT NULL,
+  `damage` int NOT NULL,
+  `delay` int NOT NULL,
   `strength` int NOT NULL,
   `stamina` int NOT NULL,
   `agility` int NOT NULL,
