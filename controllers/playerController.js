@@ -6,11 +6,12 @@ class PlayerController {
 		LEAVE: 2,
 		SAY: 3,
 		YELL: 4,
-		ATTACK: 5,
-		DIE: 6,
-		TAKE: 7,
-		DROP: 8,
-		EQUIP: 9
+		CONSIDER: 5,
+		ATTACK: 6,
+		DIE: 7,
+		TAKE: 8,
+		DROP: 9,
+		EQUIP: 10
 	};
 
 	static entityType = {
@@ -63,6 +64,11 @@ class PlayerController {
 				// Yell something to all nearby Rooms
 				case PlayerController.messageActions.YELL:
 					this.gameController.yell(this.player, message.text);
+					break;
+
+				// Cosnider the threat level of an Enemy
+				case PlayerController.messageActions.CONSIDER:
+					this.gameController.consider(this, message.enemyId);
 					break;
 
 				// Attack an Enemy
@@ -278,6 +284,19 @@ class PlayerController {
 			action: PlayerController.messageActions.YELL,
 			senderId: sender.id,
 			text: text
+		}));
+	}
+
+	/**
+	 * Player considered the threat level of an Enemy.
+	 * @param {Enemy} enemy - The Enemy being considered.
+	 * @param {Object} threat - The threat level object. See gameConfig.threatScale.
+	 */
+	consider(enemy, threat) {
+		this.socket.send(JSON.stringify({
+			action: PlayerController.messageActions.CONSIDER,
+			enemyId: enemy.id,
+			threat: threat.index
 		}));
 	}
 

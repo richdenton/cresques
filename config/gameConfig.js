@@ -7,22 +7,27 @@ module.exports = {
 	experiencePerMob: 50,
 	threatScale: {
 		TRIVIAL: {
+			index: 0,
 			levelDelta: -10,
 			multiplier: 0
 		},
 		EASY: {
+			index: 1,
 			levelDelta: -1,
 			multiplier: 0.5
 		},
 		EVEN: {
+			index: 2,
 			levelDelta: 0,
 			multiplier: 1
 		},
 		DIFFICULT: {
+			index: 3,
 			levelDelta: 1,
 			multiplier: 1.5
 		},
 		IMPOSSIBLE: {
+			index: 4,
 			levelDelta: 3,
 			multiplier: 2.0
 		}

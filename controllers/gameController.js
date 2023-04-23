@@ -149,6 +149,18 @@ class GameController {
 	}
 
 	/**
+	 * Handle a Player considering the threat level of an Enemy.
+	 * @param {PlayerController} playerController - The Player who is considering.
+	 * @param {Number} enemyId - The unique ID of the Enemy to be considered.
+	 */
+	consider(playerController, enemyId) {
+		const enemy = this.game.enemies.get(enemyId);
+		if (enemy && enemy.roomId === playerController.player.roomId) {
+			playerController.consider(enemyId, GameUtils.getThreatLevel(playerController.player, enemy));
+		}
+	}
+
+	/**
 	 * Handle a Player attacking an Enemy.
 	 * @param {Player} player - The Player who is attacking.
 	 * @param {Number} enemyId - The unique ID of the Enemy.

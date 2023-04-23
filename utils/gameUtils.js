@@ -35,7 +35,7 @@ class GameUtils {
 	}
 
 	/**
-	 * Use the difference between battling Entities to determing experience bonuses.
+	 * Use the difference between battling Entities to determine experience bonuses.
 	 * @param {Entity} attacker - A Player or Enemy.
 	 * @param {Entity} target - A Player or Enemy.
 	 * @return {Object} The threat level object. See gameConfig.threatScale.
