@@ -124,7 +124,7 @@ class PlayerController {
 				}
 
 				// Combat
-				if (enemy.damage) {
+				if (enemy.damage > -1) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ATTACK,
 						attacker: {
@@ -167,7 +167,7 @@ class PlayerController {
 				}
 
 				// Combat
-				if (player.damage) {
+				if (player.damage > -1) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ATTACK,
 						attacker: {

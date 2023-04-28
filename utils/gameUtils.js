@@ -68,13 +68,24 @@ class GameUtils {
 	}
 
 	/**
+	 * Calculate the chance an attack will land based on the level difference of the attacker and defender.
+	 * @param {Entity} attacker - A Player or Enemy.
+	 * @param {Entity} defender - A Player or Enemy.
+	 * @return {Boolean} Whether or not the next attack will hit.
+	 */
+	static willHit(attacker, defender) {
+		const evenlyMatched = Math.abs(attacker.level - defender.level) <= config.missRateMaxLevelDelta;
+		return Math.random() > (evenlyMatched ? config.missRateEvenBase : config.missRateUnevenBase) + (attacker.level - defender.level) * (evenlyMatched ? config.missRateEvenMultiplier : config.missRateUnevenMultiplier);
+	}
+
+	/**
 	 * Calculate the damage an Entity produces based on a D20 roll.
 	 * @param {Entity} entity - A Player or Enemy.
 	 * @return {Number} The damage to be dealt.
 	 */
 	static rollDamage(entity) {
 		const weapon = entity.items.find(i => i.id === entity.equipment ? entity.equipment[config.itemSlots.WEAPON] : -1);
-		return Math.floor(Math.random() * 20 + 1) + (weapon ? weapon.damage : 0) + Math.floor(GameUtils.getExperienceLevel(entity) / 2);
+		return Math.floor(Math.random() * 20 + 1) + (weapon ? weapon.damage : 0) + Math.floor(entity.level / 2);
 	}
 
 	/**

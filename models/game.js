@@ -37,7 +37,7 @@ class Game {
 
 		// Reset Player properties from last update
 		this.players.map.forEach(player => {
-			player.damage = 0;
+			player.damage = -1;
 			player.attacker = 0;
 			player.encumbered = player.items.length > GameUtils.getMaxWeight(player);
 		});
@@ -46,7 +46,7 @@ class Game {
 		this.enemies.map.forEach(enemy => {
 
 			// Reset actions from last update
-			enemy.damage = 0;
+			enemy.damage = -1;
 			enemy.attacker = 0;
 			enemy.newRoomId = 0;
 
@@ -100,7 +100,7 @@ class Game {
 					if ((enemy.nextAttackTime || 0) < now) {
 
 						// Roll for damage
-						player.damage = GameUtils.rollDamage(enemy);
+						player.damage = GameUtils.willHit(enemy, player) ? GameUtils.rollDamage(enemy) : 0;
 						player.health = Math.max(0, player.health - player.damage);
 						player.attacker = enemy.id;
 						player.attacking = enemy.id;
@@ -182,7 +182,7 @@ class Game {
 					if ((player.nextAttackTime || 0) < now) {
 
 						// Roll for damage
-						enemy.damage = GameUtils.rollDamage(player);
+						enemy.damage = GameUtils.willHit(player, enemy) ? GameUtils.rollDamage(player) : 0;
 						enemy.health = Math.max(0, enemy.health - enemy.damage);
 						enemy.attacker = player.id;
 						player.nextAttackTime = now + GameUtils.getNextAttackTime(player);

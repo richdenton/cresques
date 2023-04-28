@@ -32,6 +32,11 @@ module.exports = {
 			multiplier: 2.0
 		}
 	},
+	missRateMaxLevelDelta: 2,
+	missRateEvenBase: 0.05,
+	missRateEvenMultiplier: 0.005,
+	missRateUnevenBase: 0.2,
+	missRateUnevenMultiplier: 0.02,
 	strengthMultiplier: 5,
 	roomDirections: {
 		NORTH: 0,
