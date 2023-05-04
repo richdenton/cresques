@@ -2,10 +2,11 @@ const config = require('../config/gameConfig');
 const Items = require('../models/items');
 const Rooms = require('../models/rooms');
 const Species = require('../models/species');
-const EnemySpawns = require('../models/enemySpawns');
-const EnemyTemplates = require('../models/enemyTemplates');
-const Enemies = require('../models/enemies');
-const EnemyInventories = require('../models/enemyInventories');
+const MobSpawns = require('../models/mobSpawns');
+const MobTemplates = require('../models/mobTemplates');
+const Mobs = require('../models/mobs');
+const MobInventories = require('../models/mobInventories');
+const MobDialogs = require('./mobDialogs');
 const Players = require('../models/players');
 const PlayerInventories = require('../models/playerInventories');
 const GameUtils = require('../utils/gameUtils');
@@ -21,10 +22,11 @@ class Game {
 		this.items = new Items();
 		this.rooms = new Rooms();
 		this.species = new Species();
-		this.enemySpawns = new EnemySpawns();
-		this.enemyTemplates = new EnemyTemplates();
-		this.enemies = new Enemies();
-		this.enemyInventories = new EnemyInventories();
+		this.mobSpawns = new MobSpawns();
+		this.mobTemplates = new MobTemplates();
+		this.mobs = new Mobs();
+		this.mobInventories = new MobInventories();
+		this.mobDialogs = new MobDialogs();
 		this.players = new Players();
 		this.playerInventories = new PlayerInventories();
 	}
@@ -42,70 +44,70 @@ class Game {
 			player.encumbered = player.items.length > GameUtils.getMaxWeight(player);
 		});
 
-		// Handle Enemy updates
-		this.enemies.map.forEach(enemy => {
+		// Handle Mob updates
+		this.mobs.map.forEach(mob => {
 
 			// Reset actions from last update
-			enemy.damage = -1;
-			enemy.attacker = 0;
-			enemy.newRoomId = 0;
+			mob.damage = -1;
+			mob.attacker = 0;
+			mob.newRoomId = 0;
 
-			// Check if the Enemy has died
-			if (enemy.health < 1) {
+			// Check if the Mob has died
+			if (mob.health < 1) {
 
 				// End any existing combat
-				if (enemy.attacking) {
-					enemy.attacking = 0;
-					enemy.damageTotals.clear();
+				if (mob.attacking) {
+					mob.attacking = 0;
+					mob.damageTotals.clear();
 				}
 
-				// Remove Enemy from the current Room
-				if (enemy.roomId) {
-					const room = this.rooms.get(enemy.roomId);
+				// Remove Mob from the current Room
+				if (mob.roomId) {
+					const room = this.rooms.get(mob.roomId);
 					if (room.id) {
-						room.removeEnemy(enemy);
-						Logger.log('"' + enemy.name + '" (' + enemy.id + ') was removed from ' + room.name + '.', Logger.logTypes.DEBUG);
+						room.removeMob(mob);
+						Logger.log('"' + mob.name + '" (' + mob.id + ') was removed from ' + room.name + '.', Logger.logTypes.DEBUG);
 					} else {
-						Logger.log('"' + enemy.name + '" (' + enemy.id + ') is not in a room.', Logger.logTypes.ERROR);
+						Logger.log('"' + mob.name + '" (' + mob.id + ') is not in a room.', Logger.logTypes.ERROR);
 					}
 				}
 
-				// Respawn the Enemy
-				if (enemy.killTime && now > enemy.killTime + enemy.respawnTime) {
+				// Respawn the Mob
+				if (mob.killTime && now > mob.killTime + mob.respawnTime) {
 
-					// Respawn Enemy in original spawning Room
-					const room = this.rooms.get(enemy.respawnRoomId);
+					// Respawn Mob in original spawning Room
+					const room = this.rooms.get(mob.respawnRoomId);
 					if (room.id) {
-						enemy.newRoomId = room.id;
-						room.addEnemy(enemy);
-						Logger.log('"' + enemy.name + '" (' + enemy.id + ') respawned in ' + room.name + '.', Logger.logTypes.DEBUG);
+						mob.newRoomId = room.id;
+						room.addMob(mob);
+						Logger.log('"' + mob.name + '" (' + mob.id + ') respawned in ' + room.name + '.', Logger.logTypes.DEBUG);
 					} else {
-						Logger.log('Could not respawn "' + enemy.name + '" (' + enemy.id + ') due to missing room.', Logger.logTypes.ERROR);
+						Logger.log('Could not respawn "' + mob.name + '" (' + mob.id + ') due to missing room.', Logger.logTypes.ERROR);
 					}
 
-					// Reset Enemy stats
-					enemy.killTime = 0;
-					enemy.health = enemy.maxHealth;
+					// Reset Mob stats
+					mob.killTime = 0;
+					mob.health = mob.maxHealth;
 				}
 			}
 
-			// Check if Enemy is currently in combat
-			else if (enemy.attacking) {
+			// Check if Mob is currently in combat
+			else if (mob.attacking) {
 
 				// Check if target is still available to fight
-				const player = this.players.get(enemy.attacking);
-				if (player.id && player.health && player.roomId === enemy.roomId) {
+				const player = this.players.get(mob.attacking);
+				if (player.id && player.health && player.roomId === mob.roomId) {
 
-					// Check if Enemy is ready to attack
-					if ((enemy.nextAttackTime || 0) < now) {
+					// Check if Mob is ready to attack
+					if ((mob.nextAttackTime || 0) < now) {
 
 						// Roll for damage
-						player.damage = GameUtils.willHit(enemy, player) ? GameUtils.rollDamage(enemy) : 0;
+						player.damage = GameUtils.willHit(mob, player) ? GameUtils.rollDamage(mob) : 0;
 						player.health = Math.max(0, player.health - player.damage);
-						player.attacker = enemy.id;
-						player.attacking = enemy.id;
-						enemy.nextAttackTime = now + GameUtils.getNextAttackTime(enemy);
-						Logger.log('"' + enemy.name + '" (' + enemy.id + ') hit ' + player.name + ' for ' + player.damage + ' damage.', Logger.logTypes.DEBUG);
+						player.attacker = mob.id;
+						player.attacking = mob.id;
+						mob.nextAttackTime = now + GameUtils.getNextAttackTime(mob);
+						Logger.log('"' + mob.name + '" (' + mob.id + ') hit ' + player.name + ' for ' + player.damage + ' damage.', Logger.logTypes.DEBUG);
 
 						// Check if the Player has died
 						if (player.health < 1) {
@@ -116,8 +118,8 @@ class Game {
 				} else {
 
 					// End combat
-					enemy.attacking = 0;
-					enemy.damageTotals.clear();
+					mob.attacking = 0;
+					mob.damageTotals.clear();
 				}
 			}
 		});
@@ -174,40 +176,40 @@ class Game {
 			// Check if Player is currently in combat
 			else if (player.attacking) {
 
-				// Check if the target Enemy is still available to fight
-				const enemy = this.enemies.get(player.attacking);
-				if (enemy.id && enemy.health && enemy.roomId === player.roomId) {
+				// Check if the target Mob is still available to fight
+				const mob = this.mobs.get(player.attacking);
+				if (mob.id && mob.health && mob.roomId === player.roomId) {
 
 					// Check if Plyer is ready to attack
 					if ((player.nextAttackTime || 0) < now) {
 
 						// Roll for damage
-						enemy.damage = GameUtils.willHit(player, enemy) ? GameUtils.rollDamage(player) : 0;
-						enemy.health = Math.max(0, enemy.health - enemy.damage);
-						enemy.attacker = player.id;
+						mob.damage = GameUtils.willHit(player, mob) ? GameUtils.rollDamage(player) : 0;
+						mob.health = Math.max(0, mob.health - mob.damage);
+						mob.attacker = player.id;
 						player.nextAttackTime = now + GameUtils.getNextAttackTime(player);
-						Logger.log(player.name + ' hit "' + enemy.name + '" (' + enemy.id + ') for ' + enemy.damage + ' damage.', Logger.logTypes.DEBUG);
+						Logger.log(player.name + ' hit "' + mob.name + '" (' + mob.id + ') for ' + mob.damage + ' damage.', Logger.logTypes.DEBUG);
 
-						// Determine if this attack should change who the Enemy is targetting
-						enemy.damageTotals.set(player.id, (enemy.damageTotals.get(player.id) || 0) + enemy.damage);
-						enemy.attacking = [...enemy.damageTotals.entries()].reduce((accumulator, currentValue) => currentValue[1] > accumulator[1] ? currentValue : accumulator)[0];
+						// Determine if this attack should change who the Mob is targetting
+						mob.damageTotals.set(player.id, (mob.damageTotals.get(player.id) || 0) + mob.damage);
+						mob.attacking = [...mob.damageTotals.entries()].reduce((accumulator, currentValue) => currentValue[1] > accumulator[1] ? currentValue : accumulator)[0];
 
-						// Check if the Enemy has died
-						if (enemy.health < 1) {
-							enemy.killTime = now;
-							Logger.log('"' + enemy.name + '" (' + enemy.id + ') died.', Logger.logTypes.DEBUG);
+						// Check if the Mob has died
+						if (mob.health < 1) {
+							mob.killTime = now;
+							Logger.log('"' + mob.name + '" (' + mob.id + ') died.', Logger.logTypes.DEBUG);
 
 							// Reward the Player
-							player.experience += GameUtils.getExperienceReward(player, enemy);
+							player.experience += GameUtils.getExperienceReward(player, mob);
 							player.level = GameUtils.getExperienceLevel(player);
 
 							// Drop loot
-							if (enemy.items) {
+							if (mob.items) {
 								const room = this.rooms.get(player.roomId);
-								enemy.items.forEach(item => {
+								mob.items.forEach(item => {
 									const newItem = JSON.parse(JSON.stringify(item));
 									newItem.dropTime = now;
-									newItem.enemyId = enemy.id;
+									newItem.mobId = mob.id;
 									newItem.playerId = player.id;
 									room.addItem(newItem);
 								});

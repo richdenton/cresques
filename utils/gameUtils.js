@@ -13,7 +13,7 @@ class GameUtils {
 
 	/**
 	 * Calculate the current experience level of an Entity.
-	 * @param {Entity} entity - A Player or Enemy.
+	 * @param {Entity} entity - A Player or Mob.
 	 * @return {Number} The level of the Entity.
 	 */
 	static getExperienceLevel(entity) {
@@ -26,7 +26,7 @@ class GameUtils {
 
 	/**
 	 * Calculate the max hit points of an Entity.
-	 * @param {Entity} entity - A Player or Enemy.
+	 * @param {Entity} entity - A Player or Mob.
 	 * @param {Species} species - The Species of the Entity.
 	 * @return {Number} The max health of the Entity.
 	 */
@@ -36,8 +36,8 @@ class GameUtils {
 
 	/**
 	 * Use the difference between battling Entities to determine experience bonuses.
-	 * @param {Entity} attacker - A Player or Enemy.
-	 * @param {Entity} target - A Player or Enemy.
+	 * @param {Entity} attacker - A Player or Mob.
+	 * @param {Entity} target - A Player or Mob.
 	 * @return {Object} The threat level object. See gameConfig.threatScale.
 	 */
 	static getThreatLevel(attacker, target) {
@@ -59,8 +59,8 @@ class GameUtils {
 
 	/**
 	 * Calculate how much experience an Entity should earn after defeating their target.
-	 * @param {Entity} attacker - A Player or Enemy.
-	 * @param {Entity} target - A Player or Enemy.
+	 * @param {Entity} attacker - A Player or Mob.
+	 * @param {Entity} target - A Player or Mob.
 	 * @return {Object} The number of experienece points to reward.
 	 */
 	static getExperienceReward(attacker, target) {
@@ -69,8 +69,8 @@ class GameUtils {
 
 	/**
 	 * Calculate the chance an attack will land based on the level difference of the attacker and defender.
-	 * @param {Entity} attacker - A Player or Enemy.
-	 * @param {Entity} defender - A Player or Enemy.
+	 * @param {Entity} attacker - A Player or Mob.
+	 * @param {Entity} defender - A Player or Mob.
 	 * @return {Boolean} Whether or not the next attack will hit.
 	 */
 	static willHit(attacker, defender) {
@@ -80,7 +80,7 @@ class GameUtils {
 
 	/**
 	 * Calculate the damage an Entity produces based on a D20 roll.
-	 * @param {Entity} entity - A Player or Enemy.
+	 * @param {Entity} entity - A Player or Mob.
 	 * @return {Number} The damage to be dealt.
 	 */
 	static rollDamage(entity) {
@@ -106,7 +106,7 @@ class GameUtils {
 
 	/**
 	 * Calculate the next time the Entity can attack.
-	 * @param {Entity} entity - A Player or Enemy.
+	 * @param {Entity} entity - A Player or Mob.
 	 * @return {Number} The number of milliseconds until the Entity can attack again.
 	 */
 	static getNextAttackTime(entity) {

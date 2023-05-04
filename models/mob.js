@@ -1,9 +1,9 @@
 const Entity = require('./entity');
 
-class Enemy extends Entity {
+class Mob extends Entity {
 
 	/**
-	 * Represents an in-game Enemy.
+	 * Represents an in-game Mob.
 	 * @constructor
 	 */
 	constructor() {
@@ -12,11 +12,12 @@ class Enemy extends Entity {
 		this.roomId = 0;
 		this.damageTotals = new Map();
 		this.items = [];
+		this.dialogs = [];
 	}
 
 	/**
-	 * Initialize an Enemy with data from an EnemyTemplate.
-	 * @param {Object} template - The EnemyTemplate to clone.
+	 * Initialize a Mob with data from a MobTemplate.
+	 * @param {Object} template - The MobTemplate to clone.
 	 */
 	loadTemplate(template) {
 		this.templateId = template.id;
@@ -32,7 +33,7 @@ class Enemy extends Entity {
 	}
 
 	/**
-	 * Add an Item to the Enemy.
+	 * Add an Item to the Mob.
 	 * @param {item} item - The Item to add.
 	 */
 	addItem(item) {
@@ -40,7 +41,7 @@ class Enemy extends Entity {
 	}
 
 	/**
-	 * Remove an Item from the Enemy.
+	 * Remove an Item from the Mob.
 	 * @param {item} item - The Item to remove.
 	 */
 	removeItem(item) {
@@ -48,4 +49,4 @@ class Enemy extends Entity {
 	}
 }
 
-module.exports = Enemy;
+module.exports = Mob;

@@ -4,7 +4,7 @@ const Entities = require('./entities');
 class Species extends Entity {
 
 	/**
-	 * Represents the Species of a Player or Enemy.
+	 * Represents the Species of a Player or Mob.
 	 * @constructor
 	 */
 	constructor(data) {

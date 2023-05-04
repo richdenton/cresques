@@ -1,10 +1,10 @@
 const Entities = require('./entities');
-const EnemySpawn = require('./enemySpawn');
+const MobSpawn = require('./mobSpawn');
 
-class EnemySpawns extends Entities {
+class MobSpawns extends Entities {
 
 	/**
-	 * Represents a map of Enemy spawn locations.
+	 * Represents a map of Mob spawn locations.
 	 * @constructor
 	 */
 	constructor() {
@@ -12,7 +12,7 @@ class EnemySpawns extends Entities {
 	}
 
 	/**
-	 * Initialize the EnemySpawn map with data from the database.
+	 * Initialize the MobSpawn map with data from the database.
 	 */
 	async load() {
 
@@ -22,11 +22,11 @@ class EnemySpawns extends Entities {
 		// Retrieve all spawn location from the database
 		await super.load('spawn', (results) => {
 			results.forEach(result => {
-				const enemySpawn = new EnemySpawn(result);		
-				this.add(enemySpawn);
+				const mobSpawn = new MobSpawn(result);		
+				this.add(mobSpawn);
 			});
 		});
 	}
 }
 
-module.exports = EnemySpawns;
+module.exports = MobSpawns;

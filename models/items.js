@@ -12,7 +12,7 @@ class Items extends Entities {
 	}
 
 	/**
-	 * Initialize the EnemyTemplate map with data from the database.
+	 * Initialize the MobTemplate map with data from the database.
 	 */
 	async load() {
 

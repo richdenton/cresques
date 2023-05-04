@@ -7,16 +7,17 @@ class PlayerController {
 		SAY: 3,
 		YELL: 4,
 		CONSIDER: 5,
-		ATTACK: 6,
-		DIE: 7,
-		TAKE: 8,
-		DROP: 9,
-		EQUIP: 10
+		HAIL: 6,
+		ATTACK: 7,
+		DIE: 8,
+		TAKE: 9,
+		DROP: 10,
+		EQUIP: 11
 	};
 
 	static entityType = {
 		PLAYER: 0,
-		ENEMY: 1
+		MOB: 1
 	};
 
 	/**
@@ -58,22 +59,27 @@ class PlayerController {
 
 				// Say something to the Room
 				case PlayerController.messageActions.SAY:
-					this.gameController.say(this.player, message.text);
+					this.gameController.say(this.player, entityType.PLAYER, message.text);
 					break;
 
 				// Yell something to all nearby Rooms
 				case PlayerController.messageActions.YELL:
-					this.gameController.yell(this.player, message.text);
+					this.gameController.yell(this.player, entityType.PLAYER, message.text);
 					break;
 
-				// Cosnider the threat level of an Enemy
+				// Consider the threat level of a Mob
 				case PlayerController.messageActions.CONSIDER:
-					this.gameController.consider(this, message.enemyId);
+					this.gameController.consider(this, message.mobId);
 					break;
 
-				// Attack an Enemy
+				// Hail a Mob
+				case PlayerController.messageActions.HAIL:
+					this.gameController.hail(this.player, message.mobId);
+					break;
+
+				// Attack a Mob
 				case PlayerController.messageActions.ATTACK:
-					this.gameController.attack(this.player, message.enemyId);
+					this.gameController.attack(this.player, message.mobId);
 					break;
 
 				// Take an Item
@@ -112,29 +118,29 @@ class PlayerController {
 			socket = this.socket;
 		if (room.id > 0) {
 
-			// Notify about Enemy changes
-			room.enemies.forEach(enemy => {
+			// Notify about Mob changes
+			room.mobs.forEach(mob => {
 
 				// Enter / Respawn
-				if (enemy.newRoomId && enemy.newRoomId === this.player.roomId) {
+				if (mob.newRoomId && mob.newRoomId === this.player.roomId) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ENTER,
-						enemy: enemy
+						mob: mob
 					}));
 				}
 
 				// Combat
-				if (enemy.damage > -1) {
+				if (mob.damage > -1) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ATTACK,
 						attacker: {
 							type: PlayerController.entityType.PLAYER,
-							id: enemy.attacker
+							id: mob.attacker
 						},
 						defender: {
-							type: PlayerController.entityType.ENEMY,
-							id: enemy.id,
-							damage: enemy.damage
+							type: PlayerController.entityType.MOB,
+							id: mob.id,
+							damage: mob.damage
 						}
 					}));
 				}
@@ -171,7 +177,7 @@ class PlayerController {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ATTACK,
 						attacker: {
-							type: PlayerController.entityType.ENEMY,
+							type: PlayerController.entityType.MOB,
 							id: player.attacker
 						},
 						defender: {
@@ -187,7 +193,7 @@ class PlayerController {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.DIE,
 						attacker: {
-							type: PlayerController.entityType.ENEMY,
+							type: PlayerController.entityType.MOB,
 							id: player.attacking
 						},
 						corpse: {
@@ -198,18 +204,18 @@ class PlayerController {
 				}
 			});
 
-			// Notify about Enemy deaths
-			room.enemies.forEach(enemy => {
-				if (enemy.killTime === now) {
+			// Notify about Mob deaths
+			room.mobs.forEach(mob => {
+				if (mob.killTime === now) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.DIE,
 						attacker: {
 							type: PlayerController.entityType.PLAYER,
-							id: enemy.attacking
+							id: mob.attacking
 						},
 						corpse: {
-							type: PlayerController.entityType.ENEMY,
-							id: enemy.id
+							type: PlayerController.entityType.MOB,
+							id: mob.id
 						}
 					}));
 				}
@@ -220,7 +226,7 @@ class PlayerController {
 				if (item.dropTime === now && item.playerId === this.player.id) {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.DROP,
-						enemyId: item.enemyId,
+						mobId: item.mobId,
 						item: item
 					}));
 				}
@@ -262,40 +268,44 @@ class PlayerController {
 	}
 
 	/**
-	 * Retrieved a chat message from a Player in the same Room.
-	 * @param {Player} sender - The Player who sent the message.
+	 * Retrieved a chat message from a Player or Mob in the same Room.
+	 * @param {Entity} sender - The Player who sent the message.
+	 * @param {Number} type - The type of the Entity.
 	 * @param {String} text - The content of the message.
 	 */
-	say(sender, text) {
+	say(sender, type, text) {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.SAY,
 			senderId: sender.id,
+			senderType: type,
 			text: text
 		}));
 	}
 
 	/**
-	 * Retrieved a chat message from a Player in a nearby Room.
-	 * @param {Player} sender - The Player who sent the message.
+	 * Retrieved a chat message from a Player or Mob in a nearby Room.
+	 * @param {Entity} sender - The Player who sent the message.
+	 * @param {Number} type - The type of the Entity.
 	 * @param {String} text - The content of the message.
 	 */
-	yell(sender, text) {
+	yell(sender, type, text) {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.YELL,
 			senderId: sender.id,
+			senderType: type,
 			text: text
 		}));
 	}
 
 	/**
-	 * Player considered the threat level of an Enemy.
-	 * @param {Enemy} enemy - The Enemy being considered.
+	 * Player considered the threat level of a Mob.
+	 * @param {Mob} mob - The Mob being considered.
 	 * @param {Object} threat - The threat level object. See gameConfig.threatScale.
 	 */
-	consider(enemy, threat) {
+	consider(mob, threat) {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.CONSIDER,
-			enemyId: enemy.id,
+			mobId: mob.id,
 			threat: threat.index
 		}));
 	}

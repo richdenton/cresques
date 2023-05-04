@@ -1,5 +1,5 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -12,20 +12,14 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Table structure for table `enemy`
+-- Table structure for table `dialog`
 --
 
-CREATE TABLE `enemy` (
+CREATE TABLE `dialog` (
   `id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `species_id` int NOT NULL,
-  `health` int NOT NULL,
-  `strength` int NOT NULL,
-  `stamina` int NOT NULL,
-  `agility` int NOT NULL,
-  `intelligence` int NOT NULL,
-  `level` int NOT NULL,
-  `money` int NOT NULL
+  `mob_id` int NOT NULL,
+  `text` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `next_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -38,7 +32,7 @@ CREATE TABLE `inventory` (
   `id` int NOT NULL,
   `player_id` int NOT NULL,
   `item_id` int NOT NULL,
-  `equipped` bit NOT NULL
+  `slot` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -70,8 +64,27 @@ CREATE TABLE `item` (
 --
 
 CREATE TABLE `loot` (
-  `enemy_id` int NOT NULL,
+  `mob_id` int NOT NULL,
   `item_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mob`
+--
+
+CREATE TABLE `mob` (
+  `id` int NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `species_id` int NOT NULL,
+  `health` int NOT NULL,
+  `strength` int NOT NULL,
+  `stamina` int NOT NULL,
+  `agility` int NOT NULL,
+  `intelligence` int NOT NULL,
+  `level` int NOT NULL,
+  `money` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -122,7 +135,7 @@ CREATE TABLE `room` (
 CREATE TABLE `spawn` (
   `id` int NOT NULL,
   `room_id` int NOT NULL,
-  `enemy_id` int NOT NULL,
+  `mob_id` int NOT NULL,
   `respawn_time` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -158,13 +171,9 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Indexes for dumped tables
+-- Indexes for table `dialog`
 --
-
---
--- Indexes for table `enemy`
---
-ALTER TABLE `enemy`
+ALTER TABLE `dialog`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -177,6 +186,12 @@ ALTER TABLE `inventory`
 -- Indexes for table `item`
 --
 ALTER TABLE `item`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `mob`
+--
+ALTER TABLE `mob`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -211,13 +226,9 @@ ALTER TABLE `user`
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT for table `dialog`
 --
-
---
--- AUTO_INCREMENT for table `enemy`
---
-ALTER TABLE `enemy`
+ALTER TABLE `dialog`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
@@ -230,6 +241,12 @@ ALTER TABLE `inventory`
 -- AUTO_INCREMENT for table `item`
 --
 ALTER TABLE `item`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mob`
+--
+ALTER TABLE `mob`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --

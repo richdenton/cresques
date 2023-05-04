@@ -11,6 +11,7 @@ Currently, Cresques is quite limited. Over time, I hope to expand it to include 
 - [x] Local and region chat
 - [x] Player vs environment combat
 - [x] Item handling
+- [ ] Dialog
 - [ ] Merchants
 - [ ] Questing
 - [ ] Dynamic environments

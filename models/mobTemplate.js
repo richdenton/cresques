@@ -1,10 +1,10 @@
 const Entity = require('./entity');
 
-class EnemyTemplate extends Entity {
+class MobTemplate extends Entity {
 
 	/**
-	 * Represents a templated version of an Enemy.
-	 * Templates contain the base version of an Enemy as in-game Enemies can change.
+	 * Represents a templated version of a Mob.
+	 * Templates contain the base version of a Mob as in-game Mobs can change.
 	 * @param {Object} data - Default parameters.
 	 * @constructor
 	 */
@@ -23,4 +23,4 @@ class EnemyTemplate extends Entity {
 	}
 }
 
-module.exports = EnemyTemplate;
+module.exports = MobTemplate;

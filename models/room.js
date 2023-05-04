@@ -21,27 +21,27 @@ class Room extends Entity {
 			this.exits.up = parseInt(data.up);
 			this.exits.down = parseInt(data.down);
 		}
-		this.enemies = [];
+		this.mobs = [];
 		this.players = [];
 		this.items = [];
 	}
 
 	/**
-	 * Add an Enemy to the Room.
-	 * @param {Enemy} enemy - The Enemy to add.
+	 * Add a Mob to the Room.
+	 * @param {Mob} mob - The Mob to add.
 	 */
-	addEnemy(enemy) {
-		this.enemies.push(enemy);
-		enemy.roomId = this.id;
+	addMob(mob) {
+		this.mobs.push(mob);
+		mob.roomId = this.id;
 	}
 
 	/**
-	 * Remove an Enemy from the Room.
-	 * @param {Enemy} enemy - The Enemy to remove.
+	 * Remove a Mob from the Room.
+	 * @param {Mob} mob - The Mob to remove.
 	 */
-	removeEnemy(enemy) {
-		this.enemies = this.enemies.filter(e => e !== enemy);
-		enemy.roomId = 0;
+	removeMob(mob) {
+		this.mobs = this.mobs.filter(e => e !== mob);
+		mob.roomId = 0;
 	}
 
 	/**

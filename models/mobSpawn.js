@@ -1,9 +1,9 @@
 const Entity = require('./entity');
 
-class EnemySpawn extends Entity {
+class MobSpawn extends Entity {
 
 	/**
-	 * Represents an Enemy spawn point (ie Room and EnemyTemplate to use).
+	 * Represents a Mob spawn point (ie Room and MobTemplate to use).
 	 * @param {Object} data - Default parameters.
 	 * @constructor
 	 */
@@ -11,10 +11,10 @@ class EnemySpawn extends Entity {
 		super();
 		if (data) {
 			this.roomId = parseInt(data.room_id);
-			this.enemyId = parseInt(data.enemy_id);
+			this.mobId = parseInt(data.mob_id);
 			this.respawnTime = parseInt(data.respawn_time);
 		}
 	}
 }
 
-module.exports = EnemySpawn;
+module.exports = MobSpawn;

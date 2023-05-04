@@ -5,6 +5,11 @@ const Logger = require('../utils/logger');
 
 class GameController {
 
+	static entityType = {
+		PLAYER: 0,
+		MOB: 1
+	};
+
 	constructor() {
 		this.playerControllers = [];
 		this.game = new Game();
@@ -113,27 +118,29 @@ class GameController {
 	}
 
 	/**
-	 * Handle a Player saying something to everyone in the current Room.
-	 * @param {Player} player - The Player who sent the message.
+	 * Handle a Player or Mob saying something to everyone in the current Room.
+	 * @param {Entity} sender - The Player or Mob who sent the message.
+	 * @param {Number} type - The type of the Entity.
 	 * @param {String} text - The content of the message.
 	 */
-	say(player, text) {
-		const currentRoomId = player.roomId;
+	say(sender, type, text) {
+		const currentRoomId = sender.roomId;
 		this.playerControllers.forEach(playerController => {
 			if (playerController.player.roomId == currentRoomId) {
-				playerController.say(player, text);
+				playerController.say(sender, type, text);
 			}
 		});
-		Logger.log(player.name + ' says, \'' + text + '\'.', Logger.logTypes.DEBUG);
+		Logger.log(sender.name + ' says, \'' + text + '\'.', Logger.logTypes.DEBUG);
 	}
 
 	/**
-	 * Handle a Player yelling something to everyone in nearby Rooms.
-	 * @param {Player} player - The Player who sent the message.
+	 * Handle a Player or Mob yelling something to everyone in nearby Rooms.
+	 * @param {Entity} sender - The Player or Mob who sent the message.
+	 * @param {Number} type - The type of the Entity.
 	 * @param {String} text - The content of the message.
 	 */
-	yell(player, text) {
-		const currentRoom = this.game.rooms.get(player.roomId);
+	yell(sender, type, text) {
+		const currentRoom = this.game.rooms.get(sender.roomId);
 		this.playerControllers.forEach(playerController => {
 			if (playerController.player.roomId == currentRoom.id
 				|| playerController.player.roomId == currentRoom.exits.north
@@ -142,34 +149,46 @@ class GameController {
 				|| playerController.player.roomId == currentRoom.exits.west
 				|| playerController.player.roomId == currentRoom.exits.up
 				|| playerController.player.roomId == currentRoom.exits.down) {
-				playerController.yell(player, text);
+				playerController.yell(sender, type, text);
 			}
 		});
-		Logger.log(player.name + ' yells, \'' + text + '\'.', Logger.logTypes.DEBUG);
+		Logger.log(sender.name + ' yells, \'' + text + '\'.', Logger.logTypes.DEBUG);
 	}
 
 	/**
-	 * Handle a Player considering the threat level of an Enemy.
+	 * Handle a Player considering the threat level of a Mob.
 	 * @param {PlayerController} playerController - The Player who is considering.
-	 * @param {Number} enemyId - The unique ID of the Enemy to be considered.
+	 * @param {Number} mobId - The unique ID of the Mob to be considered.
 	 */
-	consider(playerController, enemyId) {
-		const enemy = this.game.enemies.get(enemyId);
-		if (enemy && enemy.roomId === playerController.player.roomId) {
-			playerController.consider(enemyId, GameUtils.getThreatLevel(playerController.player, enemy));
+	consider(playerController, mobId) {
+		const mob = this.game.mobs.get(mobId);
+		if (mob && mob.roomId === playerController.player.roomId) {
+			playerController.consider(mobId, GameUtils.getThreatLevel(playerController.player, mob));
 		}
 	}
 
 	/**
-	 * Handle a Player attacking an Enemy.
-	 * @param {Player} player - The Player who is attacking.
-	 * @param {Number} enemyId - The unique ID of the Enemy.
+	 * Handle a Player hailing a Mob.
+	 * @param {Player} player - The Player who is hailing.
+	 * @param {Number} mobId - The unique ID of the Mob.
 	 */
-	attack(player, enemyId) {
-		const enemy = this.game.enemies.get(enemyId);
-		if (enemy && enemy.roomId === player.roomId) {
-			player.attacking = enemyId;
-			Logger.log(player.name + ' attacked "' + enemy.name + '".', Logger.logTypes.DEBUG);
+	hail(player, mobId) {
+		const mob = this.game.mobs.get(mobId);
+		if (mob && mob.roomId === player.roomId) {
+			say(mob, entityType.MOB, 'Hello!');
+		}
+	}
+
+	/**
+	 * Handle a Player attacking a Mob.
+	 * @param {Player} player - The Player who is attacking.
+	 * @param {Number} mobId - The unique ID of the Mob.
+	 */
+	attack(player, mobId) {
+		const mob = this.game.mobs.get(mobId);
+		if (mob && mob.roomId === player.roomId) {
+			player.attacking = mobId;
+			Logger.log(player.name + ' attacked "' + mob.name + '".', Logger.logTypes.DEBUG);
 		}
 	}
 

@@ -1,17 +1,17 @@
 const Entity = require('./entity');
 
-class EnemyInventory extends Entity {
+class MobInventory extends Entity {
 
 	/**
-	 * Represents a list of all items in an Enemy's possession.
+	 * Represents a list of all items in a Mob's possession.
 	 * @param {Object} data - Default parameters.
 	 * @constructor
 	 */
 	constructor(data) {
 		super();
-		this.enemyId = parseInt(data.enemy_id);
+		this.mobId = parseInt(data.mob_id);
 		this.itemId = parseInt(data.item_id);
 	}
 }
 
-module.exports = EnemyInventory;
+module.exports = MobInventory;
