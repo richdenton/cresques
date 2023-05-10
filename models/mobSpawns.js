@@ -20,7 +20,7 @@ class MobSpawns extends Entities {
 		this.map.clear();
 
 		// Retrieve all spawn location from the database
-		await super.load('spawn', (results) => {
+		await super.load('mob_spawn', (results) => {
 			results.forEach(result => {
 				const mobSpawn = new MobSpawn(result);		
 				this.add(mobSpawn);

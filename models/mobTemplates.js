@@ -20,7 +20,7 @@ class MobTemplates extends Entities {
 		this.map.clear();
 
 		// Retrieve all templates from the database
-		await super.load('mob', (results) => {
+		await super.load('mob_template', (results) => {
 			results.forEach(result => {
 				const mobTemplate = new MobTemplate(result);			
 				this.add(mobTemplate);

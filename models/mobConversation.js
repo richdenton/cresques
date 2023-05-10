@@ -1,6 +1,6 @@
 const Entity = require('./entity');
 
-class MobDialog extends Entity {
+class MobConversation extends Entity {
 
 	/**
 	 * Represents a conversation with a Mob.
@@ -12,8 +12,9 @@ class MobDialog extends Entity {
 		this.id = parseInt(data.id);
 		this.mobId = parseInt(data.mob_id);
 		this.text = data.text;
-		this.nextId = parseInt(data.next_id);
+		this.conditions = data.conditions;
+		this.responses = data.responses;
 	}
 }
 
-module.exports = MobDialog;
+module.exports = MobConversation;

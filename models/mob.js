@@ -12,7 +12,7 @@ class Mob extends Entity {
 		this.roomId = 0;
 		this.damageTotals = new Map();
 		this.items = [];
-		this.dialogs = [];
+		this.conversations = [];
 	}
 
 	/**

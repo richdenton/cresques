@@ -23,7 +23,7 @@ class PlayerInventories extends Entities {
 		this.map.clear();
 
 		// Retrieve all Player inventories from the database
-		await super.load('inventory', (results) => {
+		await super.load('player_inventory', (results) => {
 			results.forEach(result => {
 				const playerInventory = new PlayerInventory(result);
 				let player = players.get(playerInventory.playerId);

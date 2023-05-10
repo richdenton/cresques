@@ -18,7 +18,7 @@ class Entities {
 	 */
 	async load(table, next) {
 		const results = await DatabaseController.pool.query(`SELECT * FROM ${table};`);
-		Logger.log('Loaded ' + results[0].length + ' objects from the "' + table + '" table.', Logger.logTypes.INFO);
+		Logger.log('Loaded ' + results[0].length + ' ' + (results[0].length == 1 ? 'object' : 'objects') + ' from the "' + table + '" table.', Logger.logTypes.INFO);
 		next(results[0]);
 	}
 

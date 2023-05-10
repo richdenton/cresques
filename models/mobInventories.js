@@ -21,8 +21,8 @@ class MobInventories extends Entities {
 		// Remove old data
 		this.map.clear();
 
-		// Retrieve all Player inventories from the database
-		await super.load('loot', (results) => {
+		// Retrieve all Mob inventories from the database
+		await super.load('mob_inventory', (results) => {
 			results.forEach(result => {
 				const mobInventory = new MobInventory(result);
 				let mob = mobs.get(mobInventory.mobId);

@@ -6,7 +6,7 @@ const MobSpawns = require('../models/mobSpawns');
 const MobTemplates = require('../models/mobTemplates');
 const Mobs = require('../models/mobs');
 const MobInventories = require('../models/mobInventories');
-const MobDialogs = require('./mobDialogs');
+const MobConversations = require('./mobConversations');
 const Players = require('../models/players');
 const PlayerInventories = require('../models/playerInventories');
 const GameUtils = require('../utils/gameUtils');
@@ -26,7 +26,7 @@ class Game {
 		this.mobTemplates = new MobTemplates();
 		this.mobs = new Mobs();
 		this.mobInventories = new MobInventories();
-		this.mobDialogs = new MobDialogs();
+		this.mobConversations = new MobConversations();
 		this.players = new Players();
 		this.playerInventories = new PlayerInventories();
 	}

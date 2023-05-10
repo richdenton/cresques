@@ -6,34 +6,11 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
-
---
--- Table structure for table `dialog`
---
-
-CREATE TABLE `dialog` (
-  `id` int NOT NULL,
-  `mob_id` int NOT NULL,
-  `text` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `next_id` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `inventory`
---
-
-CREATE TABLE `inventory` (
-  `id` int NOT NULL,
-  `player_id` int NOT NULL,
-  `item_id` int NOT NULL,
-  `slot` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -60,10 +37,24 @@ CREATE TABLE `item` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `loot`
+-- Table structure for table `mob_conversation`
 --
 
-CREATE TABLE `loot` (
+CREATE TABLE `mob_conversation` (
+  `id` int NOT NULL,
+  `mob_id` int NOT NULL,
+  `text` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `conditions` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `responses` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mob_inventory`
+--
+
+CREATE TABLE `mob_inventory` (
   `mob_id` int NOT NULL,
   `item_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -71,10 +62,23 @@ CREATE TABLE `loot` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mob`
+-- Table structure for table `mob_spawn`
 --
 
-CREATE TABLE `mob` (
+CREATE TABLE `mob_spawn` (
+  `id` int NOT NULL,
+  `room_id` int NOT NULL,
+  `mob_id` int NOT NULL,
+  `respawn_time` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mob_template`
+--
+
+CREATE TABLE `mob_template` (
   `id` int NOT NULL,
   `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `species_id` int NOT NULL,
@@ -111,13 +115,26 @@ CREATE TABLE `player` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `player_inventory`
+--
+
+CREATE TABLE `player_inventory` (
+  `id` int NOT NULL,
+  `player_id` int NOT NULL,
+  `item_id` int NOT NULL,
+  `slot` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `room`
 --
 
 CREATE TABLE `room` (
   `id` int NOT NULL,
   `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `north` int NOT NULL,
   `south` int NOT NULL,
   `east` int NOT NULL,
@@ -129,26 +146,13 @@ CREATE TABLE `room` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `spawn`
---
-
-CREATE TABLE `spawn` (
-  `id` int NOT NULL,
-  `room_id` int NOT NULL,
-  `mob_id` int NOT NULL,
-  `respawn_time` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `species`
 --
 
 CREATE TABLE `species` (
   `id` int NOT NULL,
   `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `room_id` int NOT NULL,
   `health` int NOT NULL,
   `strength` int NOT NULL,
@@ -171,27 +175,27 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Indexes for table `dialog`
---
-ALTER TABLE `dialog`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `inventory`
---
-ALTER TABLE `inventory`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `item`
 --
 ALTER TABLE `item`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `mob`
+-- Indexes for table `mob_conversation`
 --
-ALTER TABLE `mob`
+ALTER TABLE `mob_conversation`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `mob_spawn`
+--
+ALTER TABLE `mob_spawn`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `mob_template`
+--
+ALTER TABLE `mob_template`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -201,15 +205,15 @@ ALTER TABLE `player`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `room`
+-- Indexes for table `player_inventory`
 --
-ALTER TABLE `room`
+ALTER TABLE `player_inventory`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `spawn`
+-- Indexes for table `room`
 --
-ALTER TABLE `spawn`
+ALTER TABLE `room`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -226,27 +230,27 @@ ALTER TABLE `user`
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- AUTO_INCREMENT for table `dialog`
---
-ALTER TABLE `dialog`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `inventory`
---
-ALTER TABLE `inventory`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `item`
 --
 ALTER TABLE `item`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `mob`
+-- AUTO_INCREMENT for table `mob_conversation`
 --
-ALTER TABLE `mob`
+ALTER TABLE `mob_conversation`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mob_spawn`
+--
+ALTER TABLE `mob_spawn`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mob_template`
+--
+ALTER TABLE `mob_template`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
@@ -256,15 +260,15 @@ ALTER TABLE `player`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `room`
+-- AUTO_INCREMENT for table `player_inventory`
 --
-ALTER TABLE `room`
+ALTER TABLE `player_inventory`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `spawn`
+-- AUTO_INCREMENT for table `room`
 --
-ALTER TABLE `spawn`
+ALTER TABLE `room`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
