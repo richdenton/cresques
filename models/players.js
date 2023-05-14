@@ -93,12 +93,12 @@ class Players extends Entities {
 
 			// Remove any Items that the Player no longer has
 			if (oldItems.length) {
-				await DatabaseController.pool.query('DELETE FROM inventory WHERE player_id=? AND item_id NOT IN (?)', [ player.id, oldItems ]);
+				await DatabaseController.pool.query('DELETE FROM player_inventory WHERE player_id=? AND item_id NOT IN (?)', [ player.id, oldItems ]);
 			}
 
 			// Add any new Items the Player received since the last update
 			if (newItems.length) {
-				await DatabaseController.pool.query('INSERT INTO inventory (player_id, item_id, slot) VALUES ?', [ newItems ]);
+				await DatabaseController.pool.query('INSERT INTO player_inventory (player_id, item_id, slot) VALUES ?', [ newItems ]);
 			}
 
 			// Mark all local Items as being saved to the database

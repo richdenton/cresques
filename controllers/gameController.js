@@ -5,11 +5,6 @@ const Logger = require('../utils/logger');
 
 class GameController {
 
-	static entityType = {
-		PLAYER: 0,
-		MOB: 1
-	};
-
 	constructor() {
 		this.playerControllers = [];
 		this.game = new Game();
@@ -170,12 +165,15 @@ class GameController {
 	/**
 	 * Handle a Player hailing a Mob.
 	 * @param {Player} player - The Player who is hailing.
-	 * @param {Number} mobId - The unique ID of the Mob.
+	 * @param {Number} mobId - The unique ID of the Entity being hailed.
 	 */
 	hail(player, mobId) {
 		const mob = this.game.mobs.get(mobId);
 		if (mob && mob.roomId === player.roomId) {
-			say(mob, entityType.MOB, 'Hello!');
+			const conversation = mob.conversations.find(c => c.conditions === 'hail');
+			if (conversation) {
+				this.say(mob, 1, GameUtils.formatConversationMessage(player, conversation.text));
+			}
 		}
 	}
 

@@ -269,30 +269,34 @@ class PlayerController {
 
 	/**
 	 * Retrieved a chat message from a Player or Mob in the same Room.
-	 * @param {Entity} sender - The Player who sent the message.
+	 * @param {Entity} sender - The Entity who sent the message.
 	 * @param {Number} type - The type of the Entity.
 	 * @param {String} text - The content of the message.
 	 */
 	say(sender, type, text) {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.SAY,
-			senderId: sender.id,
-			senderType: type,
+			sender: {
+				id: sender.id,
+				type: type
+			},
 			text: text
 		}));
 	}
 
 	/**
 	 * Retrieved a chat message from a Player or Mob in a nearby Room.
-	 * @param {Entity} sender - The Player who sent the message.
+	 * @param {Entity} sender - The Entity who sent the message.
 	 * @param {Number} type - The type of the Entity.
 	 * @param {String} text - The content of the message.
 	 */
 	yell(sender, type, text) {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.YELL,
-			senderId: sender.id,
-			senderType: type,
+			sender: {
+				id: sender.id,
+				type: type
+			},
 			text: text
 		}));
 	}
