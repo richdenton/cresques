@@ -59,12 +59,12 @@ class PlayerController {
 
 				// Say something to the Room
 				case PlayerController.messageActions.SAY:
-					this.gameController.say(this.player, entityType.PLAYER, message.text);
+					this.gameController.say(this.player, PlayerController.entityType.PLAYER, message.text);
 					break;
 
 				// Yell something to all nearby Rooms
 				case PlayerController.messageActions.YELL:
-					this.gameController.yell(this.player, entityType.PLAYER, message.text);
+					this.gameController.yell(this.player, PlayerController.entityType.PLAYER, message.text);
 					break;
 
 				// Consider the threat level of a Mob

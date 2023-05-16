@@ -105,6 +105,9 @@ class GameController {
 							}
 						}
 					});
+
+					// End any open Conversations
+					player.conversation = {};
 				} else {
 					Logger.log('Could not move ' + player.name + '.', Logger.logTypes.ERROR);
 				}
@@ -120,12 +123,35 @@ class GameController {
 	 */
 	say(sender, type, text) {
 		const currentRoomId = sender.roomId;
+
+		// Notify other Players
 		this.playerControllers.forEach(playerController => {
 			if (playerController.player.roomId == currentRoomId) {
 				playerController.say(sender, type, text);
 			}
 		});
 		Logger.log(sender.name + ' says, \'' + text + '\'.', Logger.logTypes.DEBUG);
+
+		// Check if Player is in a Conversation
+		if (sender.conversation) {
+			const mob = this.game.mobs.get(sender.conversation.mobId);
+			if (mob && mob.roomId === sender.roomId) {
+				const conversation = mob.conversations.find(c => c.id === sender.conversation.id);
+				if (conversation) {
+					const response = conversation.responses.find(r => text.toLowerCase().indexOf(r.input) > -1);
+					if (response) {
+						const nextConversation = mob.conversations.find(n => n.id === response.nextId);
+						if (nextConversation) {
+							sender.conversation = {
+								id: nextConversation.id,
+								mobId: mob.id
+							};
+							this.say(mob, 1, GameUtils.formatConversationMessage(sender, nextConversation.text));
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -170,8 +196,12 @@ class GameController {
 	hail(player, mobId) {
 		const mob = this.game.mobs.get(mobId);
 		if (mob && mob.roomId === player.roomId) {
-			const conversation = mob.conversations.find(c => c.conditions === 'hail');
+			const conversation = mob.conversations.find(c => c.conditions[0] === 'hail');
 			if (conversation) {
+				player.conversation = {
+					id: conversation.id,
+					mobId: mob.id
+				};
 				this.say(mob, 1, GameUtils.formatConversationMessage(player, conversation.text));
 			}
 		}

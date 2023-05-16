@@ -12,8 +12,17 @@ class MobConversation extends Entity {
 		this.id = parseInt(data.id);
 		this.mobId = parseInt(data.mob_id);
 		this.text = data.text;
-		this.conditions = data.conditions;
-		this.responses = data.responses;
+		this.conditions = (data.conditions || '').split('|');
+		this.responses = [];
+		(data.responses || '').split('|').forEach(response => {
+			const properties = response.split('>');
+			if (properties.length) {
+				this.responses.push({
+					input: properties[0],
+					nextId: parseInt(properties[1])
+				});
+			}
+		});
 	}
 }
 
