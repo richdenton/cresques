@@ -44,6 +44,7 @@ CREATE TABLE `mob_conversation` (
   `id` int NOT NULL,
   `mob_id` int NOT NULL,
   `text` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `parent_id` int NOT NULL,
   `conditions` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `responses` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

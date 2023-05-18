@@ -141,12 +141,12 @@ class GameController {
 					const response = conversation.responses.find(r => text.toLowerCase().indexOf(r.input) > -1);
 					if (response) {
 						const nextConversation = mob.conversations.find(n => n.id === response.nextId);
-						if (nextConversation) {
+						if (nextConversation && player.meetsConditions(nextConversation.conditions)) {
 							sender.conversation = {
 								id: nextConversation.id,
 								mobId: mob.id
 							};
-							this.say(mob, 1, GameUtils.formatConversationMessage(sender, nextConversation.text));
+							this.say(mob, 1, nextConversation.getFormattedMessage(sender));
 						}
 					}
 				}
@@ -196,13 +196,22 @@ class GameController {
 	hail(player, mobId) {
 		const mob = this.game.mobs.get(mobId);
 		if (mob && mob.roomId === player.roomId) {
-			const conversation = mob.conversations.find(c => c.conditions[0] === 'hail');
+
+			// Find the most applicable Conversation
+			let conversation = {};
+			for (const iterator of mob.conversations.filter(c => c.parentId === 0)) {
+				if (player.meetsConditions(iterator.conditions)) {
+					conversation = iterator;
+				}
+			}
+
+			// Save current Conversation to the Player and display the message
 			if (conversation) {
 				player.conversation = {
 					id: conversation.id,
-					mobId: mob.id
+					mobId: conversation.mobId
 				};
-				this.say(mob, 1, GameUtils.formatConversationMessage(player, conversation.text));
+				this.say(mob, 1, conversation.getFormattedMessage(player));
 			}
 		}
 	}

@@ -1,4 +1,3 @@
-const config = require('../config/gameConfig');
 const Entity = require('./entity');
 
 class Player extends Entity {
@@ -62,6 +61,17 @@ class Player extends Entity {
 		this.equipment[item.slot] = item.id;
 		item.equipped = true;
 		item.saved = false;
+	}
+
+	/**
+	 * Determine whether the Player meets the conditions of a given Conversation.
+	 * @param {Conversation} conversation - The Conversation with conditions to test.
+	 */
+	meetsConditions(conversation) {
+		for (const condition of conversation.conditions) {
+			// todo: test conditions
+		}
+		return true;
 	}
 }
 

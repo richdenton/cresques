@@ -113,16 +113,6 @@ class GameUtils {
 		const weapon = entity.items.find(i => i.id === entity.equipment ? entity.equipment[config.itemSlots.WEAPON] : -1);
 		return weapon ? weapon.delay : config.meleeDelay;
 	}
-
-	/**
-	 * Add sender-specific context to a conversation message.
-	 * @param {Entity} entity - A Player or Mob.
-	 * @param {String} text - The message content.
-	 * @return {String} The formatted message.
-	 */
-	static formatConversationMessage(entity, text) {
-		return text.replace('{name}', entity.name);
-	}
 }
 
 module.exports = GameUtils;
