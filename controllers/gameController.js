@@ -130,7 +130,7 @@ class GameController {
 				playerController.say(sender, type, text);
 			}
 		});
-		Logger.log(sender.name + ' says, \'' + text + '\'.', Logger.logTypes.DEBUG);
+		Logger.log(sender.name + ' says, \'' + text + '\'', Logger.logTypes.DEBUG);
 
 		// Check if Player is in a Conversation
 		if (sender.conversation) {
@@ -141,7 +141,7 @@ class GameController {
 					const response = conversation.responses.find(r => text.toLowerCase().indexOf(r.input) > -1);
 					if (response) {
 						const nextConversation = mob.conversations.find(n => n.id === response.nextId);
-						if (nextConversation && player.meetsConditions(nextConversation.conditions)) {
+						if (nextConversation && sender.meetsConditions(nextConversation)) {
 							sender.conversation = {
 								id: nextConversation.id,
 								mobId: mob.id
@@ -173,7 +173,7 @@ class GameController {
 				playerController.yell(sender, type, text);
 			}
 		});
-		Logger.log(sender.name + ' yells, \'' + text + '\'.', Logger.logTypes.DEBUG);
+		Logger.log(sender.name + ' yells, \'' + text + '\'', Logger.logTypes.DEBUG);
 	}
 
 	/**
@@ -200,7 +200,7 @@ class GameController {
 			// Find the most applicable Conversation
 			let conversation = {};
 			for (const iterator of mob.conversations.filter(c => c.parentId === 0)) {
-				if (player.meetsConditions(iterator.conditions)) {
+				if (player.meetsConditions(iterator)) {
 					conversation = iterator;
 				}
 			}

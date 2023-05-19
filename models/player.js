@@ -69,7 +69,13 @@ class Player extends Entity {
 	 */
 	meetsConditions(conversation) {
 		for (const condition of conversation.conditions) {
-			// todo: test conditions
+			switch (condition.parameter1) {
+				case 'itemId':
+					if (!this.items.find(i => i.id === parseInt(condition.parameter2))) {
+						return false;
+					}
+					break;
+			}
 		}
 		return true;
 	}
