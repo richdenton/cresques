@@ -31,8 +31,8 @@ class Players extends Entities {
 				player.staminaBase = playerSpecies.stamina;
 				player.agilityBase = playerSpecies.agility;
 				player.intelligenceBase = playerSpecies.intelligence;
-				player.level = GameUtils.getExperienceLevel(player);
-				player.maxHealth = GameUtils.getMaxHealth(player, playerSpecies);
+				player.healthBase = playerSpecies.health;
+				player.level = player.getExperienceLevel();
 				this.add(player);
 			});
 		});

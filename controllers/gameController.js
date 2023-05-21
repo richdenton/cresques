@@ -184,7 +184,7 @@ class GameController {
 	consider(playerController, mobId) {
 		const mob = this.game.mobs.get(mobId);
 		if (mob && mob.roomId === playerController.player.roomId) {
-			playerController.consider(mobId, GameUtils.getThreatLevel(playerController.player, mob));
+			playerController.consider(mobId, playerController.player.getThreatLevel(mob));
 		}
 	}
 
@@ -198,7 +198,7 @@ class GameController {
 		if (mob && mob.roomId === player.roomId) {
 
 			// Find the most applicable Conversation
-			let conversation = {};
+			let conversation = null;
 			for (const iterator of mob.conversations.filter(c => c.parentId === 0)) {
 				if (player.meetsConditions(iterator)) {
 					conversation = iterator;

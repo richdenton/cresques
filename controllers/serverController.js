@@ -298,7 +298,6 @@ class ServerController {
 				player.intelligenceBase = species.intelligence;
 				player.roomId = species.roomId;
 				player.level = 0;
-				player.maxHealth = GameUtils.getMaxHealth(player, species);
 			} else {
 				return response.status(500).send(JSON.stringify({
 					message: strings.createPlayerError

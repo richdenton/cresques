@@ -9,8 +9,10 @@ class MobInventory extends Entity {
 	 */
 	constructor(data) {
 		super();
-		this.mobId = parseInt(data.mob_id);
-		this.itemId = parseInt(data.item_id);
+		if (data) {
+			this.mobId = parseInt(data.mob_id);
+			this.itemId = parseInt(data.item_id);
+		}
 	}
 }
 

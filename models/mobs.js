@@ -37,7 +37,7 @@ class Mobs extends Entities {
 			mob.staminaBase = mobSpecies.stamina;
 			mob.agilityBase = mobSpecies.agility;
 			mob.intelligenceBase = mobSpecies.intelligence;
-			mob.maxHealth = GameUtils.getMaxHealth(mob, mobSpecies);
+			mob.healthBase = mobSpecies.health;
 			this.add(mob);
 			const room = rooms.get(mobSpawn.roomId);
 			room.addMob(mob);

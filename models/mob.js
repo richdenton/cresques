@@ -1,6 +1,6 @@
-const Entity = require('./entity');
+const Character = require('./character');
 
-class Mob extends Entity {
+class Mob extends Character {
 
 	/**
 	 * Represents an in-game Mob.
@@ -9,9 +9,7 @@ class Mob extends Entity {
 	constructor() {
 		super();
 		this.templateId = 0;
-		this.roomId = 0;
 		this.damageTotals = new Map();
-		this.items = [];
 		this.conversations = [];
 	}
 

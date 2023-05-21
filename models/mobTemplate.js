@@ -10,16 +10,18 @@ class MobTemplate extends Entity {
 	 */
 	constructor(data) {
 		super();
-		this.id = parseInt(data.id);
-		this.name = data.name;
-		this.speciesId = parseInt(data.species_id);
-		this.health = parseInt(data.health);
-		this.strength = parseInt(data.strength);
-		this.stamina = parseInt(data.stamina);
-		this.agility = parseInt(data.agility);
-		this.intelligence = parseInt(data.intelligence);
-		this.level = parseInt(data.level);
-		this.money = parseInt(data.money);
+		if (data) {
+			this.id = parseInt(data.id);
+			this.name = data.name;
+			this.speciesId = parseInt(data.species_id);
+			this.health = parseInt(data.health);
+			this.strength = parseInt(data.strength);
+			this.stamina = parseInt(data.stamina);
+			this.agility = parseInt(data.agility);
+			this.intelligence = parseInt(data.intelligence);
+			this.level = parseInt(data.level);
+			this.money = parseInt(data.money);
+		}
 	}
 }
 

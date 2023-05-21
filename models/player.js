@@ -1,6 +1,6 @@
-const Entity = require('./entity');
+const Character = require('./character');
 
-class Player extends Entity {
+class Player extends Character {
 
 	/**
 	 * Represents a Player.
@@ -24,8 +24,6 @@ class Player extends Entity {
 			this.roomId = parseInt(data.room_id);
 		}
 		this.isActive = false;
-		this.items = [];
-		this.equipment = {};
 	}
 
 	/**

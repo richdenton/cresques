@@ -9,9 +9,11 @@ class PlayerInventory extends Entity {
 	 */
 	constructor(data) {
 		super();
-		this.playerId = parseInt(data.player_id);
-		this.itemId = parseInt(data.item_id);
-		this.slot = parseInt(data.slot);
+		if (data) {
+			this.playerId = parseInt(data.player_id);
+			this.itemId = parseInt(data.item_id);
+			this.slot = parseInt(data.slot);
+		}
 	}
 }
 

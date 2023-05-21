@@ -41,7 +41,7 @@ class Game {
 		this.players.map.forEach(player => {
 			player.damage = -1;
 			player.attacker = 0;
-			player.encumbered = player.items.length > GameUtils.getMaxWeight(player);
+			player.encumbered = player.items.length > player.getMaxWeight();
 		});
 
 		// Handle Mob updates
@@ -87,7 +87,7 @@ class Game {
 
 					// Reset Mob stats
 					mob.killTime = 0;
-					mob.health = mob.maxHealth;
+					mob.health = mob.getMaxHealth();
 				}
 			}
 
@@ -102,11 +102,11 @@ class Game {
 					if ((mob.nextAttackTime || 0) < now) {
 
 						// Roll for damage
-						player.damage = GameUtils.willHit(mob, player) ? GameUtils.rollDamage(mob) : 0;
+						player.damage = mob.willHit(player) ? mob.rollDamage() : 0;
 						player.health = Math.max(0, player.health - player.damage);
 						player.attacker = mob.id;
 						player.attacking = mob.id;
-						mob.nextAttackTime = now + GameUtils.getNextAttackTime(mob);
+						mob.nextAttackTime = now + mob.getNextAttackTime();
 						Logger.log('"' + mob.name + '" (' + mob.id + ') hit ' + player.name + ' for ' + player.damage + ' damage.', Logger.logTypes.DEBUG);
 
 						// Check if the Player has died
@@ -169,7 +169,7 @@ class Game {
 
 					// Reset Player stats
 					player.killTime = 0;
-					player.health = player.maxHealth;
+					player.health = player.getMaxHealth();
 				}
 			}
 
@@ -184,10 +184,10 @@ class Game {
 					if ((player.nextAttackTime || 0) < now) {
 
 						// Roll for damage
-						mob.damage = GameUtils.willHit(player, mob) ? GameUtils.rollDamage(player) : 0;
+						mob.damage = player.willHit(mob) ? player.rollDamage() : 0;
 						mob.health = Math.max(0, mob.health - mob.damage);
 						mob.attacker = player.id;
-						player.nextAttackTime = now + GameUtils.getNextAttackTime(player);
+						player.nextAttackTime = now + player.getNextAttackTime();
 						Logger.log(player.name + ' hit "' + mob.name + '" (' + mob.id + ') for ' + mob.damage + ' damage.', Logger.logTypes.DEBUG);
 
 						// Determine if this attack should change who the Mob is targetting
@@ -200,8 +200,8 @@ class Game {
 							Logger.log('"' + mob.name + '" (' + mob.id + ') died.', Logger.logTypes.DEBUG);
 
 							// Reward the Player
-							player.experience += GameUtils.getExperienceReward(player, mob);
-							player.level = GameUtils.getExperienceLevel(player);
+							player.experience += player.getExperienceReward(mob);
+							player.level = player.getExperienceLevel();
 
 							// Drop loot
 							if (mob.items) {
