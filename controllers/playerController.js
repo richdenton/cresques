@@ -302,15 +302,17 @@ class PlayerController {
 	}
 
 	/**
-	 * Player considered the threat level of a Mob.
+	 * Player considered the threat and faction levels of a Mob.
 	 * @param {Mob} mob - The Mob being considered.
 	 * @param {Object} threat - The threat level object. See gameConfig.threatScale.
+	 * @param {Object} faction - The faction level object. See gameConfig.factionScale.
 	 */
-	consider(mob, threat) {
+	consider(mob, threat, faction) {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.CONSIDER,
 			mobId: mob.id,
-			threat: threat.index
+			threat: threat.index,
+			faction: faction.index
 		}));
 	}
 

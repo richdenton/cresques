@@ -12,6 +12,15 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
+--
+-- Table structure for table `faction`
+--
+
+CREATE TABLE `faction` (
+  `id` int NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -52,10 +61,24 @@ CREATE TABLE `mob_conversation` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `mob_faction`
+--
+
+CREATE TABLE `mob_faction` (
+  `id` int NOT NULL,
+  `mob_id` int NOT NULL,
+  `faction_id` int NOT NULL,
+  `score` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `mob_inventory`
 --
 
 CREATE TABLE `mob_inventory` (
+  `id` int NOT NULL,
   `mob_id` int NOT NULL,
   `item_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -81,7 +104,7 @@ CREATE TABLE `mob_spawn` (
 
 CREATE TABLE `mob_template` (
   `id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `species_id` int NOT NULL,
   `health` int NOT NULL,
   `strength` int NOT NULL,
@@ -100,7 +123,7 @@ CREATE TABLE `mob_template` (
 
 CREATE TABLE `player` (
   `id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `user_id` int NOT NULL,
   `species_id` int NOT NULL,
   `health` int NOT NULL,
@@ -111,6 +134,19 @@ CREATE TABLE `player` (
   `experience` int NOT NULL,
   `money` int NOT NULL,
   `room_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `player_faction`
+--
+
+CREATE TABLE `player_faction` (
+  `id` int NOT NULL,
+  `player_id` int NOT NULL,
+  `faction_id` int NOT NULL,
+  `score` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -176,6 +212,16 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `faction`
+--
+ALTER TABLE `faction`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `item`
 --
 ALTER TABLE `item`
@@ -185,6 +231,18 @@ ALTER TABLE `item`
 -- Indexes for table `mob_conversation`
 --
 ALTER TABLE `mob_conversation`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `mob_faction`
+--
+ALTER TABLE `mob_faction`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `mob_inventory`
+--
+ALTER TABLE `mob_inventory`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -203,6 +261,12 @@ ALTER TABLE `mob_template`
 -- Indexes for table `player`
 --
 ALTER TABLE `player`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `player_faction`
+--
+ALTER TABLE `player_faction`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -231,6 +295,12 @@ ALTER TABLE `user`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- AUTO_INCREMENT for table `faction`
+--
+ALTER TABLE `faction`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `item`
 --
 ALTER TABLE `item`
@@ -240,6 +310,18 @@ ALTER TABLE `item`
 -- AUTO_INCREMENT for table `mob_conversation`
 --
 ALTER TABLE `mob_conversation`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mob_faction`
+--
+ALTER TABLE `mob_faction`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mob_inventory`
+--
+ALTER TABLE `mob_inventory`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
@@ -258,6 +340,12 @@ ALTER TABLE `mob_template`
 -- AUTO_INCREMENT for table `player`
 --
 ALTER TABLE `player`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `player_faction`
+--
+ALTER TABLE `player_faction`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --

@@ -5,11 +5,12 @@ const Species = require('../models/species');
 const MobSpawns = require('../models/mobSpawns');
 const MobTemplates = require('../models/mobTemplates');
 const Mobs = require('../models/mobs');
+const MobFactions = require('../models/mobFactions');
 const MobInventories = require('../models/mobInventories');
 const MobConversations = require('./mobConversations');
 const Players = require('../models/players');
+const PlayerFactions = require('../models/playerFactions');
 const PlayerInventories = require('../models/playerInventories');
-const GameUtils = require('../utils/gameUtils');
 const Logger = require('../utils/logger');
 
 class Game {
@@ -25,9 +26,11 @@ class Game {
 		this.mobSpawns = new MobSpawns();
 		this.mobTemplates = new MobTemplates();
 		this.mobs = new Mobs();
+		this.mobFactions = new MobFactions();
 		this.mobInventories = new MobInventories();
 		this.mobConversations = new MobConversations();
 		this.players = new Players();
+		this.playerFactions = new PlayerFactions();
 		this.playerInventories = new PlayerInventories();
 	}
 

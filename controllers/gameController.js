@@ -177,14 +177,17 @@ class GameController {
 	}
 
 	/**
-	 * Handle a Player considering the threat level of a Mob.
+	 * Handle a Player considering the threat and faction levels of a Mob.
 	 * @param {PlayerController} playerController - The Player who is considering.
 	 * @param {Number} mobId - The unique ID of the Mob to be considered.
 	 */
 	consider(playerController, mobId) {
 		const mob = this.game.mobs.get(mobId);
 		if (mob && mob.roomId === playerController.player.roomId) {
-			playerController.consider(mobId, playerController.player.getThreatLevel(mob));
+			const threatLevel = playerController.player.getThreatLevel(mob),
+				factionLevel = playerController.player.getFactionLevel(mob);
+			playerController.consider(mobId, threatLevel, factionLevel);
+			Logger.log(playerController.player.name + ' considered "' + mob.name + '" (threat: ' + threatLevel.index + ', faction: ' + factionLevel.index + ').', Logger.logTypes.DEBUG);
 		}
 	}
 

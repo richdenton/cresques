@@ -32,6 +32,44 @@ module.exports = {
 			multiplier: 2.0
 		}
 	},
+	factionScale: {
+		AGGRESSIVE: {
+			index: 0,
+			factionDelta: -3000
+		},
+		THREATENINGLY: {
+			index: 1,
+			factionDelta: -1500
+		},
+		DUBIOUS: {
+			index: 2,
+			factionDelta: -750
+		},
+		APPREHENSIVE: {
+			index: 3,
+			factionDelta: -250
+		},
+		INDIFFERENT: {
+			index: 4,
+			factionDelta: 0
+		},
+		AMIABLY: {
+			index: 5,
+			factionDelta: 250
+		},
+		KINDLY: {
+			index: 6,
+			factionDelta: 500
+		},
+		WARMLY: {
+			index: 7,
+			factionDelta: 750
+		},
+		ALLY: {
+			index: 8,
+			factionDelta: 1000
+		}
+	},
 	missRateMaxLevelDelta: 2,
 	missRateEvenBase: 0.05,
 	missRateEvenMultiplier: 0.005,

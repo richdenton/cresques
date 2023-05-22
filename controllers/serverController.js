@@ -9,7 +9,6 @@ const PlayerController = require('./playerController');
 const User = require('../models/user');
 const Users = require('../models/users');
 const Logger = require('../utils/logger');
-const GameUtils = require('../utils/gameUtils');
 
 class ServerController {
 
@@ -29,9 +28,11 @@ class ServerController {
 		await this.gameController.game.mobSpawns.load();
 		await this.gameController.game.mobTemplates.load();
 		this.gameController.game.mobs.init(this.gameController.game.mobSpawns, this.gameController.game.mobTemplates, this.gameController.game.species, this.gameController.game.rooms);
+		await this.gameController.game.mobFactions.load(this.gameController.game.mobs);
 		await this.gameController.game.mobInventories.load(this.gameController.game.mobs, this.gameController.game.items);
 		await this.gameController.game.mobConversations.load(this.gameController.game.mobs);
 		await this.gameController.game.players.load(this.gameController.game.species);
+		await this.gameController.game.playerFactions.load(this.gameController.game.players);
 		await this.gameController.game.playerInventories.load(this.gameController.game.players, this.gameController.game.items);
 	}
 

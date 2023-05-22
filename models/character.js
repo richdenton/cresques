@@ -12,6 +12,12 @@ class Character extends Entity {
         this.roomId = 0;
         this.items = [];
 		this.equipment = {};
+		this.factions = [
+			{
+				id: 0,
+				score: 0
+			}
+		];
 	}
 
     /**
@@ -35,25 +41,42 @@ class Character extends Entity {
 	}
 
 	/**
-	 * Use the difference between battling Characters to determine experience bonuses.
+	 * Calculate the combat multiplier between this and another Character. 
 	 * @param {Character} target - A Player or Mob.
 	 * @return {Object} The threat level object. See gameConfig.threatScale.
 	 */
 	getThreatLevel(target) {
-		let lastThreatLevel = 0,
-			levelDelta = target.level - this.level;
-		for (const currentThreatLevel in gameConfig.threatScale) {
-			if (lastThreatLevel) {
-				if (levelDelta <= gameConfig.threatScale[currentThreatLevel].levelDelta) {
-					return gameConfig.threatScale[currentThreatLevel];
+		const levelDelta = target.level - this.level;
+		let result = gameConfig.threatScale.TRIVIAL;
+		for (const tier in gameConfig.threatScale) {
+			if (levelDelta <= gameConfig.threatScale[tier].levelDelta) {
+				result = gameConfig.threatScale[tier];
+				break;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Calculate the faction score difference between this and another Character. 
+	 * @param {Character} target - A Player or Mob.
+	 * @return {Object} The faction level object. See gameConfig.factionScale.
+	 */
+	getFactionLevel(target) {
+		let result = gameConfig.factionScale.AGGRESSIVE;
+		target.factions.forEach(faction => {
+			const factionDelta = faction.score - (this.factions.find(f => f.id === faction.id) || { score: 0 }).score;
+			for (const tier in gameConfig.factionScale) {
+				if (gameConfig.factionScale[tier].index < result.index) {
+					continue;
 				}
-				if (levelDelta <= gameConfig.threatScale[lastThreatLevel].levelDelta) {
-					return gameConfig.threatScale[lastThreatLevel];
+				if (factionDelta <= gameConfig.factionScale[tier].factionDelta) {
+					result = gameConfig.factionScale[tier];
+					break;
 				}
 			}
-			lastThreatLevel = currentThreatLevel;
-		}
-		return gameConfig.threatScale[lastThreatLevel];
+		});
+		return result;
 	}
 
 	/**
@@ -106,6 +129,23 @@ class Character extends Entity {
 	getNextAttackTime() {
 		const weapon = this.items.find(i => i.id === this.equipment[gameConfig.itemSlots.WEAPON]);
 		return weapon ? weapon.delay : gameConfig.meleeDelay;
+	}
+
+	 /**
+	 * Update the score of a given Faction.
+	 * @param {Number} id - A unique ID of a Faction.
+	 * @param {Number} score - The Faction score to increase or decrease.
+	 */
+	updateFactionRank(id, score) {
+		let faction = this.factions.find(f => f.id === id);
+		if (faction) {
+			faction.score += score;
+		} else {
+			this.factions.add({
+				id: id,
+				score: score
+			});
+		}
 	}
 }
 
