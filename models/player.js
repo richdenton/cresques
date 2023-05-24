@@ -67,12 +67,22 @@ class Player extends Character {
 	 */
 	meetsConditions(conversation) {
 		for (const condition of conversation.conditions) {
-			switch (condition.parameter1) {
-				case 'itemId':
-					if (!this.items.find(i => i.id === parseInt(condition.parameter2))) {
-						return false;
-					}
-					break;
+			if (condition.parameter1.indexOf('item_') > -1) {
+
+				// Check if the Player owns a certain number of a given Item
+				const itemId = parseInt(condition.parameter1.substring(5)),
+					itemCount = this.items.filter(i => i.id == itemId).length;
+				if (!eval(itemCount + condition.operator + condition.parameter2)){
+					return false;
+				}
+			} else if (condition.parameter1.indexOf('faction_') > -1) {
+
+				// Check if the Player has reached a certain score with a given Faction
+				const factionId = parseInt(condition.parameter1.substring(8)),
+					factionScore = (this.factions[factionId] || { score: 0 }).score;
+				if (!eval(factionScore + condition.operator + condition.parameter2)){
+					return false;
+				}
 			}
 		}
 		return true;
