@@ -1,7 +1,6 @@
 const Entities = require('./entities');
 const Mob = require('./mob');
 const Rooms = require('./rooms');
-const GameUtils = require('../utils/gameUtils');
 
 class Mobs extends Entities {
 
@@ -16,11 +15,13 @@ class Mobs extends Entities {
 	/**
 	 * Initialize the Mob map with data from the database.
 	 * @param {MobSpawns} mobSpawns - Map of all Mob spawn points.
+	 * @param {MobShops} mobShops - Map of all Shops owned by Mobs.
+	 * @param {Shops} shops - Map of all Shops.
 	 * @param {MobTemplates} mobTemplates - Map of all Mob templates.
-	 * @param {Entities} species - The map of Species to help initialize Mob stats.
+	 * @param {Species} species - The map of Species to help initialize Mob stats.
 	 * @param {Rooms} rooms - Map of all Rooms.
 	 */
-	init(mobSpawns, mobTemplates, species, rooms) {
+	init(mobSpawns, mobShops, shops, mobTemplates, species, rooms) {
 
 		// Remove old data
 		this.map.clear();
@@ -32,6 +33,13 @@ class Mobs extends Entities {
 			mob.roomId = mobSpawn.roomId;
 			mob.respawnTime = mobSpawn.respawnTime;
 			mob.respawnRoomId = mobSpawn.roomId;
+			const mobShop = mobShops.findByMobId(mobSpawn.mobId);
+			if (mobShop) {
+				const shop = shops.get(mobShop.shopId);
+				if (shop) {
+					mob.shop = shop;
+				}
+			}
 			const mobSpecies = species.get(mob.speciesId);
 			mob.strengthBase = mobSpecies.strength;
 			mob.staminaBase = mobSpecies.stamina;

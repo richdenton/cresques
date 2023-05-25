@@ -302,7 +302,11 @@ class GameController {
 		// Ensure the Player has possession of the Item
 		const item = player.items.find(i => i.id === itemId);
 		if (item) {
-			player.equipItem(item);
+			if (item.type === config.itemTypes.EQUIPMENT) {
+				player.equipItem(item);
+			} else {
+				Logger.log(player.name + ' cannot equip item ' + itemId + '.', Logger.logTypes.ERROR);
+			}
 		} else {
 			Logger.log(player.name + ' is not carrying item ' + itemId + '.', Logger.logTypes.ERROR);
 		}

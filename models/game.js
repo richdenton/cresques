@@ -1,8 +1,11 @@
 const config = require('../config/gameConfig');
 const Items = require('../models/items');
 const Rooms = require('../models/rooms');
+const Shops = require('../models/shops');
+const ShopInventories = require('../models/shopInventories');
 const Species = require('../models/species');
 const MobSpawns = require('../models/mobSpawns');
+const MobShops = require('../models/mobShops');
 const MobTemplates = require('../models/mobTemplates');
 const Mobs = require('../models/mobs');
 const MobFactions = require('../models/mobFactions');
@@ -22,8 +25,11 @@ class Game {
 	constructor() {
 		this.items = new Items();
 		this.rooms = new Rooms();
+		this.shops = new Shops();
+		this.shopInventories = new ShopInventories();
 		this.species = new Species();
 		this.mobSpawns = new MobSpawns();
+		this.mobShops = new MobShops();
 		this.mobTemplates = new MobTemplates();
 		this.mobs = new Mobs();
 		this.mobFactions = new MobFactions();

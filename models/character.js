@@ -20,6 +20,22 @@ class Character extends Entity {
 		];
 	}
 
+	/**
+	 * Add an Item to the Character.
+	 * @param {item} item - The Item to add.
+	 */
+	addItem(item) {
+		this.items.push(item);
+	}
+
+	/**
+	 * Remove an Item from the Character.
+	 * @param {item} item - The Item to remove.
+	 */
+	removeItem(item) {
+		this.items = this.items.filter(i => i !== item);
+	}
+
     /**
 	 * Calculate the current experience level of a Character.
 	 * @return {Number} The level of the Character.

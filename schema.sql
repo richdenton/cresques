@@ -6,11 +6,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `faction`
@@ -18,7 +14,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `faction` (
   `id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -81,6 +77,18 @@ CREATE TABLE `mob_inventory` (
   `id` int NOT NULL,
   `mob_id` int NOT NULL,
   `item_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mob_shop`
+--
+
+CREATE TABLE `mob_shop` (
+  `id` int NOT NULL,
+  `mob_id` int NOT NULL,
+  `shop_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -171,7 +179,7 @@ CREATE TABLE `player_inventory` (
 CREATE TABLE `room` (
   `id` int NOT NULL,
   `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `north` int NOT NULL,
   `south` int NOT NULL,
   `east` int NOT NULL,
@@ -183,13 +191,37 @@ CREATE TABLE `room` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `shop`
+--
+
+CREATE TABLE `shop` (
+  `id` int NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `money` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `shop_inventory`
+--
+
+CREATE TABLE `shop_inventory` (
+  `id` int NOT NULL,
+  `shop_id` int NOT NULL,
+  `item_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `species`
 --
 
 CREATE TABLE `species` (
   `id` int NOT NULL,
   `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `room_id` int NOT NULL,
   `health` int NOT NULL,
   `strength` int NOT NULL,
@@ -246,6 +278,12 @@ ALTER TABLE `mob_inventory`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `mob_shop`
+--
+ALTER TABLE `mob_shop`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `mob_spawn`
 --
 ALTER TABLE `mob_spawn`
@@ -282,6 +320,18 @@ ALTER TABLE `room`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `shop`
+--
+ALTER TABLE `shop`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `shop_inventory`
+--
+ALTER TABLE `shop_inventory`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `species`
 --
 ALTER TABLE `species`
@@ -293,6 +343,10 @@ ALTER TABLE `species`
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
 
 --
 -- AUTO_INCREMENT for table `faction`
@@ -322,6 +376,12 @@ ALTER TABLE `mob_faction`
 -- AUTO_INCREMENT for table `mob_inventory`
 --
 ALTER TABLE `mob_inventory`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mob_shop`
+--
+ALTER TABLE `mob_shop`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
@@ -361,6 +421,18 @@ ALTER TABLE `room`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `shop`
+--
+ALTER TABLE `shop`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `shop_inventory`
+--
+ALTER TABLE `shop_inventory`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `species`
 --
 ALTER TABLE `species`
@@ -372,7 +444,3 @@ ALTER TABLE `species`
 ALTER TABLE `user`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

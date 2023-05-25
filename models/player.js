@@ -27,22 +27,6 @@ class Player extends Character {
 	}
 
 	/**
-	 * Add an Item to the Player.
-	 * @param {item} item - The Item to add.
-	 */
-	addItem(item) {
-		this.items.push(item);
-	}
-
-	/**
-	 * Remove an Item from the Player.
-	 * @param {item} item - The Item to remove.
-	 */
-	removeItem(item) {
-		this.items = this.items.filter(i => i !== item);
-	}
-
-	/**
 	 * Add (or replace) an Item in the Player's list of equipment.
 	 * @param {item} item - The Item to equip.
 	 */

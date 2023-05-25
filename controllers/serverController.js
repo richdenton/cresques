@@ -24,10 +24,13 @@ class ServerController {
 		await this.users.load();
 		await this.gameController.game.items.load();
 		await this.gameController.game.rooms.load();
+		await this.gameController.game.shops.load();
+		await this.gameController.game.shopInventories.load(this.gameController.game.shops, this.gameController.game.items);
 		await this.gameController.game.species.load();
 		await this.gameController.game.mobSpawns.load();
+		await this.gameController.game.mobShops.load();
 		await this.gameController.game.mobTemplates.load();
-		this.gameController.game.mobs.init(this.gameController.game.mobSpawns, this.gameController.game.mobTemplates, this.gameController.game.species, this.gameController.game.rooms);
+		this.gameController.game.mobs.init(this.gameController.game.mobSpawns, this.gameController.game.mobShops, this.gameController.game.shops, this.gameController.game.mobTemplates, this.gameController.game.species, this.gameController.game.rooms);
 		await this.gameController.game.mobFactions.load(this.gameController.game.mobs);
 		await this.gameController.game.mobInventories.load(this.gameController.game.mobs, this.gameController.game.items);
 		await this.gameController.game.mobConversations.load(this.gameController.game.mobs);

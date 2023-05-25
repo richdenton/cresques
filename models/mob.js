@@ -29,22 +29,6 @@ class Mob extends Character {
 		this.level = template.level;
 		this.money = template.money;
 	}
-
-	/**
-	 * Add an Item to the Mob.
-	 * @param {item} item - The Item to add.
-	 */
-	addItem(item) {
-		this.items.push(item);
-	}
-
-	/**
-	 * Remove an Item from the Mob.
-	 * @param {item} item - The Item to remove.
-	 */
-	removeItem(item) {
-		this.items = this.items.filter(i => i !== item);
-	}
 }
 
 module.exports = Mob;
