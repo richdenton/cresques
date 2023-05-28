@@ -65,8 +65,8 @@ class Character extends Entity {
 		const levelDelta = target.level - this.level;
 		let result = gameConfig.threatScale.TRIVIAL;
 		for (const tier in gameConfig.threatScale) {
-			if (levelDelta <= gameConfig.threatScale[tier].levelDelta) {
-				result = gameConfig.threatScale[tier];
+			result = gameConfig.threatScale[tier];
+			if (levelDelta <= result.levelDelta) {
 				break;
 			}
 		}
@@ -86,8 +86,8 @@ class Character extends Entity {
 				if (gameConfig.factionScale[tier].index < result.index) {
 					continue;
 				}
-				if (factionDelta <= gameConfig.factionScale[tier].factionDelta) {
-					result = gameConfig.factionScale[tier];
+				result = gameConfig.factionScale[tier];
+				if (factionDelta <= result.factionDelta) {
 					break;
 				}
 			}

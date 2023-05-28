@@ -183,39 +183,63 @@ class GameController {
 	 */
 	consider(playerController, mobId) {
 		const mob = this.game.mobs.get(mobId);
-		if (mob && mob.roomId === playerController.player.roomId) {
-			const threatLevel = playerController.player.getThreatLevel(mob),
-				factionLevel = playerController.player.getFactionLevel(mob);
-			playerController.consider(mobId, threatLevel, factionLevel);
-			Logger.log(playerController.player.name + ' considered "' + mob.name + '" (threat: ' + threatLevel.index + ', faction: ' + factionLevel.index + ').', Logger.logTypes.DEBUG);
+		if (mob) {
+			if (mob.roomId === playerController.player.roomId) {
+				const threatLevel = playerController.player.getThreatLevel(mob),
+					factionLevel = playerController.player.getFactionLevel(mob);
+				playerController.consider(mob, threatLevel, factionLevel);
+				Logger.log(playerController.player.name + ' considered "' + mob.name + '" (threat: ' + threatLevel.index + ', faction: ' + factionLevel.index + ').', Logger.logTypes.DEBUG);
+			} else {
+				Logger.log(playerController.player.name + ' is too far away from "' + mob.name + '".', Logger.logTypes.ERROR);
+			}
+		} else {
+			Logger.log('No mob found with ID ' + mobId + '.', Logger.logTypes.ERROR);
 		}
 	}
 
 	/**
 	 * Handle a Player hailing a Mob.
-	 * @param {Player} player - The Player who is hailing.
+	 * @param {PlayerController} playerController - The Player who is considering.
 	 * @param {Number} mobId - The unique ID of the Entity being hailed.
 	 */
-	hail(player, mobId) {
+	hail(playerController, mobId) {
 		const mob = this.game.mobs.get(mobId);
-		if (mob && mob.roomId === player.roomId) {
+		if (mob) {
+			if (mob.roomId === playerController.player.roomId) {
+				const factionLevel = playerController.player.getFactionLevel(mob).index;
+				if (factionLevel >= config.factionScale.INDIFFERENT.index) {
 
-			// Find the most applicable Conversation
-			let conversation = null;
-			for (const iterator of mob.conversations.filter(c => c.parentId === 0)) {
-				if (player.meetsConditions(iterator)) {
-					conversation = iterator;
+					// Determine if Mob is a merchant
+					if (mob.shop) {
+						playerController.shop(mob.shop);
+						return;
+					}
+
+					// Otherwise, find the most applicable Conversation
+					let conversation = null;
+					for (const iterator of mob.conversations.filter(c => c.parentId === 0)) {
+						if (playerController.player.meetsConditions(iterator)) {
+							conversation = iterator;
+						}
+					}
+
+					// Save current Conversation to the Player and display the message
+					if (conversation) {
+						playerController.player.conversation = {
+							id: conversation.id,
+							mobId: conversation.mobId
+						};
+						this.say(mob, 1, conversation.getFormattedMessage(playerController.player));
+					}
+				} else if (factionLevel == config.factionScale.AGGRESSIVE.index) {
+					mob.attacking = player.id;
+					Logger.log('"' + mob.name + '" attacked ' + playerController.player.name + '.', Logger.logTypes.DEBUG);
 				}
+			} else {
+				Logger.log(playerController.player.name + ' is too far away from "' + mob.name + '".', Logger.logTypes.ERROR);
 			}
-
-			// Save current Conversation to the Player and display the message
-			if (conversation) {
-				player.conversation = {
-					id: conversation.id,
-					mobId: conversation.mobId
-				};
-				this.say(mob, 1, conversation.getFormattedMessage(player));
-			}
+		} else {
+			Logger.log('No mob found with ID ' + mobId + '.', Logger.logTypes.ERROR);
 		}
 	}
 
@@ -226,9 +250,15 @@ class GameController {
 	 */
 	attack(player, mobId) {
 		const mob = this.game.mobs.get(mobId);
-		if (mob && mob.roomId === player.roomId) {
-			player.attacking = mobId;
-			Logger.log(player.name + ' attacked "' + mob.name + '".', Logger.logTypes.DEBUG);
+		if (mob) {
+			if (mob.roomId === player.roomId) {
+				player.attacking = mobId;
+				Logger.log(player.name + ' attacked "' + mob.name + '".', Logger.logTypes.DEBUG);
+			} else {
+				Logger.log(player.name + ' is too far away from "' + mob.name + '".', Logger.logTypes.ERROR);
+			}
+		} else {
+			Logger.log('No mob found with ID ' + mobId + '.', Logger.logTypes.ERROR);
 		}
 	}
 
@@ -294,21 +324,110 @@ class GameController {
 
 	/**
 	 * Handle a Player equipping an Item from their Inventory.
-	 * @param {Player} player - The Player who is equipping the Item.
+	 * @param {PlayerController} playerController - The Player who is equipping the Item.
 	 * @param {Number} itemId - The unique ID of the Item.
 	 */
-	equip(player, itemId) {
+	equip(playerController, itemId) {
 
 		// Ensure the Player has possession of the Item
-		const item = player.items.find(i => i.id === itemId);
+		const item = playerController.player.items.find(i => i.id === itemId);
 		if (item) {
 			if (item.type === config.itemTypes.EQUIPMENT) {
-				player.equipItem(item);
+				playerController.player.equipItem(item);
+				playerController.equip(item);
 			} else {
-				Logger.log(player.name + ' cannot equip item ' + itemId + '.', Logger.logTypes.ERROR);
+				Logger.log(playerController.player.name + ' cannot equip item ' + itemId + '.', Logger.logTypes.ERROR);
 			}
 		} else {
-			Logger.log(player.name + ' is not carrying item ' + itemId + '.', Logger.logTypes.ERROR);
+			Logger.log(playerController.player.name + ' is not carrying item ' + itemId + '.', Logger.logTypes.ERROR);
+		}
+	}
+
+	/**
+	 * Handle a Player buying an Item from a Shop.
+	 * @param {Player} player - The Player who is buying.
+	 * @param {Number} mobId - The unique ID of the Mob.
+	 * @param {Number} itemId - The unique ID of the Item.
+	 */
+	buy(player, mobId, itemId) {
+		const mob = this.game.mobs.get(mobId);
+		if (mob) {
+			if (mob.roomId === player.roomId) {
+				const shop = mob.shop;
+				if (shop) {
+					const item = shop.items.find(i => i.id === itemId);
+					if (item) {
+						if (player.money >= item.value) {
+							
+							// Make the sale
+							player.money -= item.value;
+							player.addItem(item);
+							shop.sellItem(item);
+
+							// Update Players in the Room
+							this.playerControllers.forEach(playerController => {
+								if (playerController.player.roomId === player.roomId) {
+									playerController.buy(player, mob, item);
+								}
+							});
+						} else {
+							Logger.log(player.name + ' cannot afford ' + item.name + '.', Logger.logTypes.ERROR);
+						}
+					} else {
+						Logger.log('No item found with ID ' + itemId + ' in the shop associated with "' +  mob.name + '".', Logger.logTypes.ERROR);
+					}
+				} else {
+					Logger.log('No shop associated with "' + mob.name + '".', Logger.logTypes.ERROR);
+				}
+			} else {
+				Logger.log(player.name + ' is too far away from "' + mob.name + '".', Logger.logTypes.ERROR);
+			}
+		} else {
+			Logger.log('No mob found with ID ' + mobId + '.', Logger.logTypes.ERROR);
+		}
+	}
+
+	/**
+	 * Handle a Player selling an Item to a Shop.
+	 * @param {Player} player - The Player who is selling.
+	 * @param {Number} mobId - The unique ID of the Mob.
+	 * @param {Number} itemId - The unique ID of the Item.
+	 */
+	buy(player, mobId, itemId) {
+		const mob = this.game.mobs.get(mobId);
+		if (mob) {
+			if (mob.roomId === player.roomId) {
+				const shop = mob.shop;
+				if (shop) {
+					const item = shop.items.find(i => i.id === itemId);
+					if (item) {
+						if (shop.money >= item.value) {
+							
+							// Make the sale
+							player.money += item.value;
+							player.removeItem(item);
+							shop.buyItem(item);
+
+							// Update Players in the Room
+							this.playerControllers.forEach(playerController => {
+								if (playerController.player.roomId === player.roomId) {
+									playerController.sell(player, mob, item);
+								}
+							});
+						} else {
+							Logger.log('"' + mob.name + '" cannot afford ' + item.name + '.', Logger.logTypes.ERROR);
+						}
+					} else {
+						Logger.log('No item found with ID ' + itemId + ' in the shop associated with "' +  mob.name + '".', Logger.logTypes.ERROR);
+					}
+				} else {
+					Logger.log('No shop associated with "' + mob.name + '".', Logger.logTypes.ERROR);
+				}
+			} else {
+				Logger.log(player.name + ' is too far away from "' + mob.name + '".', Logger.logTypes.ERROR);
+			}
+		} else {
+			Logger.log('No mob found with ID ' + mobId + '.', Logger.logTypes.ERROR);
 		}
 	}
 }

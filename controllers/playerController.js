@@ -12,7 +12,10 @@ class PlayerController {
 		DIE: 8,
 		TAKE: 9,
 		DROP: 10,
-		EQUIP: 11
+		EQUIP: 11,
+		SHOP: 12,
+		BUY: 13,
+		SELL: 14
 	};
 
 	static entityType = {
@@ -74,7 +77,7 @@ class PlayerController {
 
 				// Hail a Mob
 				case PlayerController.messageActions.HAIL:
-					this.gameController.hail(this.player, message.mobId);
+					this.gameController.hail(this, message.mobId);
 					break;
 
 				// Attack a Mob
@@ -94,7 +97,17 @@ class PlayerController {
 
 				// Equip an Item
 				case PlayerController.messageActions.EQUIP:
-					this.gameController.equip(this.player, message.itemId);
+					this.gameController.equip(this, message.itemId);
+					break;
+
+				// Buy an Item
+				case PlayerController.messageActions.BUY:
+					this.gameController.buy(this, message.mobId, message.itemId);
+					break;
+
+				// Sell an Item
+				case PlayerController.messageActions.SELL:
+					this.gameController.sell(this, message.mobId, message.itemId);
 					break;
 			}
 		}
@@ -338,6 +351,58 @@ class PlayerController {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.DROP,
 			playerId: player.id,
+			item: item
+		}));
+	}
+
+	/**
+	 * Player equipped an Item from their Inventory.
+	 * @param {Item} item - The Item that was equipped.
+	 */
+	equip(item) {
+		this.socket.send(JSON.stringify({
+			action: PlayerController.messageActions.EQUIP,
+			itemId: item.id
+		}));
+	}
+
+	/**
+	 * Player viewed a Shop's Inventory.
+	 * @param {Shop} shop - The Shop that was viewed.
+	 */
+	shop(shop) {
+		this.socket.send(JSON.stringify({
+			action: PlayerController.messageActions.SHOP,
+			shop: shop
+		}));
+	}
+
+	/**
+	 * Player bought an Item from a Shop.
+	 * @param {Player} player - The Player who bought the Item.
+	 * @param {Mob} mob - The Mob associated with the Shop.
+	 * @param {Item} item - The Item associated with the Shop.
+	 */
+	buy(player, mob, item) {
+		this.socket.send(JSON.stringify({
+			action: PlayerController.messageActions.BUY,
+			playerId: player.id,
+			mobId: mob.id,
+			item: item
+		}));
+	}
+
+	/**
+	 * Player sold an Item tp a Shop.
+	 * @param {Player} player - The Player who sold the Item.
+	 * @param {Mob} mob - The Mob associated with the Shop.
+	 * @param {Item} item - The Item associated with the Shop.
+	 */
+	buy(player, mob, item) {
+		this.socket.send(JSON.stringify({
+			action: PlayerController.messageActions.SELL,
+			playerId: player.id,
+			mobId: mob.id,
 			item: item
 		}));
 	}
