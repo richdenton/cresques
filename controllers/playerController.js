@@ -100,6 +100,11 @@ class PlayerController {
 					this.gameController.equip(this, message.itemId);
 					break;
 
+				// View a Shop
+				case PlayerController.messageActions.SHOP:
+					this.gameController.shop(this, message.mobId);
+					break;
+
 				// Buy an Item
 				case PlayerController.messageActions.BUY:
 					this.gameController.buy(this, message.mobId, message.itemId);

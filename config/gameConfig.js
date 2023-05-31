@@ -84,10 +84,6 @@ module.exports = {
 		UP: 4,
 		DOWN: 5
 	},
-	itemTypes: {
-		EQUIPMENT: 0,
-		CONSUMABLE: 1
-	},
 	itemSlots: {
 		WEAPON: 0,
 		HEAD: 1,

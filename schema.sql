@@ -26,7 +26,6 @@ CREATE TABLE `faction` (
 CREATE TABLE `item` (
   `id` int NOT NULL,
   `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `type` int NOT NULL,
   `rarity` int NOT NULL,
   `slot` int NOT NULL,
   `damage` int NOT NULL,

@@ -209,13 +209,7 @@ class GameController {
 				const factionLevel = playerController.player.getFactionLevel(mob).index;
 				if (factionLevel >= config.factionScale.INDIFFERENT.index) {
 
-					// Determine if Mob is a merchant
-					if (mob.shop) {
-						playerController.shop(mob.shop);
-						return;
-					}
-
-					// Otherwise, find the most applicable Conversation
+					// Find the most applicable Conversation
 					let conversation = null;
 					for (const iterator of mob.conversations.filter(c => c.parentId === 0)) {
 						if (playerController.player.meetsConditions(iterator)) {
@@ -332,14 +326,42 @@ class GameController {
 		// Ensure the Player has possession of the Item
 		const item = playerController.player.items.find(i => i.id === itemId);
 		if (item) {
-			if (item.type === config.itemTypes.EQUIPMENT) {
-				playerController.player.equipItem(item);
+			if (item.slot === config.itemSlots.WEAPON || item.slot === config.itemSlots.HEAD || item.slot === config.itemSlots.CHEST || item.slot === config.itemSlots.ARMS || item.slot === config.itemSlots.LEGS) {
+				playerController.player.equip(item);
 				playerController.equip(item);
 			} else {
 				Logger.log(playerController.player.name + ' cannot equip item ' + itemId + '.', Logger.logTypes.ERROR);
 			}
 		} else {
 			Logger.log(playerController.player.name + ' is not carrying item ' + itemId + '.', Logger.logTypes.ERROR);
+		}
+	}
+
+	/**
+	 * Handle a Player viewing a Shop.
+	 * @param {PlayerController} playerController - The Player who is shopping.
+	 * @param {Number} mobId - The unique ID of the Entity being targetted.
+	 */
+	shop(playerController, mobId) {
+		const mob = this.game.mobs.get(mobId);
+		if (mob) {
+			if (mob.roomId === playerController.player.roomId) {
+				const factionLevel = playerController.player.getFactionLevel(mob).index;
+				if (factionLevel >= config.factionScale.INDIFFERENT.index) {
+					if (mob.shop) {
+						playerController.shop(mob.shop);
+					} else {
+						Logger.log('No shop associated with "' + mob.name + '".', Logger.logTypes.ERROR);
+					}
+				} else if (factionLevel == config.factionScale.AGGRESSIVE.index) {
+					mob.attacking = player.id;
+					Logger.log('"' + mob.name + '" attacked ' + playerController.player.name + '.', Logger.logTypes.DEBUG);
+				}
+			} else {
+				Logger.log(playerController.player.name + ' is too far away from "' + mob.name + '".', Logger.logTypes.ERROR);
+			}
+		} else {
+			Logger.log('No mob found with ID ' + mobId + '.', Logger.logTypes.ERROR);
 		}
 	}
 
@@ -358,7 +380,7 @@ class GameController {
 					const item = shop.items.find(i => i.id === itemId);
 					if (item) {
 						if (player.money >= item.value) {
-							
+
 							// Make the sale
 							player.money -= item.value;
 							player.addItem(item);
@@ -393,7 +415,7 @@ class GameController {
 	 * @param {Number} mobId - The unique ID of the Mob.
 	 * @param {Number} itemId - The unique ID of the Item.
 	 */
-	buy(player, mobId, itemId) {
+	sell(player, mobId, itemId) {
 		const mob = this.game.mobs.get(mobId);
 		if (mob) {
 			if (mob.roomId === player.roomId) {
@@ -402,7 +424,7 @@ class GameController {
 					const item = shop.items.find(i => i.id === itemId);
 					if (item) {
 						if (shop.money >= item.value) {
-							
+
 							// Make the sale
 							player.money += item.value;
 							player.removeItem(item);

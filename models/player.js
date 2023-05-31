@@ -30,7 +30,7 @@ class Player extends Character {
 	 * Add (or replace) an Item in the Player's list of equipment.
 	 * @param {item} item - The Item to equip.
 	 */
-	equipItem(item) {
+	equip(item) {
 
 		// Unequip previous Item
 		const oldItem = this.items.find(i => i.id === this.equipment[item.slot]);
