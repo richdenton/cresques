@@ -1,3 +1,5 @@
+const GameUtils = require('../utils/gameUtils');
+
 class PlayerController {
 
 	static messageActions = {
@@ -144,7 +146,9 @@ class PlayerController {
 					socket.send(JSON.stringify({
 						action: PlayerController.messageActions.ENTER,
 						mob: mob
-					}));
+					},
+						[ 'action', 'mob', 'id', 'name' ]
+					));
 				}
 
 				// Combat
@@ -173,12 +177,16 @@ class PlayerController {
 						socket.send(JSON.stringify({
 							action: PlayerController.messageActions.MOVE,
 							room: room
-						}));
+						},
+							[ 'action', 'room', 'id', 'name', 'description', 'exits', 'north', 'east', 'south', 'west', 'up', 'down', 'mobs', 'items' ]
+						));
 					} else {
 						socket.send(JSON.stringify({
 							action: PlayerController.messageActions.ENTER,
 							player: player
-						}));
+						},
+							[ 'action', 'player', 'id', 'name' ]
+						));
 					}
 				}
 
@@ -260,7 +268,9 @@ class PlayerController {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.MOVE,
 			room: room
-		}));
+		},
+			[ 'action', 'room', 'id', 'name', 'description', 'exits', 'north', 'east', 'south', 'west', 'up', 'down', 'mobs', 'items' ]
+		));
 	}
 
 	/**
@@ -271,7 +281,9 @@ class PlayerController {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.ENTER,
 			player: player
-		}));
+		},
+			[ 'action', 'player', 'id', 'name' ]
+		));
 	}
 
 	/**
