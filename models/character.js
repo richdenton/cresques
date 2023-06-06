@@ -42,7 +42,7 @@ class Character extends Entity {
 	 */
 	getExperienceLevel() {
 		let level = 0;
-		while (this.experience > (gameConfig.experienceBase * Math.pow(level + 1, gameConfig.experiencePowerCurve))) {
+		while (this.experience > (gameConfig.experienceLevelBase * Math.pow(level + 1, gameConfig.experienceLevelPowerCurve))) {
 			level++;
 		}
 		return level;
@@ -101,7 +101,7 @@ class Character extends Entity {
 	 * @return {Object} The number of experienece points to reward.
 	 */
 	getExperienceReward(target) {
-		return Math.floor(((this.level * 5) + gameConfig.experiencePerMob) * this.getThreatLevel(target).multiplier);
+		return Math.floor(Math.pow(target.level, gameConfig.experienceRewardPowerCurve) * gameConfig.experienceRewardBase * this.getThreatLevel(target).multiplier);
 	}
 
 	/**
@@ -110,8 +110,8 @@ class Character extends Entity {
 	 * @return {Boolean} Whether or not the next attack will hit.
 	 */
 	willHit(target) {
-		const evenlyMatched = Math.abs(this.level - target.level) <= gameConfig.missRateMaxLevelDelta;
-		return Math.random() > (evenlyMatched ? gameConfig.missRateEvenBase : gameConfig.missRateUnevenBase) + (this.level - target.level) * (evenlyMatched ? gameConfig.missRateEvenMultiplier : gameConfig.missRateUnevenMultiplier);
+		const evenlyMatched = Math.abs(target.level - this.level) <= gameConfig.missRateMaxLevelDelta;
+		return Math.random() > (evenlyMatched ? gameConfig.missRateEvenBase : gameConfig.missRateUnevenBase) + (target.level - this.level) * (evenlyMatched ? gameConfig.missRateEvenMultiplier : gameConfig.missRateUnevenMultiplier);
 	}
 
 	/**

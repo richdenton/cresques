@@ -2,9 +2,10 @@ module.exports = {
 	refreshRate: 1000,
 	playerRespawnTime: 10000,
 	meleeDelay: 2000,
-	experienceBase: 1000,
-	experiencePowerCurve: 3,
-	experiencePerMob: 50,
+	experienceLevelBase: 1000,
+	experienceLevelPowerCurve: 3,
+	experienceRewardBase: 75,
+	experienceRewardPowerCurve: 2,
 	threatScale: {
 		TRIVIAL: {
 			index: 0,
@@ -73,7 +74,7 @@ module.exports = {
 	missRateMaxLevelDelta: 2,
 	missRateEvenBase: 0.05,
 	missRateEvenMultiplier: 0.005,
-	missRateUnevenBase: 0.2,
+	missRateUnevenBase: 0.02,
 	missRateUnevenMultiplier: 0.02,
 	strengthMultiplier: 5,
 	roomDirections: {

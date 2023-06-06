@@ -178,7 +178,7 @@ class PlayerController {
 							action: PlayerController.messageActions.MOVE,
 							room: room
 						},
-							[ 'action', 'room', 'id', 'name', 'description', 'exits', 'north', 'east', 'south', 'west', 'up', 'down', 'mobs', 'items' ]
+							[ 'action', 'room', 'id', 'name', 'description', 'exits', 'north', 'east', 'south', 'west', 'up', 'down', 'players', 'mobs', 'items' ]
 						));
 					} else {
 						socket.send(JSON.stringify({
@@ -269,7 +269,7 @@ class PlayerController {
 			action: PlayerController.messageActions.MOVE,
 			room: room
 		},
-			[ 'action', 'room', 'id', 'name', 'description', 'exits', 'north', 'east', 'south', 'west', 'up', 'down', 'mobs', 'items' ]
+			[ 'action', 'room', 'id', 'name', 'description', 'exits', 'north', 'east', 'south', 'west', 'up', 'down', 'players', 'mobs', 'items' ]
 		));
 	}
 
