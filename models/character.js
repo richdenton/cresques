@@ -12,12 +12,7 @@ class Character extends Entity {
         this.roomId = 0;
         this.items = [];
 		this.equipment = {};
-		this.factions = [
-			{
-				id: 0,
-				score: 0
-			}
-		];
+		this.factions = [];
 	}
 
 	/**
@@ -157,7 +152,7 @@ class Character extends Entity {
 		if (faction) {
 			faction.score += score;
 		} else {
-			this.factions.add({
+			this.factions.push({
 				id: id,
 				score: score
 			});

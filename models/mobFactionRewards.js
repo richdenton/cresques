@@ -25,7 +25,10 @@ class MobFactionRewards extends Entities {
 			results.forEach(result => {
 				const mobFactionReward = new MobFactionReward(result);
 				let mob = mobs.get(mobFactionReward.mobId);
-				mob.factionRewards[mobFactionReward.id] = mobFactionReward.reward;
+				mob.factionRewards.push({
+					factionId: mobFactionReward.id,
+					score: mobFactionReward.score
+				});
 				this.add(mobFactionReward);
 			});
 		});

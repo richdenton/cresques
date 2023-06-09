@@ -78,7 +78,13 @@ class Players extends Entities {
 		const results = await DatabaseController.pool.query('UPDATE player SET health=?, strength=?, stamina=?, agility=?, intelligence=?, experience=?, money=?, room_id=? WHERE id=?;', [player.health, player.strength, player.stamina, player.agility, player.intelligence, player.experience, player.money, player.roomId, player.id]);
 
 		// Update Faction score
-		// todo: save faction score updates to the database
+		if (player.factions.length) {
+			let factions = [];
+			player.factions.forEach(faction => {
+				factions.push([ player.id, faction.id, faction.score ]);
+			});
+			await DatabaseController.pool.query('INSERT INTO player_faction (player_id, faction_id, score) VALUES ? ON DUPLICATE KEY UPDATE score = VALUES(score);', [ factions ]);
+		}
 
 		// Update Inventory
 		if (player.items.length) {
