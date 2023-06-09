@@ -9,6 +9,7 @@ const MobShops = require('../models/mobShops');
 const MobTemplates = require('../models/mobTemplates');
 const Mobs = require('../models/mobs');
 const MobFactions = require('../models/mobFactions');
+const MobFactionRewards = require('../models/mobFactionRewards');
 const MobInventories = require('../models/mobInventories');
 const MobConversations = require('./mobConversations');
 const Players = require('../models/players');
@@ -33,6 +34,7 @@ class Game {
 		this.mobTemplates = new MobTemplates();
 		this.mobs = new Mobs();
 		this.mobFactions = new MobFactions();
+		this.mobFactionRewards = new MobFactionRewards();
 		this.mobInventories = new MobInventories();
 		this.mobConversations = new MobConversations();
 		this.players = new Players();
@@ -208,9 +210,14 @@ class Game {
 							mob.killTime = now;
 							Logger.log('"' + mob.name + '" (' + mob.id + ') died.', Logger.logTypes.DEBUG);
 
-							// Reward the Player
+							// Reward experience points
 							player.experience += player.getExperienceReward(mob);
 							player.level = player.getExperienceLevel();
+
+							// Reward Faction score
+							mob.factionRewards.forEach(reward => {
+								player.updateFactionScore(reward.factionId, reward.score);
+							});
 
 							// Drop loot
 							if (mob.items) {

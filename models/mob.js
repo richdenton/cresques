@@ -11,6 +11,7 @@ class Mob extends Character {
 		this.templateId = 0;
 		this.damageTotals = new Map();
 		this.conversations = [];
+		this.factionRewards = {};
 	}
 
 	/**

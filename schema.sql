@@ -69,6 +69,19 @@ CREATE TABLE `mob_faction` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `mob_faction_reward`
+--
+
+CREATE TABLE `mob_faction_reward` (
+  `id` int NOT NULL,
+  `mob_id` int NOT NULL,
+  `faction_id` int NOT NULL,
+  `score` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `mob_inventory`
 --
 
@@ -271,6 +284,12 @@ ALTER TABLE `mob_faction`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `mob_faction_reward`
+--
+ALTER TABLE `mob_faction_reward`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `mob_inventory`
 --
 ALTER TABLE `mob_inventory`
@@ -369,6 +388,12 @@ ALTER TABLE `mob_conversation`
 -- AUTO_INCREMENT for table `mob_faction`
 --
 ALTER TABLE `mob_faction`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mob_faction_reward`
+--
+ALTER TABLE `mob_faction_reward`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --

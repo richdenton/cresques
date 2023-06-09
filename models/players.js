@@ -77,6 +77,9 @@ class Players extends Entities {
 		// Update Player
 		const results = await DatabaseController.pool.query('UPDATE player SET health=?, strength=?, stamina=?, agility=?, intelligence=?, experience=?, money=?, room_id=? WHERE id=?;', [player.health, player.strength, player.stamina, player.agility, player.intelligence, player.experience, player.money, player.roomId, player.id]);
 
+		// Update Faction score
+		// todo: save faction score updates to the database
+
 		// Update Inventory
 		if (player.items.length) {
 

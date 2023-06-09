@@ -25,7 +25,7 @@ class PlayerFactions extends Entities {
 			results.forEach(result => {
 				const playerFaction = new PlayerFaction(result);
 				let player = players.get(playerFaction.playerId);
-				player.updateFactionRank(playerFaction.id, playerFaction.score);
+				player.updateFactionScore(playerFaction.id, playerFaction.score);
 				this.add(playerFaction);
 			});
 		});

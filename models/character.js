@@ -147,12 +147,12 @@ class Character extends Entity {
 		return weapon ? weapon.delay : gameConfig.meleeDelay;
 	}
 
-	 /**
+	/**
 	 * Update the score of a given Faction.
 	 * @param {Number} id - A unique ID of a Faction.
 	 * @param {Number} score - The Faction score to increase or decrease.
 	 */
-	updateFactionRank(id, score) {
+	updateFactionScore(id, score) {
 		let faction = this.factions.find(f => f.id === id);
 		if (faction) {
 			faction.score += score;

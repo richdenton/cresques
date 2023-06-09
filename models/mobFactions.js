@@ -25,7 +25,7 @@ class MobFactions extends Entities {
 			results.forEach(result => {
 				const mobFaction = new MobFaction(result);
 				let mob = mobs.get(mobFaction.mobId);
-				mob.updateFactionRank(mobFaction.id, mobFaction.score);
+				mob.updateFactionScore(mobFaction.id, mobFaction.score);
 				this.add(mobFaction);
 			});
 		});
