@@ -91,5 +91,6 @@ module.exports = {
 		CHEST: 2,
 		ARMS: 3,
 		LEGS: 4
-	}
+	},
+	itemDecayTime: 10000
 };

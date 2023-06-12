@@ -14,10 +14,11 @@ class PlayerController {
 		DIE: 8,
 		TAKE: 9,
 		DROP: 10,
-		EQUIP: 11,
-		SHOP: 12,
-		BUY: 13,
-		SELL: 14
+		DECAY: 11,
+		EQUIP: 12,
+		SHOP: 13,
+		BUY: 14,
+		SELL: 15
 	};
 
 	static entityType = {
@@ -255,6 +256,14 @@ class PlayerController {
 						mobId: item.mobId,
 						item: item
 					}));
+				}
+				if (item.decayed) {
+					socket.send(JSON.stringify({
+						action: PlayerController.messageActions.DECAY,
+						item: item
+					},
+						[ 'action', 'item', 'id', 'name' ]
+					));
 				}
 			});
 		}

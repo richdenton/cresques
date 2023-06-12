@@ -48,6 +48,16 @@ class Game {
 	 */
 	update(now) {
 
+		// Remove decayed Items
+		this.rooms.map.forEach(room => {
+			room.items.forEach(item => {
+				if (item.decayed) {
+					room.removeItem(item);
+					Logger.log(item.name + ' was removed from ' + room.name + '.', Logger.logTypes.DEBUG);
+				}
+			});
+		});
+
 		// Reset Player properties from last update
 		this.players.map.forEach(player => {
 			player.damage = -1;
@@ -228,6 +238,7 @@ class Game {
 									newItem.mobId = mob.id;
 									newItem.playerId = player.id;
 									room.addItem(newItem);
+									Logger.log(newItem.name + ' was added to ' + room.name + '.', Logger.logTypes.DEBUG);
 								});
 							}
 						}
@@ -238,6 +249,15 @@ class Game {
 					player.attacking = 0;
 				}
 			}
+		});
+
+		// Mark dropped Items as decaying
+		this.rooms.map.forEach(room => {
+			room.items.forEach(item => {
+				if (now >= item.dropTime + config.itemDecayTime) {
+					item.decayed = true;
+				}
+			});
 		});
 	}
 }
