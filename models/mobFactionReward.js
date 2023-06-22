@@ -3,7 +3,7 @@ const Entity = require('./entity');
 class MobFactionReward extends Entity {
 
 	/**
-	 * Represents the reward/penalty given to a Player when defeating a Mob.
+	 * Represents the Faction Reward (or penalty) given to a Player after defeating a Mob.
 	 * @param {Object} data - Default parameters.
 	 * @constructor
 	 */

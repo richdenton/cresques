@@ -35,6 +35,7 @@ class ServerController {
 		await this.gameController.game.mobFactionRewards.load(this.gameController.game.mobs);
 		await this.gameController.game.mobInventories.load(this.gameController.game.mobs, this.gameController.game.items);
 		await this.gameController.game.mobConversations.load(this.gameController.game.mobs);
+		await this.gameController.game.mobConversationRewards.load(this.gameController.game.mobConversations, this.gameController.game.items);
 		await this.gameController.game.players.load(this.gameController.game.species);
 		await this.gameController.game.playerFactions.load(this.gameController.game.players);
 		await this.gameController.game.playerInventories.load(this.gameController.game.players, this.gameController.game.items);

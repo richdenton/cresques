@@ -369,7 +369,7 @@ class PlayerController {
 	}
 
 	/**
-	 * Player dropped up an Item.
+	 * Player dropped an Item.
 	 * @param {Player} player - The Player who dropped the Item.
 	 * @param {Item} item - The Item that was dropped.
 	 */

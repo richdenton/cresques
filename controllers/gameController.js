@@ -142,6 +142,22 @@ class GameController {
 					if (response) {
 						const nextConversation = mob.conversations.find(n => n.id === response.nextId);
 						if (nextConversation && sender.meetsConditions(nextConversation)) {
+
+							// Reward the Player
+							nextConversation.rewards.forEach(reward => {
+								if (reward.item) {
+									sender.addItem(reward.item);
+									this.playerControllers.forEach(playerController => {
+										if (playerController.player.id === sender.id) {
+											playerController.take(sender, item);
+										}
+									});
+								}
+								sender.money += reward.money;
+								sender.experience += reward.experience;
+							});
+
+							// Send the Mob's response
 							sender.conversation = {
 								id: nextConversation.id,
 								mobId: mob.id
@@ -217,8 +233,20 @@ class GameController {
 						}
 					}
 
-					// Save current Conversation to the Player and display the message
+					// Save current Conversation to the Player
 					if (conversation) {
+
+						// Reward the Player
+						conversation.rewards.forEach(reward => {
+							if (reward.item) {
+								playerController.player.addItem(reward.item);
+								playerController.take(playerController.player, reward.item);
+							}
+							playerController.player.money += reward.money;
+							playerController.player.experience += reward.experience;
+						});
+
+						//  Send the Mob's response
 						playerController.player.conversation = {
 							id: conversation.id,
 							mobId: conversation.mobId
@@ -226,7 +254,7 @@ class GameController {
 						this.say(mob, 1, conversation.getFormattedMessage(playerController.player));
 					}
 				} else if (factionLevel == config.factionScale.AGGRESSIVE.index) {
-					mob.attacking = player.id;
+					mob.attacking = playerController.player.id;
 					Logger.log('"' + mob.name + '" attacked ' + playerController.player.name + '.', Logger.logTypes.DEBUG);
 				}
 			} else {
@@ -275,7 +303,9 @@ class GameController {
 
 					// Update Players
 					this.playerControllers.forEach(playerController => {
-						playerController.take(player, item);
+						if (playerController.player.roomId === room.id) {
+							playerController.take(player, item);
+						}
 					});
 				} else {
 					Logger.log('Item ' + itemId + ' does not belong to ' + player.name + '.', Logger.logTypes.ERROR);
@@ -306,7 +336,9 @@ class GameController {
 
 				// Update Players
 				this.playerControllers.forEach(playerController => {
-					playerController.drop(player, item);
+					if (playerController.player.roomId === room.id) {
+						playerController.drop(player, item);
+					}
 				});
 			} else {
 				Logger.log(player.name + ' is not carrying item ' + itemId + '.', Logger.logTypes.ERROR);

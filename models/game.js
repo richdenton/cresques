@@ -12,6 +12,7 @@ const MobFactions = require('../models/mobFactions');
 const MobFactionRewards = require('../models/mobFactionRewards');
 const MobInventories = require('../models/mobInventories');
 const MobConversations = require('./mobConversations');
+const MobConversationRewards = require('./mobConversationRewards');
 const Players = require('../models/players');
 const PlayerFactions = require('../models/playerFactions');
 const PlayerInventories = require('../models/playerInventories');
@@ -37,6 +38,7 @@ class Game {
 		this.mobFactionRewards = new MobFactionRewards();
 		this.mobInventories = new MobInventories();
 		this.mobConversations = new MobConversations();
+		this.mobConversationRewards = new MobConversationRewards();
 		this.players = new Players();
 		this.playerFactions = new PlayerFactions();
 		this.playerInventories = new PlayerInventories();

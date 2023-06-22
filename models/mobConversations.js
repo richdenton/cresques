@@ -4,7 +4,7 @@ const MobConversation = require('./mobConversation');
 class MobConversations extends Entities {
 
 	/**
-	 * Represents a map of Mob conversations.
+	 * Represents a map of Mob Conversations.
 	 * @constructor
 	 */
 	constructor() {
@@ -20,7 +20,7 @@ class MobConversations extends Entities {
 		// Remove old data
 		this.map.clear();
 
-		// Retrieve all conversations from the database
+		// Retrieve all Conversations from the database
 		await super.load('mob_conversation', (results) => {
 			results.forEach(result => {
 				const mobConversation = new MobConversation(result);

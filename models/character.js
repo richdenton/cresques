@@ -74,7 +74,7 @@ class Character extends Entity {
 	 * @return {Object} The faction level object. See gameConfig.factionScale.
 	 */
 	getFactionLevel(target) {
-		let result = gameConfig.factionScale.AGGRESSIVE;
+		let result = gameConfig.factionScale.INDIFFERENT;
 		target.factions.forEach(faction => {
 			const factionDelta = faction.score - (this.factions.find(f => f.id === faction.id) || { score: 0 }).score;
 			for (const tier in gameConfig.factionScale) {

@@ -4,7 +4,7 @@ const MobFactionReward = require('./mobFactionReward');
 class MobFactionRewards extends Entities {
 
 	/**
-	 * Represents a map of Faction Rewards when defeating Mobs.
+	 * Represents a map of Faction Rewards given to a Player after defeating Mobs.
 	 * @constructor
 	 */
 	constructor() {
@@ -20,7 +20,7 @@ class MobFactionRewards extends Entities {
 		// Remove old data
 		this.map.clear();
 
-		// Retrieve all Mob Faction rewards from the database
+		// Retrieve all Faction Rewards from the database
 		await super.load('mob_faction_reward', (results) => {
 			results.forEach(result => {
 				const mobFactionReward = new MobFactionReward(result);

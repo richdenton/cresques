@@ -13,5 +13,5 @@ Currently, Cresques is quite limited. Over time, I hope to expand it to include 
 - [x] Item handling
 - [x] Dialog
 - [x] Merchants
-- [ ] Questing
+- [x] Questing
 - [ ] Dynamic environments

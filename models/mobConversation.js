@@ -3,7 +3,7 @@ const Entity = require('./entity');
 class MobConversation extends Entity {
 
 	/**
-	 * Represents a conversation with a Mob.
+	 * Represents a Conversation with a Mob.
 	 * @param {Object} data - Default parameters.
 	 * @constructor
 	 */
@@ -35,6 +35,7 @@ class MobConversation extends Entity {
 					});
 				}
 			});
+			this.rewards = [];
 		}
 	}
 
