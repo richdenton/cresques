@@ -109,6 +109,20 @@ CREATE TABLE `mob_inventory` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `mob_route`
+--
+
+CREATE TABLE `mob_route` (
+  `id` int NOT NULL,
+  `mob_id` int NOT NULL,
+  `room_start` int NOT NULL,
+  `room_end` int NOT NULL,
+  `wait_time` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `mob_shop`
 --
 
@@ -317,6 +331,12 @@ ALTER TABLE `mob_inventory`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `mob_route`
+--
+ALTER TABLE `mob_route`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `mob_shop`
 --
 ALTER TABLE `mob_shop`
@@ -427,6 +447,12 @@ ALTER TABLE `mob_faction_reward`
 -- AUTO_INCREMENT for table `mob_inventory`
 --
 ALTER TABLE `mob_inventory`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mob_route`
+--
+ALTER TABLE `mob_route`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --

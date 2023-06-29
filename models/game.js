@@ -13,6 +13,7 @@ const MobFactionRewards = require('../models/mobFactionRewards');
 const MobInventories = require('../models/mobInventories');
 const MobConversations = require('./mobConversations');
 const MobConversationRewards = require('./mobConversationRewards');
+const MobRoutes = require('./mobRoutes');
 const Players = require('../models/players');
 const PlayerFactions = require('../models/playerFactions');
 const PlayerInventories = require('../models/playerInventories');
@@ -39,6 +40,7 @@ class Game {
 		this.mobInventories = new MobInventories();
 		this.mobConversations = new MobConversations();
 		this.mobConversationRewards = new MobConversationRewards();
+		this.mobRoutes = new MobRoutes();
 		this.players = new Players();
 		this.playerFactions = new PlayerFactions();
 		this.playerInventories = new PlayerInventories();
@@ -143,6 +145,36 @@ class Game {
 					// End combat
 					mob.attacking = 0;
 					mob.damageTotals.clear();
+				}
+			}
+
+			// Check if Mob is traveling
+			else if (mob.routes.length) {
+				mob.routeIndex = mob.routeIndex || 0;
+				if (mob.routeIndex >= mob.routes.length) {
+					mob.routeIndex = 0;
+				}
+
+				// Check if enough time has elapsed from last movement
+				const route = mob.routes[mob.routeIndex];
+				if (now - (mob.moveTime || 0) > route.waitTime) {
+					const roomStart = this.rooms.get(route.roomStart),
+						roomEnd = this.rooms.get(route.roomEnd);
+
+					// Move the Mob
+					if (roomStart.id && mob.roomId === roomStart.id) {
+						if (roomEnd.id) {
+							roomStart.removeMob(mob);
+							roomEnd.addMob(mob);
+							Logger.log('"' + mob.name + '" (' + mob.id + ') moved from ' + roomStart.name + ' to ' + roomEnd.name + '.', Logger.logTypes.DEBUG);
+							mob.moveTime = now;
+							mob.routeIndex++;
+						} else {
+							Logger.log('"' + mob.name + '" (' + mob.id + ') cannot move to room ' + roomEnd.id + '.', Logger.logTypes.ERROR);
+						}
+					} else {
+						Logger.log('"' + mob.name + '" (' + mob.id + ') is not in ' + roomStart.name + '.', Logger.logTypes.ERROR);
+					}
 				}
 			}
 		});
