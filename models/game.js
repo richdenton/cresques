@@ -84,6 +84,9 @@ class Game {
 				if (mob.attacking) {
 					mob.attacking = 0;
 					mob.damageTotals.clear();
+					if (mob.moveTime) {
+						mob.moveTime = now;
+					}
 				}
 
 				// Remove Mob from the current Room
@@ -145,11 +148,15 @@ class Game {
 					// End combat
 					mob.attacking = 0;
 					mob.damageTotals.clear();
+					if (mob.moveTime) {
+						mob.moveTime = now;
+					}
 				}
 			}
 
 			// Check if Mob is traveling
 			else if (mob.routes.length) {
+				mob.moveTime = mob.moveTime || now;
 				mob.routeIndex = mob.routeIndex || 0;
 				if (mob.routeIndex >= mob.routes.length) {
 					mob.routeIndex = 0;
@@ -157,7 +164,7 @@ class Game {
 
 				// Check if enough time has elapsed from last movement
 				const route = mob.routes[mob.routeIndex];
-				if (now - (mob.moveTime || 0) > route.waitTime) {
+				if (now - mob.moveTime > route.waitTime) {
 					const roomStart = this.rooms.get(route.roomStart),
 						roomEnd = this.rooms.get(route.roomEnd);
 
