@@ -1,9 +1,9 @@
-const config = require('../config/gameConfig');
+const gameConfig = require('../config/gameConfig');
 const Items = require('../models/items');
 const Rooms = require('../models/rooms');
 const Shops = require('../models/shops');
 const ShopInventories = require('../models/shopInventories');
-const Species = require('../models/species');
+const Races = require('../models/races');
 const MobSpawns = require('../models/mobSpawns');
 const MobShops = require('../models/mobShops');
 const MobTemplates = require('../models/mobTemplates');
@@ -30,7 +30,7 @@ class Game {
 		this.rooms = new Rooms();
 		this.shops = new Shops();
 		this.shopInventories = new ShopInventories();
-		this.species = new Species();
+		this.races = new Races();
 		this.mobSpawns = new MobSpawns();
 		this.mobShops = new MobShops();
 		this.mobTemplates = new MobTemplates();
@@ -202,7 +202,7 @@ class Game {
 				}
 
 				// Respawn the Player
-				if (player.isActive && (!player.killTime || now > player.killTime + config.playerRespawnTime)) {
+				if (player.isActive && (!player.killTime || now > player.killTime + gameConfig.playerRespawnTime)) {
 
 					// Remove Player from the current Room
 					let room = this.rooms.get(player.roomId);
@@ -214,10 +214,10 @@ class Game {
 						Logger.log(player.name + ' is not in a room.', Logger.logTypes.ERROR);
 					}
 
-					// Respawn Player in Species starting Room
-					const species = this.species.get(player.speciesId);
-					if (species.id) {
-						room = this.rooms.get(species.roomId);
+					// Respawn Player in Race starting Room
+					const race = this.races.get(player.raceId);
+					if (race.id) {
+						room = this.rooms.get(race.roomId);
 						if (room.id) {
 							player.newRoomId = room.id;
 							room.addPlayer(player);
@@ -226,7 +226,7 @@ class Game {
 							Logger.log('Could not respawn ' + player.name + ' due to missing room.', Logger.logTypes.ERROR);
 						}
 					} else {
-						Logger.log('Could not respawn ' + player.name + ' due to missing species.', Logger.logTypes.ERROR);
+						Logger.log('Could not respawn ' + player.name + ' due to missing race.', Logger.logTypes.ERROR);
 					}
 
 					// Reset Player stats
@@ -295,7 +295,7 @@ class Game {
 		// Mark dropped Items as decaying
 		this.rooms.map.forEach(room => {
 			room.items.forEach(item => {
-				if (now >= item.dropTime + config.itemDecayTime) {
+				if (now >= item.dropTime + gameConfig.itemDecayTime) {
 					item.decayed = true;
 				}
 			});

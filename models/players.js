@@ -1,7 +1,6 @@
 const DatabaseController = require('../controllers/databaseController');
 const Entities = require('./entities');
 const Player = require('./player');
-const GameUtils = require('../utils/gameUtils');
 
 class Players extends Entities {
 
@@ -15,9 +14,9 @@ class Players extends Entities {
 
 	/**
 	 * Initialize the Player map with data from the database.
-	 * @param {Entities} species - The map of Species to help initialize Player stats.
+	 * @param {Entities} races - The map of Races to help initialize Player stats.
 	 */
-	async load(species) {
+	async load(races) {
 
 		// Remove old data
 		this.map.clear();
@@ -26,12 +25,12 @@ class Players extends Entities {
 		await super.load('player', (results) => {
 			results.forEach(result => {
 				let player = new Player(result);
-				const playerSpecies = species.get(player.speciesId);
-				player.strengthBase = playerSpecies.strength;
-				player.staminaBase = playerSpecies.stamina;
-				player.agilityBase = playerSpecies.agility;
-				player.intelligenceBase = playerSpecies.intelligence;
-				player.healthBase = playerSpecies.health;
+				const playerRace = races.get(player.raceId);
+				player.strengthBase = playerRace.strength;
+				player.staminaBase = playerRace.stamina;
+				player.agilityBase = playerRace.agility;
+				player.intelligenceBase = playerRace.intelligence;
+				player.healthBase = playerRace.health;
 				player.level = player.getExperienceLevel();
 				this.add(player);
 			});
@@ -59,7 +58,7 @@ class Players extends Entities {
 	 * @return {Player} The Player with a new ID.
 	 */
 	async insertPlayer(player) {
-		const results = await DatabaseController.pool.query('INSERT INTO player (user_id, name, species_id, health) VALUES (?, ?, ?);', [player.userId, player.name, player.speciesId, player.health]);
+		const results = await DatabaseController.pool.query('INSERT INTO player (user_id, name, race_id, health) VALUES (?, ?, ?);', [player.userId, player.name, player.raceId, player.health]);
 		player.id = results[0].insertId;
 		if (player.id) {
 			this.add(player);

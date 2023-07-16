@@ -18,10 +18,10 @@ class Mobs extends Entities {
 	 * @param {MobShops} mobShops - Map of all Shops owned by Mobs.
 	 * @param {Shops} shops - Map of all Shops.
 	 * @param {MobTemplates} mobTemplates - Map of all Mob templates.
-	 * @param {Species} species - The map of Species to help initialize Mob stats.
+	 * @param {Races} races - The map of Races to help initialize Mob stats.
 	 * @param {Rooms} rooms - Map of all Rooms.
 	 */
-	init(mobSpawns, mobShops, shops, mobTemplates, species, rooms) {
+	init(mobSpawns, mobShops, shops, mobTemplates, races, rooms) {
 
 		// Remove old data
 		this.map.clear();
@@ -40,12 +40,12 @@ class Mobs extends Entities {
 					mob.shop = shop;
 				}
 			}
-			const mobSpecies = species.get(mob.speciesId);
-			mob.strengthBase = mobSpecies.strength;
-			mob.staminaBase = mobSpecies.stamina;
-			mob.agilityBase = mobSpecies.agility;
-			mob.intelligenceBase = mobSpecies.intelligence;
-			mob.healthBase = mobSpecies.health;
+			const mobRace = races.get(mob.raceId);
+			mob.strengthBase = mobRace.strength;
+			mob.staminaBase = mobRace.stamina;
+			mob.agilityBase = mobRace.agility;
+			mob.intelligenceBase = mobRace.intelligence;
+			mob.healthBase = mobRace.health;
 			this.add(mob);
 			const room = rooms.get(mobSpawn.roomId);
 			room.addMob(mob);

@@ -13,7 +13,7 @@ class MobTemplate extends Entity {
 		if (data) {
 			this.id = parseInt(data.id);
 			this.name = data.name;
-			this.speciesId = parseInt(data.species_id);
+			this.raceId = parseInt(data.race_id);
 			this.health = parseInt(data.health);
 			this.strength = parseInt(data.strength);
 			this.stamina = parseInt(data.stamina);

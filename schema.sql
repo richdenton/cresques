@@ -154,7 +154,7 @@ CREATE TABLE `mob_spawn` (
 CREATE TABLE `mob_template` (
   `id` int NOT NULL,
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `species_id` int NOT NULL,
+  `race_id` int NOT NULL,
   `health` int NOT NULL,
   `strength` int NOT NULL,
   `stamina` int NOT NULL,
@@ -174,7 +174,7 @@ CREATE TABLE `player` (
   `id` int NOT NULL,
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `user_id` int NOT NULL,
-  `species_id` int NOT NULL,
+  `race_id` int NOT NULL,
   `health` int NOT NULL,
   `strength` int NOT NULL,
   `stamina` int NOT NULL,
@@ -209,6 +209,24 @@ CREATE TABLE `player_inventory` (
   `player_id` int NOT NULL,
   `item_id` int NOT NULL,
   `slot` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `race`
+--
+
+CREATE TABLE `race` (
+  `id` int NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `room_id` int NOT NULL,
+  `health` int NOT NULL,
+  `strength` int NOT NULL,
+  `stamina` int NOT NULL,
+  `agility` int NOT NULL,
+  `intelligence` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -251,24 +269,6 @@ CREATE TABLE `shop_inventory` (
   `id` int NOT NULL,
   `shop_id` int NOT NULL,
   `item_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `species`
---
-
-CREATE TABLE `species` (
-  `id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `room_id` int NOT NULL,
-  `health` int NOT NULL,
-  `strength` int NOT NULL,
-  `stamina` int NOT NULL,
-  `agility` int NOT NULL,
-  `intelligence` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -373,6 +373,12 @@ ALTER TABLE `player_inventory`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `race`
+--
+ALTER TABLE `race`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `room`
 --
 ALTER TABLE `room`
@@ -388,12 +394,6 @@ ALTER TABLE `shop`
 -- Indexes for table `shop_inventory`
 --
 ALTER TABLE `shop_inventory`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `species`
---
-ALTER TABLE `species`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -492,6 +492,12 @@ ALTER TABLE `player_inventory`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `race`
+--
+ALTER TABLE `race`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
@@ -507,12 +513,6 @@ ALTER TABLE `shop`
 -- AUTO_INCREMENT for table `shop_inventory`
 --
 ALTER TABLE `shop_inventory`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `species`
---
-ALTER TABLE `species`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --

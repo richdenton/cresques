@@ -1,9 +1,18 @@
-const config = require('../config/gameConfig');
+const gameConfig = require('../config/gameConfig');
 const Game = require('../models/game');
 const GameUtils = require('../utils/gameUtils');
 const Logger = require('../utils/logger');
 
 class GameController {
+
+	static roomDirections = {
+		NORTH: 'n',
+		SOUTH: 's',
+		EAST: 'e',
+		WEST: 'w',
+		UP: 'u',
+		DOWN: 'd'
+	};
 
 	constructor() {
 		this.playerControllers = [];
@@ -20,7 +29,7 @@ class GameController {
 			_this.playerControllers.forEach(playerController => {
 				playerController.update(now);
 			});
-		}, config.refreshRate, this);
+		}, gameConfig.refreshRate, this);
 	}
 
 	/**
@@ -58,22 +67,22 @@ class GameController {
 			let newRoomId = 0;
 			if (currentRoom.id) {
 				switch(direction) {
-					case config.roomDirections.NORTH:
+					case GameController.roomDirections.NORTH:
 						newRoomId = currentRoom.exits.north;
 						break;
-					case config.roomDirections.EAST:
+					case GameController.roomDirections.EAST:
 						newRoomId = currentRoom.exits.east;
 						break;
-					case config.roomDirections.SOUTH:
+					case GameController.roomDirections.SOUTH:
 						newRoomId = currentRoom.exits.south;
 						break;
-					case config.roomDirections.WEST:
+					case GameController.roomDirections.WEST:
 						newRoomId = currentRoom.exits.west;
 						break;
-					case config.roomDirections.UP:
+					case GameController.roomDirections.UP:
 						newRoomId = currentRoom.exits.up;
 						break;
-					case config.roomDirections.DOWN:
+					case GameController.roomDirections.DOWN:
 						newRoomId = currentRoom.exits.down;
 						break;
 					default:
@@ -223,7 +232,7 @@ class GameController {
 		if (mob) {
 			if (mob.roomId === playerController.player.roomId) {
 				const factionLevel = playerController.player.getFactionLevel(mob).index;
-				if (factionLevel >= config.factionScale.INDIFFERENT.index) {
+				if (factionLevel >= gameConfig.factionScale.INDIFFERENT.index) {
 
 					// Find the most applicable Conversation
 					let conversation = null;
@@ -253,7 +262,7 @@ class GameController {
 						};
 						this.say(mob, 1, conversation.getFormattedMessage(playerController.player));
 					}
-				} else if (factionLevel == config.factionScale.AGGRESSIVE.index) {
+				} else if (factionLevel == gameConfig.factionScale.AGGRESSIVE.index) {
 					mob.attacking = playerController.player.id;
 					Logger.log('"' + mob.name + '" attacked ' + playerController.player.name + '.', Logger.logTypes.DEBUG);
 				}
@@ -358,7 +367,7 @@ class GameController {
 		// Ensure the Player has possession of the Item
 		const item = playerController.player.items.find(i => i.id === itemId);
 		if (item) {
-			if (item.slot === config.itemSlots.WEAPON || item.slot === config.itemSlots.HEAD || item.slot === config.itemSlots.CHEST || item.slot === config.itemSlots.ARMS || item.slot === config.itemSlots.LEGS) {
+			if (item.slot === gameConfig.itemSlots.WEAPON || item.slot === gameConfig.itemSlots.HEAD || item.slot === gameConfig.itemSlots.CHEST || item.slot === gameConfig.itemSlots.ARMS || item.slot === gameConfig.itemSlots.LEGS) {
 				playerController.player.equip(item);
 				playerController.equip(item);
 			} else {
@@ -379,13 +388,13 @@ class GameController {
 		if (mob) {
 			if (mob.roomId === playerController.player.roomId) {
 				const factionLevel = playerController.player.getFactionLevel(mob).index;
-				if (factionLevel >= config.factionScale.INDIFFERENT.index) {
+				if (factionLevel >= gameConfig.factionScale.INDIFFERENT.index) {
 					if (mob.shop) {
 						playerController.shop(mob.shop);
 					} else {
 						Logger.log('No shop associated with "' + mob.name + '".', Logger.logTypes.ERROR);
 					}
-				} else if (factionLevel == config.factionScale.AGGRESSIVE.index) {
+				} else if (factionLevel == gameConfig.factionScale.AGGRESSIVE.index) {
 					mob.attacking = player.id;
 					Logger.log('"' + mob.name + '" attacked ' + playerController.player.name + '.', Logger.logTypes.DEBUG);
 				}

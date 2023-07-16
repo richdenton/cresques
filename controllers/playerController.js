@@ -1,29 +1,27 @@
-const GameUtils = require('../utils/gameUtils');
-
 class PlayerController {
 
 	static messageActions = {
-		MOVE: 0,
-		ENTER: 1,
-		LEAVE: 2,
-		SAY: 3,
-		YELL: 4,
-		CONSIDER: 5,
-		HAIL: 6,
-		ATTACK: 7,
-		DIE: 8,
-		TAKE: 9,
-		DROP: 10,
-		DECAY: 11,
-		EQUIP: 12,
-		SHOP: 13,
-		BUY: 14,
-		SELL: 15
+		MOVE: 'move',
+		ENTER: 'enter',
+		LEAVE: 'leave',
+		SAY: 'say',
+		YELL: 'yell',
+		CONSIDER: 'con',
+		HAIL: 'hail',
+		ATTACK: 'attack',
+		DIE: 'die',
+		TAKE: 'take',
+		DROP: 'drop',
+		DECAY: 'decay',
+		EQUIP: 'equip',
+		SHOP: 'shop',
+		BUY: 'buy',
+		SELL: 'sell'
 	};
 
 	static entityType = {
-		PLAYER: 0,
-		MOB: 1
+		PLAYER: 'player',
+		MOB: 'mob'
 	};
 
 	/**

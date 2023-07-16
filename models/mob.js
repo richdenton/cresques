@@ -22,7 +22,7 @@ class Mob extends Character {
 	loadTemplate(template) {
 		this.templateId = template.id;
 		this.name = template.name;
-		this.speciesId = template.speciesId;
+		this.raceId = template.raceId;
 		this.health = template.health;
 		this.strength = template.strength;
 		this.stamina = template.stamina;

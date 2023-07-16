@@ -20,7 +20,7 @@ const serverController = new ServerController();
 app.post('/signup', serverController.signup.bind(serverController));
 app.post('/login', serverController.login.bind(serverController));
 app.post('/logout', serverController.logout.bind(serverController));
-app.get('/getSpecies', serverController.getSpecies.bind(serverController));
+app.get('/getRaces', serverController.getRaces.bind(serverController));
 app.get('/getPlayers', serverController.getPlayers.bind(serverController));
 app.post('/createPlayer', serverController.createPlayer.bind(serverController));
 app.post('/deletePlayer', serverController.deletePlayer.bind(serverController));

@@ -26,18 +26,18 @@ class ServerController {
 		await this.gameController.game.rooms.load();
 		await this.gameController.game.shops.load();
 		await this.gameController.game.shopInventories.load(this.gameController.game.shops, this.gameController.game.items);
-		await this.gameController.game.species.load();
+		await this.gameController.game.races.load();
 		await this.gameController.game.mobSpawns.load();
 		await this.gameController.game.mobShops.load();
 		await this.gameController.game.mobTemplates.load();
-		this.gameController.game.mobs.init(this.gameController.game.mobSpawns, this.gameController.game.mobShops, this.gameController.game.shops, this.gameController.game.mobTemplates, this.gameController.game.species, this.gameController.game.rooms);
+		this.gameController.game.mobs.init(this.gameController.game.mobSpawns, this.gameController.game.mobShops, this.gameController.game.shops, this.gameController.game.mobTemplates, this.gameController.game.races, this.gameController.game.rooms);
 		await this.gameController.game.mobFactions.load(this.gameController.game.mobs);
 		await this.gameController.game.mobFactionRewards.load(this.gameController.game.mobs);
 		await this.gameController.game.mobInventories.load(this.gameController.game.mobs, this.gameController.game.items);
 		await this.gameController.game.mobConversations.load(this.gameController.game.mobs);
 		await this.gameController.game.mobConversationRewards.load(this.gameController.game.mobConversations, this.gameController.game.items);
 		await this.gameController.game.mobRoutes.load(this.gameController.game.mobs);
-		await this.gameController.game.players.load(this.gameController.game.species);
+		await this.gameController.game.players.load(this.gameController.game.races);
 		await this.gameController.game.playerFactions.load(this.gameController.game.players);
 		await this.gameController.game.playerInventories.load(this.gameController.game.players, this.gameController.game.items);
 	}
@@ -229,12 +229,12 @@ class ServerController {
 	}
 
 	/**
-	 * Lookup the list of available Species to choose from.
+	 * Lookup the list of available Races to choose from.
 	 * @param {Request} request - The request data with an access token.
 	 * @param {Response} response - The response to return any status to.
-	 * @return {Response} Response with a list of Players attached.
+	 * @return {Response} Response with a list of Races attached.
 	 */
-	async getSpecies(request, response) {
+	async getRaces(request, response) {
 		try {
 
 			// Get the currently logged in User
@@ -245,10 +245,10 @@ class ServerController {
 				});
 			}
 
-			// Return all possible Species
-			const species = this.gameController.species.getAll();
+			// Return all possible Races
+			const races = this.gameController.races.getAll();
 			return response.status(200).send(JSON.stringify({
-				species: species
+				races: races
 			}));
 		} catch (error) {
 			response.status(500).send({
@@ -288,7 +288,7 @@ class ServerController {
 
 	/**
 	 * Create a new Player and save to the database.
-	 * @param {Request} request - The request data including "name" and "speciesId" of the new Player.
+	 * @param {Request} request - The request data including "name" and "raceId" of the new Player.
 	 * @param {Response} response - The response to return to.
 	 * @return {Response} Response with a list of Players attached.
 	 */
@@ -315,17 +315,17 @@ class ServerController {
 			let player = new Player();
 			player.name = name;
 			player.userId = user.id;
-			player.speciesId = parseInt(request.body.speciesId);
+			player.raceId = parseInt(request.body.raceId);
 
 			// Determine starting stats
-			const species = this.gameController.species.get(player.speciesId);
-			if (species.id) {
-				player.health = species.health;
-				player.strengthBase = species.strength;
-				player.staminaBase = species.stamina;
-				player.agilityBase = species.agility;
-				player.intelligenceBase = species.intelligence;
-				player.roomId = species.roomId;
+			const race = this.gameController.races.get(player.raceId);
+			if (race.id) {
+				player.health = race.health;
+				player.strengthBase = race.strength;
+				player.staminaBase = race.stamina;
+				player.agilityBase = race.agility;
+				player.intelligenceBase = race.intelligence;
+				player.roomId = race.roomId;
 				player.level = 0;
 			} else {
 				return response.status(500).send(JSON.stringify({
