@@ -246,7 +246,7 @@ class ServerController {
 			}
 
 			// Return all possible Races
-			const races = this.gameController.races.getAll();
+			const races = this.gameController.game.races.getAll();
 			return response.status(200).send(JSON.stringify({
 				races: races
 			}));
@@ -318,7 +318,7 @@ class ServerController {
 			player.raceId = parseInt(request.body.raceId);
 
 			// Determine starting stats
-			const race = this.gameController.races.get(player.raceId);
+			const race = this.gameController.game.races.get(player.raceId);
 			if (race.id) {
 				player.health = race.health;
 				player.strengthBase = race.strength;

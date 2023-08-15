@@ -365,6 +365,7 @@ ALTER TABLE `player`
 --
 ALTER TABLE `player_faction`
   ADD PRIMARY KEY (`id`);
+  ADD UNIQUE KEY `player_faction_uk` (`player_id`,`faction_id`);
 
 --
 -- Indexes for table `player_inventory`

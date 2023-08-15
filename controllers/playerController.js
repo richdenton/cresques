@@ -137,7 +137,7 @@ class PlayerController {
 			socket = this.socket;
 		if (room.id > 0) {
 
-			// Notify about Mob changes
+			// Notify about Mob movement and combat
 			room.mobs.forEach(mob => {
 
 				// Enter / Respawn
@@ -148,6 +148,14 @@ class PlayerController {
 					},
 						[ 'action', 'mob', 'id', 'name' ]
 					));
+				}
+
+				// Leave
+				if (mob.oldRoomId && mob.oldRoomId === this.player.roomId) {
+					socket.send(JSON.stringify({
+						action: PlayerController.messageActions.LEAVE,
+						mobId: mob.id
+					}));
 				}
 
 				// Combat
@@ -167,7 +175,7 @@ class PlayerController {
 				}
 			});
 
-			// Notify about other Player changes
+			// Notify about Player movement and combat
 			room.players.forEach(player => {
 
 				// Enter / Respawn
@@ -187,14 +195,6 @@ class PlayerController {
 							[ 'action', 'player', 'id', 'name' ]
 						));
 					}
-				}
-
-				// Leave
-				if (player.oldRoomId && player.oldRoomId === this.player.roomId && player.id !== this.player.id) {
-					socket.send(JSON.stringify({
-						action: PlayerController.messageActions.LEAVE,
-						playerId: player.id
-					}));
 				}
 
 				// Combat
@@ -265,6 +265,26 @@ class PlayerController {
 				}
 			});
 		}
+
+		// Notify about Mobs no longer in the Room
+		this.gameController.game.mobs.map.forEach(mob => {
+			if (mob.oldRoomId && mob.oldRoomId === this.player.roomId) {
+				socket.send(JSON.stringify({
+					action: PlayerController.messageActions.LEAVE,
+					mobId: mob.id
+				}));
+			}
+		});
+
+		// Notify about Players no longer in the Room
+		this.gameController.game.players.map.forEach(player => {
+			if (player.oldRoomId && player.oldRoomId === this.player.roomId && player.id !== this.player.id) {
+				socket.send(JSON.stringify({
+					action: PlayerController.messageActions.LEAVE,
+					playerId: player.id
+				}));
+			}
+		});
 	}
 
 	/**

@@ -76,6 +76,7 @@ class Game {
 			mob.damage = -1;
 			mob.attacker = 0;
 			mob.newRoomId = 0;
+			mob.oldRoomId = 0;
 
 			// Check if the Mob has died
 			if (mob.health < 1) {
@@ -171,7 +172,9 @@ class Game {
 					// Move the Mob
 					if (roomStart.id && mob.roomId === roomStart.id) {
 						if (roomEnd.id) {
+							mob.oldRoomId = roomStart.id;
 							roomStart.removeMob(mob);
+							mob.newRoomId = roomEnd.id;
 							roomEnd.addMob(mob);
 							Logger.log('"' + mob.name + '" (' + mob.id + ') moved from ' + roomStart.name + ' to ' + roomEnd.name + '.', Logger.logTypes.DEBUG);
 							mob.moveTime = now;

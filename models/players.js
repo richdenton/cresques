@@ -58,7 +58,7 @@ class Players extends Entities {
 	 * @return {Player} The Player with a new ID.
 	 */
 	async insertPlayer(player) {
-		const results = await DatabaseController.pool.query('INSERT INTO player (user_id, name, race_id, health) VALUES (?, ?, ?);', [player.userId, player.name, player.raceId, player.health]);
+		const results = await DatabaseController.pool.query('INSERT INTO player (user_id, name, race_id, health) VALUES (?, ?, ?, ?);', [player.userId, player.name, player.raceId, player.health]);
 		player.id = results[0].insertId;
 		if (player.id) {
 			this.add(player);

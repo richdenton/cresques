@@ -12,9 +12,6 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Setup static files
-//app.use(express.static('public'));
-
 // Setup authentication routing
 const serverController = new ServerController();
 app.post('/signup', serverController.signup.bind(serverController));
