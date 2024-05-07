@@ -237,6 +237,7 @@ CREATE TABLE `race` (
 
 CREATE TABLE `room` (
   `id` int NOT NULL,
+  `zone_id` int NOT NULL,
   `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `north` int NOT NULL,
@@ -282,6 +283,17 @@ CREATE TABLE `user` (
   `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `admin` tinyint NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `zone`
+--
+
+CREATE TABLE `zone` (
+  `id` int NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -403,6 +415,12 @@ ALTER TABLE `shop_inventory`
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `zone`
+--
+ALTER TABLE `zone`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables

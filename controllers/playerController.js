@@ -183,9 +183,10 @@ class PlayerController {
 					if (player.id === this.player.id) {
 						socket.send(JSON.stringify({
 							action: PlayerController.messageActions.MOVE,
-							room: room
+							zone: this.gameController.game.zones.get(room.zoneId),
+							room: room,
 						},
-							[ 'action', 'room', 'id', 'name', 'description', 'exits', 'north', 'east', 'south', 'west', 'up', 'down', 'players', 'mobs', 'items' ]
+							[ 'action', 'zone', 'room', 'id', 'name', 'description', 'exits', 'north', 'east', 'south', 'west', 'up', 'down', 'roomId', 'zoneId', 'players', 'mobs', 'items' ]
 						));
 					} else {
 						socket.send(JSON.stringify({
@@ -294,9 +295,10 @@ class PlayerController {
 	move(room) {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.MOVE,
-			room: room
+			zone: this.gameController.game.zones.get(room.zoneId),
+			room: room,
 		},
-			[ 'action', 'room', 'id', 'name', 'description', 'exits', 'north', 'east', 'south', 'west', 'up', 'down', 'players', 'mobs', 'items' ]
+			[ 'action', 'zone', 'room', 'id', 'name', 'description', 'exits', 'north', 'east', 'south', 'west', 'up', 'down', 'roomId', 'zoneId', 'players', 'mobs', 'items' ]
 		));
 	}
 

@@ -68,22 +68,34 @@ class GameController {
 			if (currentRoom.id) {
 				switch(direction) {
 					case GameController.roomDirections.NORTH:
-						newRoomId = currentRoom.exits.north;
+						if (currentRoom.exits.north) {
+							newRoomId = currentRoom.exits.north.roomId;
+						}
 						break;
 					case GameController.roomDirections.EAST:
-						newRoomId = currentRoom.exits.east;
+						if (currentRoom.exits.east) {
+							newRoomId = currentRoom.exits.east.roomId;
+						}
 						break;
 					case GameController.roomDirections.SOUTH:
-						newRoomId = currentRoom.exits.south;
+						if (currentRoom.exits.south) {
+							newRoomId = currentRoom.exits.south.roomId;
+						}
 						break;
 					case GameController.roomDirections.WEST:
-						newRoomId = currentRoom.exits.west;
+						if (currentRoom.exits.west) {
+							newRoomId = currentRoom.exits.west.roomId;
+						}
 						break;
 					case GameController.roomDirections.UP:
-						newRoomId = currentRoom.exits.up;
+						if (currentRoom.exits.up) {
+							newRoomId = currentRoom.exits.up.roomId;
+						}
 						break;
 					case GameController.roomDirections.DOWN:
-						newRoomId = currentRoom.exits.down;
+						if (currentRoom.exits.down) {
+							newRoomId = currentRoom.exits.down.roomId;
+						}
 						break;
 					default:
 						newRoomId = currentRoom.id;
@@ -180,7 +192,7 @@ class GameController {
 	}
 
 	/**
-	 * Handle a Player or Mob yelling something to everyone in nearby Rooms.
+	 * Handle a Player or Mob yelling something to everyone in the current Zone.
 	 * @param {Entity} sender - The Player or Mob who sent the message.
 	 * @param {Number} type - The type of the Entity.
 	 * @param {String} text - The content of the message.
@@ -188,13 +200,7 @@ class GameController {
 	yell(sender, type, text) {
 		const currentRoom = this.game.rooms.get(sender.roomId);
 		this.playerControllers.forEach(playerController => {
-			if (playerController.player.roomId == currentRoom.id
-				|| playerController.player.roomId == currentRoom.exits.north
-				|| playerController.player.roomId == currentRoom.exits.east
-				|| playerController.player.roomId == currentRoom.exits.south
-				|| playerController.player.roomId == currentRoom.exits.west
-				|| playerController.player.roomId == currentRoom.exits.up
-				|| playerController.player.roomId == currentRoom.exits.down) {
+			if (playerController.player.zoneId === currentRoom.zoneId) {
 				playerController.yell(sender, type, text);
 			}
 		});

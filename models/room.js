@@ -12,14 +12,27 @@ class Room extends Entity {
 		this.exits = {};
 		if (data) {
 			this.id = parseInt(data.id);
+			this.zoneId = parseInt(data.zone_id);
 			this.name = data.name;
 			this.description = data.description;
-			this.exits.north = parseInt(data.north);
-			this.exits.east = parseInt(data.east);
-			this.exits.south = parseInt(data.south);
-			this.exits.west = parseInt(data.west);
-			this.exits.up = parseInt(data.up);
-			this.exits.down = parseInt(data.down);
+			if (data.north) {
+				this.exits.north = { roomId: parseInt(data.north) };
+			}
+			if (data.east) {
+				this.exits.east = { roomId: parseInt(data.east) };
+			}
+			if (data.south) {
+				this.exits.south = { roomId: parseInt(data.south) };
+			}
+			if (data.west) {
+				this.exits.west = { roomId: parseInt(data.west) };
+			}
+			if (data.up) {
+				this.exits.up = { roomId: parseInt(data.up) };
+			}
+			if (data.down) {
+				this.exits.down = { roomId: parseInt(data.down) };
+			}
 		}
 		this.mobs = [];
 		this.players = [];
@@ -53,6 +66,7 @@ class Room extends Entity {
 			this.players.push(player);
 		}
 		player.roomId = this.id;
+		player.zoneId = this.zoneId;
 	}
 
 	/**
@@ -62,6 +76,7 @@ class Room extends Entity {
 	removePlayer(player) {
 		this.players = this.players.filter(p => p !== player);
 		player.roomId = 0;
+		player.zoneId = 0;
 	}
 
 	/**

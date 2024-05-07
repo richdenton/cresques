@@ -1,5 +1,6 @@
 const gameConfig = require('../config/gameConfig');
 const Items = require('../models/items');
+const Zones = require('../models/zones');
 const Rooms = require('../models/rooms');
 const Shops = require('../models/shops');
 const ShopInventories = require('../models/shopInventories');
@@ -27,6 +28,7 @@ class Game {
 	 */
 	constructor() {
 		this.items = new Items();
+		this.zones = new Zones();
 		this.rooms = new Rooms();
 		this.shops = new Shops();
 		this.shopInventories = new ShopInventories();
