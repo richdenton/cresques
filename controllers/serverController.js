@@ -248,9 +248,9 @@ class ServerController {
 
 			// Return all possible Races
 			const races = this.gameController.game.races.getAll();
-			return response.status(200).send(JSON.stringify({
+			return response.status(200).send({
 				races: races
-			}));
+			});
 		} catch (error) {
 			response.status(500).send({
 				message: error.message
@@ -277,9 +277,9 @@ class ServerController {
 
 			// Find and return all Players owned by this User
 			const players = this.gameController.game.players.findAllByUserId(user.id);
-			return response.status(200).send(JSON.stringify({
+			return response.status(200).send({
 				players: players
-			}));
+			});
 		} catch (error) {
 			response.status(500).send({
 				message: error.message
@@ -329,21 +329,21 @@ class ServerController {
 				player.roomId = race.roomId;
 				player.level = 0;
 			} else {
-				return response.status(500).send(JSON.stringify({
+				return response.status(500).send({
 					message: strings.createPlayerError
-				}));
+				});
 			}
 
 			// Save and return the Player
 			player = await this.gameController.game.players.insertPlayer(player);
 			if (player.id) {
-				return response.status(200).send(JSON.stringify({
+				return response.status(200).send({
 					player: player
-				}));
+				});
 			} else {
-				return response.status(500).send(JSON.stringify({
+				return response.status(500).send({
 					message: strings.createPlayerError
-				}));
+				});
 			}
 		} catch (error) {
 			response.status(500).send({
@@ -372,13 +372,13 @@ class ServerController {
 			// Retrieve the Player ID from the request and attmept to delete
 			const success = this.gameController.game.players.deletePlayer(request.body.playerId);
 			if (success) {
-				return response.status(200).send(JSON.stringify({
+				return response.status(200).send({
 					message: strings.deletePlayerSuccess
-				}));
+				});
 			} else {
-				return response.status(500).send(JSON.stringify({
+				return response.status(500).send({
 					message: strings.deletePlayerError
-				}));
+				});
 			}
 		} catch (error) {
 			response.status(500).send({
@@ -407,9 +407,9 @@ class ServerController {
 			// Set Player as active
 			user.playerId = parseInt(request.body.playerId);
 			const player = this.gameController.game.players.get(user.playerId);
-			return response.status(200).send(JSON.stringify({
+			return response.status(200).send({
 				player: player
-			}));
+			});
 		} catch (error) {
 			response.status(500).send({
 				message: error.message

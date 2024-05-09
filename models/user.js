@@ -13,7 +13,7 @@ class User extends Entity {
 			this.id = parseInt(data.id);
 			this.email = data.email;
 			this.password = data.password;
-			this.admin = data.admin ? (data.admin.toLowerCase() === 'true') : false;
+			this.admin = !!data.admin;
 		}
 		this.playerId = 0;
 	}
