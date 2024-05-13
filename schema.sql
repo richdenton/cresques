@@ -9,6 +9,19 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `door`
+--
+
+CREATE TABLE `door` (
+  `id` int NOT NULL,
+  `room_start` int NOT NULL,
+  `room_end` int NOT NULL,
+  `direction` varchar(1) COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `faction`
 --
 
@@ -239,13 +252,7 @@ CREATE TABLE `room` (
   `id` int NOT NULL,
   `zone_id` int NOT NULL,
   `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `north` int NOT NULL,
-  `south` int NOT NULL,
-  `east` int NOT NULL,
-  `west` int NOT NULL,
-  `up` int NOT NULL,
-  `down` int NOT NULL
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -299,6 +306,12 @@ CREATE TABLE `zone` (
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `door`
+--
+ALTER TABLE `door`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `faction`
@@ -425,6 +438,13 @@ ALTER TABLE `zone`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `door`
+--
+ALTER TABLE `door`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+COMMIT;
 
 --
 -- AUTO_INCREMENT for table `faction`

@@ -5,15 +5,6 @@ const Logger = require('../utils/logger');
 
 class GameController {
 
-	static roomDirections = {
-		NORTH: 'n',
-		SOUTH: 's',
-		EAST: 'e',
-		WEST: 'w',
-		UP: 'u',
-		DOWN: 'd'
-	};
-
 	constructor() {
 		this.playerControllers = [];
 		this.game = new Game();
@@ -55,7 +46,7 @@ class GameController {
 	/**
 	 * Move a Player to a new Room.
 	 * @param {Player} player - The Player to be moved.
-	 * @param {Number} direction - The direction to be moved. See roomDirections.
+	 * @param {Number} direction - The direction to be moved.
 	 */
 	move(player, direction) {
 
@@ -66,40 +57,8 @@ class GameController {
 			const currentRoom = this.game.rooms.get(player.roomId);
 			let newRoomId = 0;
 			if (currentRoom.id) {
-				switch(direction) {
-					case GameController.roomDirections.NORTH:
-						if (currentRoom.exits.north) {
-							newRoomId = currentRoom.exits.north.roomId;
-						}
-						break;
-					case GameController.roomDirections.EAST:
-						if (currentRoom.exits.east) {
-							newRoomId = currentRoom.exits.east.roomId;
-						}
-						break;
-					case GameController.roomDirections.SOUTH:
-						if (currentRoom.exits.south) {
-							newRoomId = currentRoom.exits.south.roomId;
-						}
-						break;
-					case GameController.roomDirections.WEST:
-						if (currentRoom.exits.west) {
-							newRoomId = currentRoom.exits.west.roomId;
-						}
-						break;
-					case GameController.roomDirections.UP:
-						if (currentRoom.exits.up) {
-							newRoomId = currentRoom.exits.up.roomId;
-						}
-						break;
-					case GameController.roomDirections.DOWN:
-						if (currentRoom.exits.down) {
-							newRoomId = currentRoom.exits.down.roomId;
-						}
-						break;
-					default:
-						newRoomId = currentRoom.id;
-						break;
+				if (currentRoom.doors[direction]) {
+					newRoomId = currentRoom.doors[direction].roomId;
 				}
 			}
 

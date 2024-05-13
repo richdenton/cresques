@@ -13,8 +13,9 @@ class Rooms extends Entities {
 
 	/**
 	 * Initialize the Room map with data from the database.
+	 * @param {Doors} doors - Map of all Doors loaded from the database.
 	 */
-	async load() {
+	async load(doors) {
 
 		// Remove old data
 		this.map.clear();
@@ -27,28 +28,17 @@ class Rooms extends Entities {
 			});
 		});
 
-		// Append Zone data to each Room exit
-		this.map.forEach(function(room, index) {
-			if (room.exits.north) {
-				room.exits.north.zoneId = this.get(room.exits.north.roomId).zoneId;
+		// Add Doors to each Room
+		doors.map.forEach(door => {
+			let room = this.map.get(door.roomStart);
+			if (room) {
+				room.doors[door.direction] = {
+					roomId: door.roomEnd,
+					zoneId: this.map.get(door.roomEnd).zoneId
+				}
+				this.map.set(room.id, room);
 			}
-			if (room.exits.east) {
-				room.exits.east.zoneId = this.get(room.exits.east.roomId).zoneId;
-			}
-			if (room.exits.south) {
-				room.exits.south.zoneId = this.get(room.exits.south.roomId).zoneId;
-			}
-			if (room.exits.west) {
-				room.exits.west.zoneId = this.get(room.exits.west.roomId).zoneId;
-			}
-			if (room.exits.up) {
-				room.exits.up.zoneId = this.get(room.exits.up.roomId).zoneId;
-			}
-			if (room.exits.down) {
-				room.exits.down.zoneId = this.get(room.exits.down.roomId).zoneId;
-			}
-			this[index] = room;
-		}, this.map);
+		}, this);
 	}
 }
 

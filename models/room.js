@@ -9,34 +9,16 @@ class Room extends Entity {
 	 */
 	constructor(data) {
 		super();
-		this.exits = {};
 		if (data) {
 			this.id = parseInt(data.id);
 			this.zoneId = parseInt(data.zone_id);
 			this.name = data.name;
 			this.description = data.description;
-			if (data.north) {
-				this.exits.north = { roomId: parseInt(data.north) };
-			}
-			if (data.east) {
-				this.exits.east = { roomId: parseInt(data.east) };
-			}
-			if (data.south) {
-				this.exits.south = { roomId: parseInt(data.south) };
-			}
-			if (data.west) {
-				this.exits.west = { roomId: parseInt(data.west) };
-			}
-			if (data.up) {
-				this.exits.up = { roomId: parseInt(data.up) };
-			}
-			if (data.down) {
-				this.exits.down = { roomId: parseInt(data.down) };
-			}
 		}
 		this.mobs = [];
 		this.players = [];
 		this.items = [];
+		this.doors = {};
 	}
 
 	/**
@@ -89,7 +71,7 @@ class Room extends Entity {
 
 	/**
 	 * Remove an Item from the Room.
-	 * @param {item} item - The Item to remove.
+	 * @param {Item} item - The Item to remove.
 	 */
 	removeItem(item) {
 		this.items = this.items.filter(i => i !== item);
