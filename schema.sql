@@ -312,6 +312,7 @@ CREATE TABLE `zone` (
 --
 ALTER TABLE `door`
   ADD PRIMARY KEY (`id`);
+  ADD UNIQUE KEY `door_uk` (`room_start`,`direction`);
 
 --
 -- Indexes for table `faction`

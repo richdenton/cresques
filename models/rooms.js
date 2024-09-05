@@ -32,11 +32,14 @@ class Rooms extends Entities {
 		doors.map.forEach(door => {
 			let room = this.map.get(door.roomStart);
 			if (room) {
-				room.doors[door.direction] = {
-					roomId: door.roomEnd,
-					zoneId: this.map.get(door.roomEnd).zoneId
+				const roomEnd = this.map.get(door.roomEnd);
+				if (roomEnd) {
+					room.doors[door.direction] = {
+						roomId: door.roomEnd,
+						zoneId: roomEnd.zoneId
+					};
+					this.map.set(room.id, room);
 				}
-				this.map.set(room.id, room);
 			}
 		}, this);
 	}
