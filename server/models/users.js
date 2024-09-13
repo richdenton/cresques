@@ -32,10 +32,10 @@ class Users extends Entities {
 	/**
 	 * Find a User by their email.
 	 * @param {String} email - Email address to lookup.
-	 * @return {User} The User or undefined.
+	 * @return {User} The found User or an empty User.
 	 */
 	findByEmail(email) {
-		let result = false;
+		let result = new User();
 		for (let user of this.map.values()) {
 			if (user.email == email) {
 				result = user;

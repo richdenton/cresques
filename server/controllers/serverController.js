@@ -128,9 +128,9 @@ class ServerController {
 				expiresIn: config.tokenExpiration
 			});
 
-			// Save access token and User ID cookies
+			// Save access token and email cookies
 			response.cookie('access_token', token, { httpOnly: true });
-			response.cookie('uid', user.id, { maxAge: config.tokenExpiration * 1000 });
+			response.cookie('email', user.email, { maxAge: config.tokenExpiration * 1000 });
 
 			// Return the response
 			Logger.log('User ' + user.id + ' signed up.', Logger.logTypes.INFO);
@@ -162,7 +162,7 @@ class ServerController {
 				// Verify that the User exists
 				user = this.users.findByEmail(request.body.email);
 				if (user.id < 1) {
-					Logger.log('Could not login user: ' + request.body, Logger.logTypes.WARN);
+					Logger.log('Could not login user: ' + request.body.email, Logger.logTypes.WARN);
 					return response.status(401).send({
 						message: strings.loginError
 					});
@@ -183,9 +183,9 @@ class ServerController {
 				expiresIn: config.tokenExpiration
 			});
 
-			// Save access token and User ID cookies
+			// Save access token and email cookies
 			response.cookie('access_token', token, { httpOnly: true });
-			response.cookie('uid', user.id, { maxAge: config.tokenExpiration * 1000 });
+			response.cookie('email', user.email, { maxAge: config.tokenExpiration * 1000 });
 
 			// Return the response
 			Logger.log('User ' + user.id + ' logged in.', Logger.logTypes.INFO);
@@ -216,9 +216,9 @@ class ServerController {
 				});
 			}
 
-			// Delete the access token cookie
+			// Delete the access token and email cookies
 			response.clearCookie('access_token');
-			response.clearCookie('uid');
+			response.clearCookie('email');
 
 			// Return the response
 			Logger.log('User ' + user.id + ' logged out.', Logger.logTypes.INFO);

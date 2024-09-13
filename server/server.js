@@ -14,19 +14,19 @@ app.use(express.urlencoded({ extended: true }));
 
 // Setup authentication routing
 const serverController = new ServerController();
-app.post('/signup', serverController.signup.bind(serverController));
-app.post('/login', serverController.login.bind(serverController));
-app.post('/logout', serverController.logout.bind(serverController));
-app.get('/getRaces', serverController.getRaces.bind(serverController));
-app.get('/getPlayers', serverController.getPlayers.bind(serverController));
-app.post('/createPlayer', serverController.createPlayer.bind(serverController));
-app.post('/deletePlayer', serverController.deletePlayer.bind(serverController));
-app.post('/selectPlayer', serverController.selectPlayer.bind(serverController));
+app.post('/api/signup', serverController.signup.bind(serverController));
+app.post('/api/login', serverController.login.bind(serverController));
+app.post('/api/logout', serverController.logout.bind(serverController));
+app.get('/api/getRaces', serverController.getRaces.bind(serverController));
+app.get('/api/getPlayers', serverController.getPlayers.bind(serverController));
+app.post('/api/createPlayer', serverController.createPlayer.bind(serverController));
+app.post('/api/deletePlayer', serverController.deletePlayer.bind(serverController));
+app.post('/api/selectPlayer', serverController.selectPlayer.bind(serverController));
 
 // Start the HTTP server
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 const expressServer = app.listen(port);
-console.log(`Cresques/${package.version} is running on port ${port}.`);
+console.log(`Cresques Server/${package.version} is running on port ${port}.`);
 
 // Start the WebSocket server
 const wss = new webSocket.Server({

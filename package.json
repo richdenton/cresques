@@ -1,0 +1,11 @@
+{
+	"name": "cresques",
+	"description": "A modern MUD-like game utilziing Node.js for the backend and React for the frontend.",
+	"author": "Rich Denton",
+	"license": "MIT",
+	"scripts": {
+		"start-client": "cd client && npm start",
+		"build-client": "cd client && npm build",
+		"start-server": "cd server && npm start"
+	}
+}
