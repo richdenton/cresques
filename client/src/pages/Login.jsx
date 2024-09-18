@@ -1,18 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { loginUser } from '../services/userApiService';
+import { useAuth } from '../hooks/AuthProvider';
 import clientConfig from '../config/clientConfig';
 import strings from '../config/strings';
 import PageContainer from '../components/PageContainer';
 import Input from '../components/Input';
 
 export default function Login() {
+	const auth = useAuth();
 	const navigate = useNavigate();
 
-	// Attempt automatic login
-	if (document.cookie && document.cookie.indexOf('email=') > -1) {
-		navigate('/select', { replace: true });
-	}
+	// Redirect logged in users
+	useEffect(() => {
+		if (auth.user) {
+			navigate('/select', { replace: true });
+		}
+	}, [auth]);
 
 	// Handle email and password changes
 	const [email, setEmail] = useState('');
@@ -21,11 +24,9 @@ export default function Login() {
 	// Handle login form submission
 	const handleLogin = async (event) => {
 		event.preventDefault();
-		try {
-			await loginUser(email, password);
+		if (email !== '' && password !== '') {
+			await auth.login(email, password);
 			navigate('/select', { replace: true });
-		} catch(error) {
-			alert(error);
 		}
 	};
 

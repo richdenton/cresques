@@ -190,7 +190,11 @@ class ServerController {
 			// Return the response
 			Logger.log('User ' + user.id + ' logged in.', Logger.logTypes.INFO);
 			return response.status(200).send({
-				message: strings.loginSuccess
+				user: {
+					id: user.id,
+					email: user.email,
+					admin: user.admin
+				}
 			});
 		} catch (error) {
 			return response.status(500).send({

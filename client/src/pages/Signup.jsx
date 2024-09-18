@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/AuthProvider';
 import { signupUser } from '../services/userApiService';
 import clientConfig from '../config/clientConfig';
 import strings from '../config/strings';
@@ -7,12 +8,15 @@ import Input from '../components/Input';
 import PageContainer from '../components/PageContainer';
 
 export default function Signup() {
+	const auth = useAuth();
 	const navigate = useNavigate();
 
-	// Attempt automatic login
-	if (document.cookie && document.cookie.indexOf('email=') > -1) {
-		navigate('/select', { replace: true });
-	}
+	// Redirect logged in users
+	useEffect(() => {
+		if (auth.user) {
+			navigate('/select', { replace: true });
+		}
+	}, [auth]);
 
 	// Handle email and password changes
 	const [email, setEmail] = useState('');

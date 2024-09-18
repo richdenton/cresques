@@ -1,0 +1,153 @@
+/* Global */
+#game .outer, #game .inner {
+	height: 100%;
+	width: 100%;
+}
+#game .mob, #game .item {
+	font-weight: 700;
+}
+#game .mob {
+	color: #6dd;
+}
+
+/* Header Stats */
+#game header {
+	font-size: 12px;
+	height: 48px;
+	line-height: 48px;
+	text-transform: uppercase;
+}
+#game header .stat .label, #game header .stat .value {
+	margin-left: 8px;
+}
+#game header .meter {
+	background: #333;
+	border-radius: 6px;
+	display: inline-block;
+	height: 12px;
+	margin-left: 8px;
+	overflow: hidden;
+	vertical-align: text-top;
+	width: 100px;
+}
+#game header .meter .fill {
+	background: green;
+	display: block;
+	height: 100%;
+}
+
+/* Tabs */
+#game .tabs {
+	background: #333;
+	height: calc(100% - 48px);
+}
+#game .tabpanel {
+	height: calc(100%  - 48px);
+}
+#game .tablist {
+	display: table;
+	height: 48px;
+	line-height: 48px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	width: 100%;
+}
+#game .tab {
+	display: table-cell;
+	margin: 0;
+	padding: 0;
+	width: 33%;
+}
+#game .tab.selected {
+	color: #fff;
+	font-weight: 700;
+}
+
+/* Explore Tab Panel */
+#tabpanel-explore .world {
+	height: calc(100% - 120px);
+	overflow-x: hidden;
+	overflow-y: auto;
+	text-align: center;
+}
+#tabpanel-explore .world .description {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 50%;
+}
+#tabpanel-explore .world a {
+	background: #000;
+	border: 1px solid #fff;
+	border-radius: 16px;
+	display: block;
+	line-height: 16px;
+	padding: 7px;
+	margin: 0 8px 8px;
+}
+#tabpanel-explore .world .mob {
+	border-color: #6dd;
+}
+#tabpanel-explore nav {
+	background: #000;
+	height: 120px;
+}
+#tabpanel-explore .chat {
+	font-size: 12px;
+	height: 120px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+#tabpanel-explore .chat .message.inactive {
+	opacity: .5;
+}
+#tabpanel-explore .exits {
+	display: table;
+	float: right;
+	margin: 0 auto;
+	text-align: center;
+	width: 144px;
+}
+#tabpanel-explore .exits .cell {
+	display: table-cell;
+	vertical-align: middle;
+	width: 33%;
+}
+#tabpanel-explore .exits .cell:first-child {
+	padding-left: 4px;
+}
+#tabpanel-explore .exits .cell:last-child {
+	padding-right: 4px;
+}
+#tabpanel-explore .exits a {
+	background: #ba9;
+	border-radius: 24px;
+	color: #000;
+	display: block;
+	line-height: 48px;
+	margin: 8px 0;
+	width: 48px;
+}
+#tabpanel-explore .exits .disabled {
+	background: #765;
+}
+.arrow {
+	border: solid black;
+	border-width: 0 3px 3px 0;
+	display: inline-block;
+	padding: 3px;
+}
+.arrow.east {
+	transform: rotate(-45deg);
+}
+.arrow.west {
+	transform: rotate(135deg);
+}
+.arrow.north {
+	transform: rotate(-135deg);
+}
+.arrow.south {
+	transform: rotate(45deg);
+}

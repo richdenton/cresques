@@ -11,50 +11,45 @@ import Select from './pages/Select';
 import Game from './pages/Game';
 import strings from './config/strings';
 import './assets/index.css';
+import AuthProvider from './hooks/AuthProvider';
 
 document.title = strings.title;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 	<React.StrictMode>
 		<BrowserRouter>
-			<Routes>
-				<Route path="/" element={<Home />} />
-				<Route path="/signup" element={<Signup />} />
-				<Route path="/login" element={<Login />} />
-				<Route
-					path="/logout"
-					element={
-						<ProtectedRoute>
-							<Logout />
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path="/create"
-					element={
-						<ProtectedRoute>
-							<Create />
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path="/select"
-					element={
-						<ProtectedRoute>
-							<Select />
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path="/play"
-					element={
-						<ProtectedRoute>
-							<Game />
-						</ProtectedRoute>
-					}
-				/>
-				<Route path="*" element={<Home />} />
-			</Routes>
+			<AuthProvider>
+				<Routes>
+					<Route path="/signup" element={<Signup />} />
+					<Route path="/login" element={<Login />} />
+					<Route path="/logout" element={<Logout />} />
+					<Route
+						path="/create"
+						element={
+							<ProtectedRoute>
+								<Create />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/select"
+						element={
+							<ProtectedRoute>
+								<Select />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/play"
+						element={
+							<ProtectedRoute>
+								<Game />
+							</ProtectedRoute>
+						}
+					/>
+					<Route path="*" element={<Home />} />
+				</Routes>
+			</AuthProvider>
 		</BrowserRouter>
 	</React.StrictMode>
 );

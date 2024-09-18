@@ -1,7 +1,9 @@
 import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/AuthProvider';
 
 export default function ProtectedRoute({ children }) {
-	if (!(document.cookie && document.cookie.indexOf('email=') > -1)) {
+	const auth = useAuth();
+	if (!auth.user) {
 		return <Navigate to="/login" />;
 	}
 	return children;

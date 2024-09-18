@@ -1,21 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { logoutUser } from '../services/userApiService';
+import { useAuth } from '../hooks/AuthProvider';
 
 export default function Logout() {
+	const auth = useAuth();
 
 	// Handle logout
-	const handleLogout = async () => {
-		if (document.cookie && document.cookie.indexOf('email=') > -1) {
-			try {
-				await logoutUser();
-			} catch(error) {
-				alert(error);
-			}
+	const logoutUser = async () => {
+		if (auth.user) {
+			await auth.logout();
 		}
 	};
 	useEffect(() => {
-		handleLogout();
+		logoutUser();
 	}, []);
 
 	// Return to the user login form

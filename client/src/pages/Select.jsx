@@ -23,8 +23,15 @@ export default function Select() {
 	const handleSelectPlayer = async (event, playerId) => {
 		event.preventDefault();
 		try {
-			await selectPlayer(playerId);
-			navigate('/play', { replace: true });
+			const response = await selectPlayer(playerId);
+			if (response.player) {
+				navigate('/play', {
+					replace: true,
+					state: {
+						player: response.player
+					}
+				});
+			}
 		} catch(error) {
 			alert(error);
 		}
