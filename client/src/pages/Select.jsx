@@ -37,7 +37,7 @@ export default function Select() {
 		}
 	};
 
-	// Append new player trigers to the list
+	// Append new player triggers to the list
 	const renderEmptyPlayerListEntries = () => {
 		let emptyPlayerListEntries = [];
 		for (let index = 0; index < clientConfig.playerSlotLimit - players.length; index++) {

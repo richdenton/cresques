@@ -99,6 +99,7 @@
 	height: 120px;
 	overflow-x: hidden;
 	overflow-y: auto;
+	text-align: left;
 }
 #tabpanel-explore .chat .message.inactive {
 	opacity: .5;

@@ -16,6 +16,40 @@ const strings = {
 	createPlayer: 'Create a Player',
 	createPlayerName: 'Enter a Name',
 	createPlayerRace: 'Select a Race',
-	createPlayerDone: 'Done'
+	createPlayerDone: 'Done',
+	chatAttack: 'You hit {0} for {1} damage.',
+	chatDefend: '{0} hit you for {1} damage.',
+	chatConsider: '{0} {1} -- {2}',
+	chatConsiderFactions: [
+		'scowls at you ready to attack',
+		'glares at you threateningly',
+		'glowers at you dubiously',
+		'looks your way apprehensively',
+		'regards you indifferently',
+		'judges you amiably',
+		'kindly considers you',
+		'looks upon you warmly',
+		'regards you as an ally'
+	],
+	chatConsiderThreats: [
+		'looks like a reasonably safe opponent.',
+		'looks like you would have the upper hand.',
+		'looks like an even fight.',
+		'looks like quite a gamble.',
+		'what would you like your tombstone to say?'
+	],
+	chatEnter: '{0} entered.',
+	chatLeave: '{0} left.',
+	chatSayYou: 'You say \'{0}\'',
+	chatSayOther: '{0} says \'{1}\'',
+	chatYellYou: 'You yell, \'{0}\'',
+	chatYellOther: '{0} yells, \'{1}\'',
+	chatKillYou: 'You have slain {0}!',
+	chatKillOther: '{0} has slain {1}!',
+	chatDieYou: 'You have died.',
+	chatDieOther: '{0} has died.',
+	chatTake: 'You pick up {0}.',
+	chatDropYou: 'You drop {0}.',
+	chatDropOther: '{0} drops {1}.'
 };
 export default strings;
