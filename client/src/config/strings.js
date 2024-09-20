@@ -39,6 +39,7 @@ const strings = {
 		'what would you like your tombstone to say?'
 	],
 	chatEnter: '{0} entered.',
+	chatEnterYou: 'You entered {0}.',
 	chatLeave: '{0} left.',
 	chatSayYou: 'You say \'{0}\'',
 	chatSayOther: '{0} says \'{1}\'',
@@ -50,6 +51,13 @@ const strings = {
 	chatDieOther: '{0} has died.',
 	chatTake: 'You pick up {0}.',
 	chatDropYou: 'You drop {0}.',
-	chatDropOther: '{0} drops {1}.'
+	chatDropOther: '{0} drops {1}.',
+	consider: 'Consider',
+	attack: 'Attack',
+	explore: 'Explore',
+	player: 'Player',
+	settings: 'Settings',
+	errorCombat: 'You are in combat!',
+	errorEncumbered: 'You are encumbered!'
 };
 export default strings;

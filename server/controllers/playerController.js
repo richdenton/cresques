@@ -1,3 +1,5 @@
+const Logger = require("../utils/logger");
+
 class PlayerController {
 
 	static messageActions = {
@@ -53,68 +55,72 @@ class PlayerController {
 	 */
 	handleMessage(data, isBinary) {
 		if (data) {
-			const message = JSON.parse(isBinary ? data : data.toString());
-			switch (message.action) {
+			try {
+				const message = JSON.parse(isBinary ? data : data.toString());
+				switch (message.action) {
 
-				// Move the Player
-				case PlayerController.messageActions.MOVE:
-					this.gameController.move(this.player, message.direction);
-					break;
+					// Move the Player
+					case PlayerController.messageActions.MOVE:
+						this.gameController.move(this.player, message.direction);
+						break;
 
-				// Say something to the Room
-				case PlayerController.messageActions.SAY:
-					this.gameController.say(this.player, PlayerController.entityType.PLAYER, message.text);
-					break;
+					// Say something to the Room
+					case PlayerController.messageActions.SAY:
+						this.gameController.say(this.player, PlayerController.entityType.PLAYER, message.text);
+						break;
 
-				// Yell something to all nearby Rooms
-				case PlayerController.messageActions.YELL:
-					this.gameController.yell(this.player, PlayerController.entityType.PLAYER, message.text);
-					break;
+					// Yell something to all nearby Rooms
+					case PlayerController.messageActions.YELL:
+						this.gameController.yell(this.player, PlayerController.entityType.PLAYER, message.text);
+						break;
 
-				// Consider the threat level of a Mob
-				case PlayerController.messageActions.CONSIDER:
-					this.gameController.consider(this, message.mobId);
-					break;
+					// Consider the threat level of a Mob
+					case PlayerController.messageActions.CONSIDER:
+						this.gameController.consider(this, message.mobId);
+						break;
 
-				// Hail a Mob
-				case PlayerController.messageActions.HAIL:
-					this.gameController.hail(this, message.mobId);
-					break;
+					// Hail a Mob
+					case PlayerController.messageActions.HAIL:
+						this.gameController.hail(this, message.mobId);
+						break;
 
-				// Attack a Mob
-				case PlayerController.messageActions.ATTACK:
-					this.gameController.attack(this.player, message.mobId);
-					break;
+					// Attack a Mob
+					case PlayerController.messageActions.ATTACK:
+						this.gameController.attack(this.player, message.mobId);
+						break;
 
-				// Take an Item
-				case PlayerController.messageActions.TAKE:
-					this.gameController.take(this.player, message.itemId);
-					break;
+					// Take an Item
+					case PlayerController.messageActions.TAKE:
+						this.gameController.take(this.player, message.itemId);
+						break;
 
-				// Drop an Item
-				case PlayerController.messageActions.DROP:
-					this.gameController.drop(this.player, message.itemId);
-					break;
+					// Drop an Item
+					case PlayerController.messageActions.DROP:
+						this.gameController.drop(this.player, message.itemId);
+						break;
 
-				// Equip an Item
-				case PlayerController.messageActions.EQUIP:
-					this.gameController.equip(this, message.itemId);
-					break;
+					// Equip an Item
+					case PlayerController.messageActions.EQUIP:
+						this.gameController.equip(this, message.itemId);
+						break;
 
-				// View a Shop
-				case PlayerController.messageActions.SHOP:
-					this.gameController.shop(this, message.mobId);
-					break;
+					// View a Shop
+					case PlayerController.messageActions.SHOP:
+						this.gameController.shop(this, message.mobId);
+						break;
 
-				// Buy an Item
-				case PlayerController.messageActions.BUY:
-					this.gameController.buy(this, message.mobId, message.itemId);
-					break;
+					// Buy an Item
+					case PlayerController.messageActions.BUY:
+						this.gameController.buy(this, message.mobId, message.itemId);
+						break;
 
-				// Sell an Item
-				case PlayerController.messageActions.SELL:
-					this.gameController.sell(this, message.mobId, message.itemId);
-					break;
+					// Sell an Item
+					case PlayerController.messageActions.SELL:
+						this.gameController.sell(this, message.mobId, message.itemId);
+						break;
+				}
+			} catch (error) {
+				Logger.log(error, Logger.logTypes.ERROR);
 			}
 		}
 	}

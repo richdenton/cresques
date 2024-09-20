@@ -5,6 +5,7 @@ const clientConfig = {
 	passwordMaxLength: 16,
 	nameMinLength: 0,
 	nameMaxLength: 100,
-	playerSlotLimit: 3
+	playerSlotLimit: 3,
+	webSocketServer: 'ws://localhost:3001/ws'
 };
 export default clientConfig;

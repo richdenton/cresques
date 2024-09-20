@@ -12,6 +12,7 @@ import Game from './pages/Game';
 import strings from './config/strings';
 import './assets/index.css';
 import AuthProvider from './hooks/AuthProvider';
+import SocketProvider from './hooks/SocketProvider';
 
 document.title = strings.title;
 
@@ -43,7 +44,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 						path="/play"
 						element={
 							<ProtectedRoute>
-								<Game />
+								<SocketProvider>
+									<Game />
+								</SocketProvider>
 							</ProtectedRoute>
 						}
 					/>
