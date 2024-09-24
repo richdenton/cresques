@@ -4,6 +4,7 @@ import { useWebSocket } from '../hooks/SocketProvider';
 import PageContainer from '../components/PageContainer';
 import { Tabs, TabPanel, TabList, Tab } from '../components/Tabs';
 import MobSheet from '../components/MobSheet';
+import ItemSheet from '../components/ItemSheet';
 import strings from '../config/strings';
 import gameConfig from '../config/gameConfig';
 import '../assets/game.css';
@@ -13,23 +14,37 @@ export default function Game() {
 	// Get the selected player
 	const location = useLocation();
 	const [thisPlayer, setThisPlayer] = useState(location.state.player);
+	const [thisPlayerAttacking, setThisPlayerAttacking] = useState(false);
 	
 	// Watch for game state changes
-	const [messages, setMessages] = useState([]);
+	const [chatMessages, setChatMessages] = useState([]);
 	const [roomDescription, setRoomDescription] = useState('');
 	const [roomDoors, setRoomDoors] = useState([]);
 	const [roomItems, setRoomItems] = useState([]);
 	const [roomMobs, setRoomMobs] = useState([]);
 	const [roomPlayers, setRoomPlayers] = useState([]);
-	const roomItemsRef = useRef(null);
-	const roomMobsRef = useRef(null);
-	const roomPlayersRef = useRef(null);
+	const roomItemsRef = useRef([]);
+	const roomMobsRef = useRef([]);
+	const roomPlayersRef = useRef([]);
 	let messageIndex = 0;
 
 	// Get the current WebSocket connection
-	const socket = useWebSocket();
+	const { sendJsonMessage, lastJsonMessage } = useWebSocket();
 
-	// Handle action sheet visibility
+	// Handle Item action sheet visibility
+	const [itemSheetOpen, setItemSheetOpen] = useState(false);
+	const [activeItem, setActiveItem] = useState(null);
+	const openItemSheet = (event, item) => {
+		event.preventDefault();
+		setActiveItem(item);
+		setItemSheetOpen(true);
+	};
+	const closeItemSheet = () => {
+		setActiveItem(null);
+		setItemSheetOpen(false);
+	};
+
+	// Handle Mob action sheet visibility
 	const [mobSheetOpen, setMobSheetOpen] = useState(false);
 	const [activeMob, setActiveMob] = useState(null);
 	const openMobSheet = (event, mob) => {
@@ -42,22 +57,24 @@ export default function Game() {
 		setMobSheetOpen(false);
 	};
 
+	// Add a new chat message to the array
+	const appendChatMessage = (content, type) => {
+		setChatMessages(chatMessages => [...chatMessages, {
+			content: content,
+			type: type
+		}]);
+	};
+
 	// Move the current player
 	const movePlayer = (event, direction) => {
 		event.preventDefault();
 		if (event.target.className !== 'disabled') {
-			if (thisPlayer.attacking) {
-				setMessages(messages => [...messages, {
-					content: strings.errorCombat,
-					type: 'error'
-				}]);
+			if (thisPlayerAttacking) {
+				appendChatMessage(strings.errorCombat, 'combat');
 			} else if (thisPlayer.encumbered) {
-				setMessages(messages => [...messages, {
-					content: strings.errorEncumbered,
-					type: 'error'
-				}]);
+				appendChatMessage(strings.errorEncumbered, 'encumbered');
 			} else {
-				socket.sendJsonMessage({
+				sendJsonMessage({
 					action: gameConfig.messageActions.MOVE,
 					direction: direction
 				});
@@ -67,9 +84,11 @@ export default function Game() {
 
 	// Listen for new messages
 	useEffect(() => {
-		const message = socket.lastJsonMessage;
+		const message = lastJsonMessage;
 		if (message) {
-			let target = {},
+			let attacker = {},
+				defender = {},
+				target = {},
 				targets = [],
 				i;
 			switch (message.action) {
@@ -77,10 +96,7 @@ export default function Game() {
 
 					// Display Zone information
 					if (thisPlayer.lastZoneId !== message.room.zoneId) {
-						setMessages(messages => [...messages, {
-							content: strings.chatEnterYou.replace('{0}', message.zone.name),
-							type: 'zone'
-						}]);
+						appendChatMessage(strings.chatEnterYou.replace('{0}', message.zone.name), 'zone');
 						thisPlayer.lastZoneId = message.room.zoneId;
 					}
 
@@ -102,31 +118,25 @@ export default function Game() {
 						setRoomPlayers(roomPlayersRef.current);
 
 						// Write message to the chat panel
-						setMessages(messages => [...messages, {
-							content: strings.chatEnter.replace('{0}', message.player.name),
-							type: 'enter'
-						}]);
+						appendChatMessage(strings.chatEnter.replace('{0}', message.player.name), 'enter');
 
 					} else if (message.mob) {
 
 						// Update the Mobs lists
 						roomMobsRef.current.push(message.mob);
 						setRoomMobs(roomMobsRef.current);
-						
+
 						// Write message to the chat panel
-						setMessages(messages => [...messages, {
-							content: strings.chatEnter.replace('{0}', message.mob.name),
-							type: 'enter'
-						}]);
+						appendChatMessage(strings.chatEnter.replace('{0}', message.mob.name), 'enter');
 					}
 					break;
 				case gameConfig.messageActions.LEAVE:
 					if (message.playerId) {
 
 						// Find the Player who left
-						target = roomPlayersRef.find(p => p.id === message.playerId);
+						target = roomPlayersRef.current.find(p => p.id === message.playerId);
 
-						// Uopdate the Players lists
+						// Update the Players lists
 						if (target.id) {
 							roomPlayersRef.current = roomPlayersRef.current.filter(p => p.id !== target.id);
 							setRoomPlayers(roomPlayersRef.current);
@@ -134,10 +144,7 @@ export default function Game() {
 
 						// Write message to the chat panel
 						if (target.name) {
-							setMessages(messages => [...messages, {
-								content: strings.chatLeave.replace('{0}', target.name),
-								type: 'leave'
-							}]);
+							appendChatMessage(strings.chatLeave.replace('{0}', target.name), 'leave');
 						}
 					} else if (message.mobId) {
 
@@ -152,10 +159,7 @@ export default function Game() {
 
 						// Write message to the chat panel
 						if (target.name) {
-							setMessages(messages => [...messages, {
-								content: strings.chatLeave.replace('{0}', target.name),
-								type: 'leave'
-							}]);
+							appendChatMessage(strings.chatLeave.replace('{0}', target.name), 'leave');
 						}
 					}
 					break;
@@ -163,12 +167,9 @@ export default function Game() {
 
 					// Check if the current Player is speaking
 					if (message.sender.type === gameConfig.entityTypes.PLAYER && message.senderId === thisPlayer.id) {
-						
+
 						// Write message to the chat panel
-						setMessages(messages => [...messages, {
-							content: strings.chatSayYou.replace('{0}', message.text),
-							type: 'say'
-						}]);
+						appendChatMessage(strings.chatSayYou.replace('{0}', message.text), 'say you');
 					} else {
 
 						// Otherwise, find the speaker
@@ -182,10 +183,7 @@ export default function Game() {
 
 						// Write message to the chat panel
 						if (target.name) {
-							setMessages(messages => [...messages, {
-								content: strings.chatSayOther.replace('{0}', target.name).replace('{1}', message.text),
-								type: 'say'
-							}]);
+							appendChatMessage(strings.chatSayOther.replace('{0}', target.name).replace('{1}', message.text), 'say other');
 						}
 					}
 					break;
@@ -195,10 +193,7 @@ export default function Game() {
 					if (message.sender.type === gameConfig.entityTypes.PLAYER && message.senderId === thisPlayer.id) {
 						
 						// Write message to the chat panel
-						setMessages(messages => [...messages, {
-							content: strings.chatYellYou.replace('{0}', message.text),
-							type: 'yell'
-						}]);
+						appendChatMessage(strings.chatYellYou.replace('{0}', message.text), 'yell you');
 					} else {
 
 						// Otherwise, find the yeller
@@ -212,10 +207,7 @@ export default function Game() {
 
 						// Write message to the chat panel
 						if (target.name) {
-							setMessages(messages => [...messages, {
-								content: strings.chatYellOther.replace('{0}', target.name).replace('{1}', message.text),
-								type: 'yell'
-							}]);
+							appendChatMessage(strings.chatYellOther.replace('{0}', target.name).replace('{1}', message.text), 'yell other');
 						}
 					}
 					break;
@@ -226,30 +218,55 @@ export default function Game() {
 
 					// Write message to the chat panel
 					if (target.name) {
-						setMessages(messages => [...messages, {
-							content: strings.chatConsider.replace('{0}', target.name).replace('{1}', strings.chatConsiderFactions[message.faction]).replace('{2}', strings.chatConsiderThreats[message.threat]),
-							type: 'consider threat_' + message.threat
-						}]);
+						appendChatMessage(strings.chatConsider.replace('{0}', target.name).replace('{1}', strings.chatConsiderFactions[message.faction]).replace('{2}', strings.chatConsiderThreats[message.threat]), 'consider threat_' + message.threat);
+					}
+					break;
+				case gameConfig.messageActions.HAIL:
+
+					// Find the Mob being hailed
+					target = roomMobsRef.current.find(m => m.id === message.mobId);
+
+					// Check if the current Player is speaking
+					if (message.playerId === thisPlayer.id) {
+						
+						// Write message to the chat panel
+						appendChatMessage(strings.chatHailYou.replace('{0}', target.name), 'hail');
+					} else {
+
+						// Otherwise, find the speaker
+						let player = null;
+						targets = roomPlayersRef.current;
+						for (i = 0; i < targets.length; i++) {
+							if (targets[i].id === message.playerId) {
+								player = targets[i];
+								break;
+							}
+						}
+
+						// Write message to the chat panel
+						if (player.name) {
+							appendChatMessage(strings.chatHailYou.replace('{0}', player.name).replace('{1}', target.text), 'hail');
+						}
 					}
 					break;
 				case gameConfig.messageActions.ATTACK:
 
 					// Find the attacker
 					targets = message.attacker.type === gameConfig.entityTypes.PLAYER ? roomPlayersRef.current : roomMobsRef.current;
-					let attacker = targets.find(a => a.id === message.attacker.id);
+					attacker = targets.find(a => a.id === message.attacker.id);
 
 					// Find the defender
 					targets = message.defender.type === gameConfig.entityTypes.PLAYER ? roomPlayersRef.current : roomMobsRef.current;
-					let defender = targets.find(d => d.id === message.defender.id);
+					defender = targets.find(d => d.id === message.defender.id);
 
 					// Write message to the chat panel
 					if (attacker.name && defender.name) {
-						setMessages(messages => [...messages, {
-							content: message.attacker.type === gameConfig.entityTypes.PLAYER && attacker.id === thisPlayer.id
-								? strings.chatAttack.replace('{0}', defender.name).replace('{1}', message.defender.damage)
-								: strings.chatDefend.replace('{0}', attacker.name).replace('{1}', message.defender.damage),
-							type: 'attack'
-						}]);
+						const isThisPlayerAttacking = message.attacker.type === gameConfig.entityTypes.PLAYER && attacker.id === thisPlayer.id;
+						setThisPlayerAttacking(isThisPlayerAttacking);
+						appendChatMessage(isThisPlayerAttacking
+							? strings.chatAttack.replace('{0}', defender.name).replace('{1}', message.defender.damage)
+							: strings.chatDefend.replace('{0}', attacker.name).replace('{1}', message.defender.damage),
+						'attack ' + (isThisPlayerAttacking ? 'you' : 'other'));
 					}
 					break;
 				case gameConfig.messageActions.DIE:
@@ -258,7 +275,7 @@ export default function Game() {
 					let corpse = {},
 						thisPlayerAttacked = false,
 						thisPlayerDied = false;
-					targets = message.attacker.type === gameConfig.entityTypes.PLAYER ? roomPlayers : roomMobs;
+					targets = message.attacker.type === gameConfig.entityTypes.PLAYER ? roomPlayersRef.current : roomMobsRef.current;
 					for (i = 0; i < targets.length; i++) {
 						if (targets[i].id === message.attacker.id) {
 							attacker = targets[i];
@@ -270,7 +287,7 @@ export default function Game() {
 					}
 
 					// Find the corpse
-					targets = message.corpse.type === gameConfig.entityTypes.PLAYER ? roomPlayers : roomMobs;
+					targets = message.corpse.type === gameConfig.entityTypes.PLAYER ? roomPlayersRef.current : roomMobsRef.current;
 					for (i = 0; i < targets.length; i++) {
 						if (targets[i].id === message.corpse.id) {
 							corpse = targets[i];
@@ -284,24 +301,14 @@ export default function Game() {
 					// Write message to the chat panel
 					if (corpse.name) {
 						if (attacker.name) {
-							setMessages(messages => [...messages, {
-								content: thisPlayerAttacked
-									? strings.chatKillYou.replace('{0}', corpse.name)
-									: strings.chatKillOther.replace('{0}', attacker.name).replace('{1}', corpse.name),
-								type: 'die'
-							}]);
+							appendChatMessage(thisPlayerAttacked ? strings.chatKillYou.replace('{0}', corpse.name) : strings.chatKillOther.replace('{0}', attacker.name).replace('{1}', corpse.name), 'die');
 							if (thisPlayerAttacked) {
-								thisPlayer.attacking = false;
+								setThisPlayerAttacking(false);
 							}
 						} else {
-							setMessages(messages => [...messages, {
-								content: thisPlayerDied
-									? strings.chatDieYou
-									: strings.chatDieOther.replace('{0}', corpse.name),
-								type: 'die'
-							}]);
+							appendChatMessage(thisPlayerDied ? strings.chatDieYou : strings.chatDieOther.replace('{0}', corpse.name), 'die');
 							if (thisPlayerDied) {
-								thisPlayer.attacking = false;
+								setThisPlayerAttacking(false);
 							}
 						}
 					}
@@ -320,36 +327,28 @@ export default function Game() {
 
 					// Write message to the chat panel
 					if (message.playerId === thisPlayer.id) {
-						setMessages(messages => [...messages, {
-							content: strings.chatTake.replace('{0}', message.item.name),
-							type: 'take'
-						}]);
+						appendChatMessage(strings.chatTake.replace('{0}', message.item.name), 'take');
 						thisPlayer.items.push(message.item);
 					}
 					break;
 				case gameConfig.messageActions.DROP:
 
 					// Update the Items lists
-					roomItemsRef.push(message.item);
-					setRoomItems(roomItemsRef);
+					roomItemsRef.current.push(message.item);
+					setRoomItems(roomItemsRef.current);
 
 					// Find the Player/Mob that dropped the Item
 					const targetId = message.playerId || message.mobId;
-					targets = message.playerId ? roomPlayersRef : roomMobsRef;
+					targets = message.playerId ? roomPlayersRef.current : roomMobsRef.current;
 					target = targets.find(t => t.id === targetId);
 
 					// Write message to the chat panel
-					const thisPlayerDropped = targets === roomPlayersRef && target.id === thisPlayer.id;
-					setMessages(messages => [...messages, {
-						content: thisPlayerDropped
-							? strings.chatDropYou.replace('{0}', message.item.name)
-							: strings.chatDropYou.replace('{0}', entity.name).replace('{1}', message.item.name),
-						type: 'item'
-					}]);
+					const thisPlayerDropped = targets === roomPlayersRef.current && target.id === thisPlayer.id;
+					appendChatMessage(thisPlayerDropped ? strings.chatDropYou.replace('{0}', message.item.name) : strings.chatDropOther.replace('{0}', target.name).replace('{1}', message.item.name), 'item');
 					break;
 			}
 		}
-	}, [socket.lastJsonMessage]);
+	}, [lastJsonMessage]);
 
 	return (
 		<PageContainer id="game">
@@ -380,7 +379,7 @@ export default function Game() {
 						</div>
 						<div className="items">
 							{roomItems.map(item => (
-								<a href="#" className="item" key={'item-' + item.id}>{item.name}</a>
+								<a href="#" className="item" key={'item-' + item.id} onClick={event => openItemSheet(event, item)}>{item.name}</a>
 							))}
 						</div>
 					</div>
@@ -406,7 +405,7 @@ export default function Game() {
 							</div>
 						</div>
 						<div className="chat">
-							{messages.map(message => (
+							{chatMessages.map(message => (
 								<div className={'message ' + message.type} key={'message-' + messageIndex++}>{message.content}</div>
 							))}
 						</div>
@@ -426,6 +425,11 @@ export default function Game() {
 					<Tab tab="settings">{strings.settings}</Tab>
 				</TabList>
 			</Tabs>
+			<ItemSheet
+				item={activeItem}
+				open={itemSheetOpen}
+				onClose={closeItemSheet}
+			/>
 			<MobSheet
 				mob={activeMob}
 				open={mobSheetOpen}

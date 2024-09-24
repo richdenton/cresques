@@ -196,6 +196,7 @@ class GameController {
 		const mob = this.game.mobs.get(mobId);
 		if (mob) {
 			if (mob.roomId === playerController.player.roomId) {
+				playerController.hail(playerController.player, mob);
 				const factionLevel = playerController.player.getFactionLevel(mob).index;
 				if (factionLevel >= gameConfig.factionScale.INDIFFERENT.index) {
 
@@ -210,6 +211,13 @@ class GameController {
 					// Save current Conversation to the Player
 					if (conversation) {
 
+						//  Send the Mob's response
+						playerController.player.conversation = {
+							id: conversation.id,
+							mobId: conversation.mobId
+						};
+						this.say(mob, 1, conversation.getFormattedMessage(playerController.player));
+
 						// Reward the Player
 						conversation.rewards.forEach(reward => {
 							if (reward.item) {
@@ -219,13 +227,6 @@ class GameController {
 							playerController.player.money += reward.money;
 							playerController.player.experience += reward.experience;
 						});
-
-						//  Send the Mob's response
-						playerController.player.conversation = {
-							id: conversation.id,
-							mobId: conversation.mobId
-						};
-						this.say(mob, 1, conversation.getFormattedMessage(playerController.player));
 					}
 				} else if (factionLevel == gameConfig.factionScale.AGGRESSIVE.index) {
 					mob.attacking = playerController.player.id;

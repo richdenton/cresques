@@ -9,3 +9,15 @@ export default function Sheet({ open, onClose, children }) {
 		</div>
 	);
 };
+
+export function SheetActions({ children }) {
+	return (
+		<div className="actions">{ children }</div>
+	)
+};
+
+export function SheetAction({ onClick, children }) {
+	return (
+		<p><a href="#" className="button contained" onClick={onClick}>{children}</a></p>
+	);
+};

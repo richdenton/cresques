@@ -382,6 +382,19 @@ class PlayerController {
 	}
 
 	/**
+	 * Player hailed a Mob.
+	 * @param {Player} player - The Player performing the hail.
+	 * @param {Mob} mob - The Mob being hailed.
+	 */
+	hail(player, mob) {
+		this.socket.send(JSON.stringify({
+			action: PlayerController.messageActions.HAIL,
+			mobId: mob.id,
+			playerId: player.id
+		}));
+	}
+
+	/**
 	 * Player picked up an Item.
 	 * @param {Player} player - The Player who took the Item.
 	 * @param {Item} item - The Item that was taken.
@@ -433,7 +446,7 @@ class PlayerController {
 	 * Player bought an Item from a Shop.
 	 * @param {Player} player - The Player who bought the Item.
 	 * @param {Mob} mob - The Mob associated with the Shop.
-	 * @param {Item} item - The Item associated with the Shop.
+	 * @param {Item} item - The Item associated with the sale.
 	 */
 	buy(player, mob, item) {
 		this.socket.send(JSON.stringify({
@@ -445,12 +458,12 @@ class PlayerController {
 	}
 
 	/**
-	 * Player sold an Item tp a Shop.
+	 * Player sold an Item to a Shop.
 	 * @param {Player} player - The Player who sold the Item.
 	 * @param {Mob} mob - The Mob associated with the Shop.
-	 * @param {Item} item - The Item associated with the Shop.
+	 * @param {Item} item - The Item associated with the sale.
 	 */
-	buy(player, mob, item) {
+	sell(player, mob, item) {
 		this.socket.send(JSON.stringify({
 			action: PlayerController.messageActions.SELL,
 			playerId: player.id,

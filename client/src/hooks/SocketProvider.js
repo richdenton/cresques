@@ -1,4 +1,5 @@
 import { createContext, useRef, useState, useMemo, useCallback, useEffect, useContext } from 'react';
+import { flushSync } from 'react-dom';
 import clientConfig from '../config/clientConfig';
 
 const SocketContext = createContext();
@@ -13,7 +14,7 @@ export default function SocketProvider({ children }) {
 			try {
 				return JSON.parse(lastMessage.data);
 			} catch(error) {
-				return error;
+				return {};
 			}
 		}
 		return null; 
@@ -40,7 +41,9 @@ export default function SocketProvider({ children }) {
 	useEffect(() => {
 		if (!webSocketRef.current || webSocketRef.current.readyState === WebSocket.CLOSED) {
 			webSocketRef.current = new WebSocket(clientConfig.webSocketServer);
-			webSocketRef.current.onmessage = setLastMessage;
+			webSocketRef.current.onmessage = (message) => {
+				flushSync(() => setLastMessage(message));
+			};
 			/*return () => {
 				setLastMessage(null);
 				webSocketRef.current.close();

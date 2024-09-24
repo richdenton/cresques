@@ -38,6 +38,8 @@ const strings = {
 		'looks like quite a gamble.',
 		'what would you like your tombstone to say?'
 	],
+	chatHailYou: 'You hail {0}.',
+	chatHailOther: '{0} hail {1}.',
 	chatEnter: '{0} entered.',
 	chatEnterYou: 'You entered {0}.',
 	chatLeave: '{0} left.',
@@ -53,6 +55,7 @@ const strings = {
 	chatDropYou: 'You drop {0}.',
 	chatDropOther: '{0} drops {1}.',
 	consider: 'Consider',
+	hail: 'Hail',
 	attack: 'Attack',
 	explore: 'Explore',
 	player: 'Player',

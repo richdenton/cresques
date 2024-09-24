@@ -1,6 +1,6 @@
 {
 	"name": "cresques-client",
-	"version": "0.4.0",
+	"version": "0.5.0",
 	"description": "React frontend for the MUD-like game package Cresques.",
 	"private": true,
 	"dependencies": {

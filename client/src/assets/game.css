@@ -65,7 +65,7 @@
 	font-weight: 700;
 }
 
-/* Explore Tab Panel */
+/* Explore Tab > Room/Zone Info */
 #tabpanel-explore .world {
 	height: calc(100% - 120px);
 	overflow-x: hidden;
@@ -94,16 +94,39 @@
 	background: #000;
 	height: 120px;
 }
+
+/* Explore Tab > Chat */
 #tabpanel-explore .chat {
+	color: #fff;
 	font-size: 12px;
 	height: 120px;
 	overflow-x: hidden;
 	overflow-y: auto;
 	text-align: left;
 }
-#tabpanel-explore .chat .message.inactive {
-	opacity: .5;
+.chat .threat_0 {
+	color: lightgreen;
 }
+.chat .threat_1 {
+	color: green;
+}
+.chat .threat_2 {
+	color: blue;
+}
+.chat .threat_3 {
+	color: white;
+}
+.chat .threat_4 {
+	color: yellow;
+}
+.chat .threat_5 {
+	color: red;
+}
+.chat .attack.you {
+	color: red;
+}
+
+/* Explore Tab > Movement Controls */
 #tabpanel-explore .exits {
 	display: table;
 	float: right;
