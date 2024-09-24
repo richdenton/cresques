@@ -2,9 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useWebSocket } from '../hooks/SocketProvider';
 import PageContainer from '../components/PageContainer';
+import WorldSection from '../components/WorldSection';
+import CombatSection from '../components/CombatSection';
+import DeathSection from '../components/DeathSection';
 import { Tabs, TabPanel, TabList, Tab } from '../components/Tabs';
-import MobSheet from '../components/MobSheet';
 import ItemSheet from '../components/ItemSheet';
+import MobSheet from '../components/MobSheet';
+import PlayerSheet from '../components/PlayerSheet';
 import strings from '../config/strings';
 import gameConfig from '../config/gameConfig';
 import '../assets/game.css';
@@ -31,30 +35,43 @@ export default function Game() {
 	// Get the current WebSocket connection
 	const { sendJsonMessage, lastJsonMessage } = useWebSocket();
 
+	// Handle main section visibility
+	const [activeSection, setActiveSection] = useState(thisPlayer.health < 1 ? 'death' : 'world');
+
 	// Handle Item action sheet visibility
-	const [itemSheetOpen, setItemSheetOpen] = useState(false);
+	const [isItemSheetOpen, setIsItemSheetOpen] = useState(false);
 	const [activeItem, setActiveItem] = useState(null);
 	const openItemSheet = (event, item) => {
 		event.preventDefault();
 		setActiveItem(item);
-		setItemSheetOpen(true);
+		setIsItemSheetOpen(true);
 	};
 	const closeItemSheet = () => {
-		setActiveItem(null);
-		setItemSheetOpen(false);
+		setIsItemSheetOpen(false);
+	};
+
+	// Handle Player action sheet visibility
+	const [isPlayerSheetOpen, setIsPlayerSheetOpen] = useState(false);
+	const [activePlayer, setActivePlayer] = useState(null);
+	const openPlayerSheet = (event, player) => {
+		event.preventDefault();
+		setActivePlayer(player);
+		setIsPlayerSheetOpen(true);
+	};
+	const closePlayerSheet = () => {
+		setIsPlayerSheetOpen(false);
 	};
 
 	// Handle Mob action sheet visibility
-	const [mobSheetOpen, setMobSheetOpen] = useState(false);
+	const [isMobSheetOpen, setIsMobSheetOpen] = useState(false);
 	const [activeMob, setActiveMob] = useState(null);
 	const openMobSheet = (event, mob) => {
 		event.preventDefault();
 		setActiveMob(mob);
-		setMobSheetOpen(true);
+		setIsMobSheetOpen(true);
 	};
 	const closeMobSheet = () => {
-		setActiveMob(null);
-		setMobSheetOpen(false);
+		setIsMobSheetOpen(false);
 	};
 
 	// Add a new chat message to the array
@@ -70,9 +87,9 @@ export default function Game() {
 		event.preventDefault();
 		if (event.target.className !== 'disabled') {
 			if (thisPlayerAttacking) {
-				appendChatMessage(strings.errorCombat, 'combat');
+				appendChatMessage(strings.chatErrorCombat, 'error combat');
 			} else if (thisPlayer.encumbered) {
-				appendChatMessage(strings.errorEncumbered, 'encumbered');
+				appendChatMessage(strings.chatErrorEncumbered, 'error encumbered');
 			} else {
 				sendJsonMessage({
 					action: gameConfig.messageActions.MOVE,
@@ -94,8 +111,9 @@ export default function Game() {
 			switch (message.action) {
 				case gameConfig.messageActions.MOVE:
 
-					// Display Zone information
-					if (thisPlayer.lastZoneId !== message.room.zoneId) {
+					// Display when the player enters a new Zone
+					if (thisPlayer.lastZoneId !== message.room.zoneId || activeSection !== 'world') {
+						setActiveSection('world');
 						appendChatMessage(strings.chatEnterYou.replace('{0}', message.zone.name), 'zone');
 						thisPlayer.lastZoneId = message.room.zoneId;
 					}
@@ -118,7 +136,7 @@ export default function Game() {
 						setRoomPlayers(roomPlayersRef.current);
 
 						// Write message to the chat panel
-						appendChatMessage(strings.chatEnter.replace('{0}', message.player.name), 'enter');
+						appendChatMessage(strings.chatEnterOther.replace('{0}', message.player.name), 'enter');
 
 					} else if (message.mob) {
 
@@ -127,7 +145,7 @@ export default function Game() {
 						setRoomMobs(roomMobsRef.current);
 
 						// Write message to the chat panel
-						appendChatMessage(strings.chatEnter.replace('{0}', message.mob.name), 'enter');
+						appendChatMessage(strings.chatEnterOther.replace('{0}', message.mob.name), 'enter');
 					}
 					break;
 				case gameConfig.messageActions.LEAVE:
@@ -144,7 +162,7 @@ export default function Game() {
 
 						// Write message to the chat panel
 						if (target.name) {
-							appendChatMessage(strings.chatLeave.replace('{0}', target.name), 'leave');
+							appendChatMessage(strings.chatLeaveOther.replace('{0}', target.name), 'leave');
 						}
 					} else if (message.mobId) {
 
@@ -159,7 +177,7 @@ export default function Game() {
 
 						// Write message to the chat panel
 						if (target.name) {
-							appendChatMessage(strings.chatLeave.replace('{0}', target.name), 'leave');
+							appendChatMessage(strings.chatLeaveOther.replace('{0}', target.name), 'leave');
 						}
 					}
 					break;
@@ -191,7 +209,7 @@ export default function Game() {
 
 					// Check if the current Player is yelling
 					if (message.sender.type === gameConfig.entityTypes.PLAYER && message.senderId === thisPlayer.id) {
-						
+
 						// Write message to the chat panel
 						appendChatMessage(strings.chatYellYou.replace('{0}', message.text), 'yell you');
 					} else {
@@ -228,7 +246,7 @@ export default function Game() {
 
 					// Check if the current Player is speaking
 					if (message.playerId === thisPlayer.id) {
-						
+
 						// Write message to the chat panel
 						appendChatMessage(strings.chatHailYou.replace('{0}', target.name), 'hail');
 					} else {
@@ -318,6 +336,13 @@ export default function Game() {
 						roomMobsRef.current = roomMobsRef.current.filter(m => m.id !== corpse.id);
 						setRoomMobs(roomMobsRef.current);
 					}
+
+					// Return to the appropriate section
+					if (thisPlayerDied) {
+						setActiveSection('death');
+					} else if (thisPlayerAttacked) {
+						setActiveSection('world');
+					}
 					break;
 				case gameConfig.messageActions.TAKE:
 
@@ -325,11 +350,14 @@ export default function Game() {
 					roomItemsRef.current = roomItemsRef.current.filter(i => i.id !== message.item.id);
 					setRoomItems(roomItemsRef.current);
 
+					// Find the Player/Mob that picked up the Item
+					const takerId = message.playerId || message.mobId;
+					targets = message.playerId ? roomPlayersRef.current : roomMobsRef.current;
+					target = targets.find(t => t.id === takerId);
+
 					// Write message to the chat panel
-					if (message.playerId === thisPlayer.id) {
-						appendChatMessage(strings.chatTake.replace('{0}', message.item.name), 'take');
-						thisPlayer.items.push(message.item);
-					}
+					const thisPlayerTook = targets === roomPlayersRef.current && target.id === thisPlayer.id;
+					appendChatMessage(thisPlayerTook ? strings.chatTakeYou.replace('{0}', message.item.name) : strings.chatTakeOther.replace('{0}', target.name).replace('{1}', message.item.name), 'item take');
 					break;
 				case gameConfig.messageActions.DROP:
 
@@ -338,13 +366,13 @@ export default function Game() {
 					setRoomItems(roomItemsRef.current);
 
 					// Find the Player/Mob that dropped the Item
-					const targetId = message.playerId || message.mobId;
+					const dropperId = message.playerId || message.mobId;
 					targets = message.playerId ? roomPlayersRef.current : roomMobsRef.current;
-					target = targets.find(t => t.id === targetId);
+					target = targets.find(t => t.id === dropperId);
 
 					// Write message to the chat panel
 					const thisPlayerDropped = targets === roomPlayersRef.current && target.id === thisPlayer.id;
-					appendChatMessage(thisPlayerDropped ? strings.chatDropYou.replace('{0}', message.item.name) : strings.chatDropOther.replace('{0}', target.name).replace('{1}', message.item.name), 'item');
+					appendChatMessage(thisPlayerDropped ? strings.chatDropYou.replace('{0}', message.item.name) : strings.chatDropOther.replace('{0}', target.name).replace('{1}', message.item.name), 'item drop');
 					break;
 			}
 		}
@@ -354,35 +382,40 @@ export default function Game() {
 		<PageContainer id="game">
 			<header>
 				<span className="stat health">
-					<span className="label">Health</span>
+					<span className="label">{strings.health}</span>
 					<span className="meter">
 						<span className="fill" style={{width: thisPlayer.health / thisPlayer.healthBase * 100}}/>
 					</span>
 				</span>
 				<span className="stat level">
-					<span className="label">Level</span>
+					<span className="label">{strings.level}</span>
 					<span className="value">{thisPlayer.level}</span>
 				</span>
 				<span className="stat money">
-					<span className="label">Money</span>
+					<span className="label">{strings.money}</span>
 					<span className="value">{thisPlayer.money}</span>
 				</span>
 			</header>
 			<Tabs defaultSelectedTab="explore">
 				<TabPanel tab="explore">
-					<div className="world">
-						<div className="description">{roomDescription}</div>
-						<div className="mobs">
-							{roomMobs.map(mob => (
-								<a href="#" className="mob" key={'mob-' + mob.id} onClick={event => openMobSheet(event, mob)}>{mob.name}</a>
-							))}
-						</div>
-						<div className="items">
-							{roomItems.map(item => (
-								<a href="#" className="item" key={'item-' + item.id} onClick={event => openItemSheet(event, item)}>{item.name}</a>
-							))}
-						</div>
-					</div>
+					<WorldSection
+						isActive={activeSection === 'world'}
+						roomDescription={roomDescription}
+						thisPlayer={thisPlayer}
+						mobs={roomMobs}
+						players={roomPlayers}
+						items={roomItems}
+						openMobSheet={openMobSheet}
+						openPlayerSheet={openPlayerSheet}
+						openItemSheet={openItemSheet}
+					/>
+					<CombatSection
+						isActive={activeSection === 'combat'}
+						mob={activeMob}
+					/>
+					<DeathSection
+						isActive={activeSection === 'death'}
+					/>
 					<nav>
 						<div className="exits">
 							<div className="cell">
@@ -427,13 +460,19 @@ export default function Game() {
 			</Tabs>
 			<ItemSheet
 				item={activeItem}
-				open={itemSheetOpen}
+				isOpen={isItemSheetOpen}
 				onClose={closeItemSheet}
 			/>
 			<MobSheet
 				mob={activeMob}
-				open={mobSheetOpen}
+				isOpen={isMobSheetOpen}
 				onClose={closeMobSheet}
+				onAttack={() => setActiveSection('combat')}
+			/>
+			<PlayerSheet
+				player={activePlayer}
+				isOpen={isPlayerSheetOpen}
+				onClose={closePlayerSheet}
 			/>
 		</PageContainer>
 	);

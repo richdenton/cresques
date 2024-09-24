@@ -3,24 +3,27 @@ import strings from '../config/strings';
 import { useWebSocket } from '../hooks/SocketProvider';
 import gameConfig from '../config/gameConfig';
 
-export default function MobSheet({ mob, open, onClose }) {
+export default function MobSheet({ mob, isOpen, onClose, onAttack }) {
 
 	// Get the current WebSocket connection
 	const { sendJsonMessage } = useWebSocket();
 
 	// Send the appropriate action to the server
-	const handleMobAction = (event, action, chatMessage) => {
+	const handleMobAction = (event, action) => {
 		event.preventDefault();
 		onClose();
 		sendJsonMessage({
 			action: action,
 			mobId: mob.id
 		});
+		if (action === gameConfig.messageActions.ATTACK) {
+			onAttack();
+		}
 	};
 
 	return (
 		<Sheet
-			open={open}
+			isOpen={isOpen}
 			onClose={onClose}
 		>
 			<SheetActions>

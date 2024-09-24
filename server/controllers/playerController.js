@@ -12,6 +12,7 @@ class PlayerController {
 		HAIL: 'hail',
 		ATTACK: 'attack',
 		DIE: 'die',
+		RESPAWN: 'res',
 		TAKE: 'take',
 		DROP: 'drop',
 		DECAY: 'decay',
@@ -87,6 +88,11 @@ class PlayerController {
 					// Attack a Mob
 					case PlayerController.messageActions.ATTACK:
 						this.gameController.attack(this.player, message.mobId);
+						break;
+
+					// Respawn a Player
+					case PlayerController.messageActions.RESPAWN:
+						this.gameController.respawn(this.player);
 						break;
 
 					// Take an Item
@@ -192,7 +198,7 @@ class PlayerController {
 							zone: this.gameController.game.zones.get(room.zoneId),
 							room: room,
 						},
-							[ 'action', 'zone', 'room', 'id', 'name', 'description', 'doors', 'n', 'e', 's', 'w', 'u', 'd', 'roomId', 'zoneId', 'players', 'mobs', 'items' ]
+							[ 'action', 'zone', 'room', 'id', 'name', 'description', 'doors', 'n', 'e', 's', 'w', 'u', 'd', 'roomId', 'zoneId', 'players', 'mobs', 'items', 'health', 'healthBase' ]
 						));
 					} else {
 						socket.send(JSON.stringify({
@@ -304,7 +310,7 @@ class PlayerController {
 			zone: this.gameController.game.zones.get(room.zoneId),
 			room: room,
 		},
-			[ 'action', 'zone', 'room', 'id', 'name', 'description', 'doors', 'n', 'e', 's', 'w', 'u', 'd', 'roomId', 'zoneId', 'players', 'mobs', 'items' ]
+			[ 'action', 'zone', 'room', 'id', 'name', 'description', 'doors', 'n', 'e', 's', 'w', 'u', 'd', 'roomId', 'zoneId', 'players', 'mobs', 'items', 'health', 'healthBase' ]
 		));
 	}
 

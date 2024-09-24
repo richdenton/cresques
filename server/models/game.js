@@ -207,39 +207,6 @@ class Game {
 				if (player.attacking) {
 					player.attacking = 0;
 				}
-
-				// Respawn the Player
-				if (player.isActive && (!player.killTime || now > player.killTime + gameConfig.playerRespawnTime)) {
-
-					// Remove Player from the current Room
-					let room = this.rooms.get(player.roomId);
-					if (room.id) {
-						player.oldRoomId = room.id;
-						room.removePlayer(player);
-						Logger.log(player.name + ' was removed from ' + room.name + '.', Logger.logTypes.DEBUG);
-					} else {
-						Logger.log(player.name + ' is not in a room.', Logger.logTypes.ERROR);
-					}
-
-					// Respawn Player in Race starting Room
-					const race = this.races.get(player.raceId);
-					if (race.id) {
-						room = this.rooms.get(race.roomId);
-						if (room.id) {
-							player.newRoomId = room.id;
-							room.addPlayer(player);
-							Logger.log(player.name + ' respawned in ' + room.name + '.', Logger.logTypes.DEBUG);
-						} else {
-							Logger.log('Could not respawn ' + player.name + ' due to missing room.', Logger.logTypes.ERROR);
-						}
-					} else {
-						Logger.log('Could not respawn ' + player.name + ' due to missing race.', Logger.logTypes.ERROR);
-					}
-
-					// Reset Player stats
-					player.killTime = 0;
-					player.health = player.getMaxHealth();
-				}
 			}
 
 			// Check if Player is currently in combat

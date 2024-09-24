@@ -4,7 +4,7 @@ Cresques is a text-based multiplayer game running on Node.js on the backend and 
 
 ## Getting Started
 
-The server establishes a RESTful API using Express to handle user authentication and character creation. Once logged in to the game world, communication shifts to WebSockets. While functionally similiar to other Multi-User Dungeon (MUD) projects, world actions in Cresques are comprised of JSON payloads allowing for far more flexibility than standard MUD protocals.
+The server establishes a RESTful API using Express to handle user authentication and character creation. Once logged in to the game world, communication shifts to WebSockets. While functionally similiar to other Multi-User Dungeon (MUD) projects, world actions in Cresques are comprised of JSON payloads allowing for far more flexibility than standard MUD protocols.
 
 ### Prerequisites
 

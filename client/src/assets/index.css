@@ -5,8 +5,12 @@ html, body, #root {
 }
 body {
 	background: #101;
-	color: #d75;
-	font: 14px Helvetica, Arial, sans-serif;
+	color: #fff;
+	font: 20px DPComic, Arial, sans-serif;
+}
+h1, h2 {
+	font-weight: 400;
+	text-align: center;
 }
 p {
 	margin: 16px 0;
@@ -14,14 +18,19 @@ p {
 }
 a {
 	color: inherit;
-	font-weight: 700;
 	text-decoration: none;
 }
 input, select {
-	font-size: inherit;
+	font: inherit;
 }
 select {
 	display: block;
+}
+
+/* Font by codeman38 (zone38.net) */
+@font-face {
+	font-family: 'DPComic';
+	src: local('DPComic'), url('../assets/dpcomic.woff') format('woff');
 }
 
 /* Page Containers */
@@ -30,11 +39,10 @@ select {
 	display: flex;
 	height: 100%;
 	justify-content: center;
-	text-align: center;
 }
 .container .outer {
 	align-items: center;
-	background: #322;
+	background: #432;
 	display: flex;
 	height: 480px;
 	justify-content: center;
@@ -49,26 +57,29 @@ select {
 		width: 100%;
 	}
 }
+#home, #login, #signup, #select, #create {
+	text-align: center;
+}
 
 /* Buttons */
 .button {
-	color: #d75;
+	background: #000;
+	border: 0;
+	border-radius: 24px;
+	color: #a86;
 	display: inline-block;
-	font-weight: 700;
+	font-weight: 400;
 	line-height: 48px;
-	margin: 1px;
+	margin: 0;
 	padding: 0;
 	min-width: 240px;
-	text-transform: uppercase;
-}
-.button.outlined {
-	border: 1px solid #d75;
+	text-align: center;
 }
 .button.contained {
-	background: #a53;
-	border: 0;
-	box-shadow: 0 4px 0 #212, 0 2px 0 #d75 inset;
-	color: #322;
+	background: #a86;
+	box-shadow: 1px 1px 0 #321, -1px -1px 0 #642 inset, 1px 1px 0 #dcb inset;
+	color: #fff;
+	text-shadow: 2px 2px 0 #864;
 }
 
 /* Text Fields */
@@ -82,7 +93,7 @@ select {
 	text-align: left;
 }
 .input input {
-	background: #101;
+	background: #321;
 	border: 0;
 	color: #d75;
 	display: block;
@@ -121,6 +132,7 @@ fieldset {
 	padding: 0;
 }
 .radio {
+	border-radius: 0;
 	flex: 1;
 	min-width: 0;
 }
@@ -131,7 +143,8 @@ fieldset {
 	display: block;
 }
 .radio.selected {
-	background: #101;
+	background: #321;
 	box-shadow: none;
-	color: #d75;
+	color: #a75;
+	text-shadow: none;
 }

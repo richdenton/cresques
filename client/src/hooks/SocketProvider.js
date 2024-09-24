@@ -26,7 +26,7 @@ export default function SocketProvider({ children }) {
 			webSocketRef.current.send(message);
 		}
 	}, []);
-  
+
 	// Send a message as JSON
 	const sendJsonMessage = useCallback((message) => {
 		sendMessage(JSON.stringify(message));
@@ -44,10 +44,11 @@ export default function SocketProvider({ children }) {
 			webSocketRef.current.onmessage = (message) => {
 				flushSync(() => setLastMessage(message));
 			};
-			/*return () => {
+			return () => {
 				setLastMessage(null);
 				webSocketRef.current.close();
-			};*/
+				webSocketRef.current = null;
+			};
 		}
 	}, [sendMessage]);
 

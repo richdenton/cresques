@@ -1,6 +1,5 @@
 module.exports = {
 	refreshRate: 1000,
-	playerRespawnTime: 10000,
 	meleeDelay: 2000,
 	experienceLevelBase: 1000,
 	experienceLevelPowerCurve: 3,

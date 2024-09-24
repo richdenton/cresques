@@ -9,6 +9,7 @@ const gameConfig = {
 		HAIL: 'hail',
 		ATTACK: 'attack',
 		DIE: 'die',
+		RESPAWN: 'res',
 		TAKE: 'take',
 		DROP: 'drop',
 		DECAY: 'decay',

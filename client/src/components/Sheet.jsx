@@ -1,5 +1,5 @@
-export default function Sheet({ open, onClose, children }) {
-	if (!open) {
+export default function Sheet({ isOpen, onClose, children }) {
+	if (!isOpen) {
 		return null;
 	}
 	return (

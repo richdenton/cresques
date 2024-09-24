@@ -3,7 +3,7 @@ import strings from '../config/strings';
 import { useWebSocket } from '../hooks/SocketProvider';
 import gameConfig from '../config/gameConfig';
 
-export default function ItemSheet({ item, isOpen, onClose }) {
+export default function PlayerSheet({ player, isOpen, onClose }) {
 
 	// Get the current WebSocket connection
 	const { sendJsonMessage } = useWebSocket();
@@ -14,7 +14,7 @@ export default function ItemSheet({ item, isOpen, onClose }) {
 		onClose();
 		sendJsonMessage({
 			action: action,
-			itemId: item.id
+			playerId: player.id
 		});
 	};
 
@@ -24,7 +24,7 @@ export default function ItemSheet({ item, isOpen, onClose }) {
 			onClose={onClose}
 		>
 			<SheetActions>
-				<SheetAction onClick={event => handleItemAction(event, gameConfig.messageActions.TAKE)}>{strings.takeItem}</SheetAction>
+				<SheetAction onClick={event => handleItemAction(event, gameConfig.messageActions.HAIL)}>{strings.hail}</SheetAction>
 			</SheetActions>
 		</Sheet>
 	);

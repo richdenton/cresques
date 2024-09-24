@@ -260,6 +260,55 @@ class GameController {
 	}
 
 	/**
+	 * Handle a Player respawning.
+	 * @param {Player} player - The Player who is respawning.
+	 */
+	respawn(player) {
+		if (player.health < 1) {
+
+			// Remove Player from the current Room
+			let room = this.game.rooms.get(player.roomId);
+			if (room.id) {
+				player.oldRoomId = room.id;
+				room.removePlayer(player);
+				Logger.log(player.name + ' was removed from ' + room.name + '.', Logger.logTypes.DEBUG);
+			} else {
+				Logger.log(player.name + ' is not in a room.', Logger.logTypes.ERROR);
+			}
+
+			// Respawn Player in Race starting Room
+			const race = this.game.races.get(player.raceId);
+			if (race.id) {
+				room = this.game.rooms.get(race.roomId);
+				if (room.id) {
+					
+					// Update the game
+					player.newRoomId = room.id;
+					room.addPlayer(player);
+					Logger.log(player.name + ' respawned in ' + room.name + '.', Logger.logTypes.DEBUG);
+
+					// Update Players
+					this.playerControllers.forEach(playerController => {
+						if (playerController.player.id === player.id) {
+							playerController.move(room);
+						} else if (playerController.player.roomId === room.id) {
+							playerController.enter(player);
+						}
+					});
+				} else {
+					Logger.log('Could not respawn ' + player.name + ' due to missing room.', Logger.logTypes.ERROR);
+				}
+			} else {
+				Logger.log('Could not respawn ' + player.name + ' due to missing race.', Logger.logTypes.ERROR);
+			}
+
+			// Reset Player stats
+			player.killTime = 0;
+			player.health = player.getMaxHealth();
+		}
+	}
+
+	/**
 	 * Handle a Player taking an Item from a Room.
 	 * @param {Player} player - The Player who is taking the Item.
 	 * @param {Number} itemId - The unique ID of the Item.
