@@ -23,6 +23,7 @@ export default function Game() {
 	// Watch for game state changes
 	const [chatMessages, setChatMessages] = useState([]);
 	const [roomDescription, setRoomDescription] = useState('');
+	const [roomImage, setRoomImage] = useState(null);
 	const [roomDoors, setRoomDoors] = useState([]);
 	const [roomItems, setRoomItems] = useState([]);
 	const [roomMobs, setRoomMobs] = useState([]);
@@ -83,19 +84,16 @@ export default function Game() {
 	};
 
 	// Move the current player
-	const movePlayer = (event, direction) => {
-		event.preventDefault();
-		if (event.target.className !== 'disabled') {
-			if (thisPlayerAttacking) {
-				appendChatMessage(strings.chatErrorCombat, 'error combat');
-			} else if (thisPlayer.encumbered) {
-				appendChatMessage(strings.chatErrorEncumbered, 'error encumbered');
-			} else {
-				sendJsonMessage({
-					action: gameConfig.messageActions.MOVE,
-					direction: direction
-				});
-			}
+	const movePlayer = (direction) => {
+		if (thisPlayerAttacking) {
+			appendChatMessage(strings.chatErrorCombat, 'error combat');
+		} else if (thisPlayer.encumbered) {
+			appendChatMessage(strings.chatErrorEncumbered, 'error encumbered');
+		} else {
+			sendJsonMessage({
+				action: gameConfig.messageActions.MOVE,
+				direction: direction
+			});
 		}
 	};
 
@@ -120,6 +118,7 @@ export default function Game() {
 
 					// Store Room information
 					setRoomDescription(message.room.description);
+					setRoomImage(message.room.image);
 					setRoomDoors(message.room.doors);
 					roomItemsRef.current = message.room.items;
 					setRoomItems(roomItemsRef.current);
@@ -127,6 +126,7 @@ export default function Game() {
 					setRoomMobs(roomMobsRef.current);
 					roomPlayersRef.current = message.room.players;
 					setRoomPlayers(roomPlayersRef.current);
+					thisPlayer.roomId = message.room.id;
 					break;
 				case gameConfig.messageActions.ENTER:
 					if (message.player) {
@@ -379,12 +379,12 @@ export default function Game() {
 	}, [lastJsonMessage]);
 
 	return (
-		<PageContainer id="game">
+		<PageContainer id="game" backgroundImage={roomImage}>
 			<header>
 				<span className="stat health">
 					<span className="label">{strings.health}</span>
 					<span className="meter">
-						<span className="fill" style={{width: thisPlayer.health / thisPlayer.healthBase * 100}}/>
+						<span className="fill" style={{width: thisPlayer.health / thisPlayer.healthBase * 100 + '%'}}/>
 					</span>
 				</span>
 				<span className="stat level">
@@ -401,6 +401,7 @@ export default function Game() {
 					<WorldSection
 						isActive={activeSection === 'world'}
 						roomDescription={roomDescription}
+						roomDoors={roomDoors}
 						thisPlayer={thisPlayer}
 						mobs={roomMobs}
 						players={roomPlayers}
@@ -408,6 +409,7 @@ export default function Game() {
 						openMobSheet={openMobSheet}
 						openPlayerSheet={openPlayerSheet}
 						openItemSheet={openItemSheet}
+						movePlayer={movePlayer}
 					/>
 					<CombatSection
 						isActive={activeSection === 'combat'}
@@ -416,33 +418,11 @@ export default function Game() {
 					<DeathSection
 						isActive={activeSection === 'death'}
 					/>
-					<nav>
-						<div className="exits">
-							<div className="cell">
-								<a href="#" className={roomDoors.hasOwnProperty('w') ? '' : 'disabled'} onClick={event => movePlayer(event, 'w')}>
-									<i className="arrow west" />
-								</a>
-							</div>
-							<div className="cell">
-								<a href="#" className={roomDoors.hasOwnProperty('n') ? '' : 'disabled'} onClick={event => movePlayer(event, 'n')}>
-									<i className="arrow north" />
-								</a>
-								<a href="#" className={roomDoors.hasOwnProperty('s') ? '' : 'disabled'} onClick={event => movePlayer(event, 's')}>
-									<i className="arrow south" />
-								</a>
-							</div>
-							<div className="cell">
-								<a href="#" className={roomDoors.hasOwnProperty('e') ? '' : 'disabled'} onClick={event => movePlayer(event, 'e')}>
-									<i className="arrow east" />
-								</a>
-							</div>
-						</div>
-						<div className="chat">
-							{chatMessages.map(message => (
-								<div className={'message ' + message.type} key={'message-' + messageIndex++}>{message.content}</div>
-							))}
-						</div>
-					</nav>
+					<div className="chat">
+						{chatMessages.map(message => (
+							<div className={'message ' + message.type} key={'message-' + messageIndex++}>{message.content}</div>
+						))}
+					</div>
 				</TabPanel>
 				<TabPanel tab="player">
 					<div className="title">{thisPlayer.name}</div>

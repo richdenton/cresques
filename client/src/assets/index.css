@@ -4,9 +4,9 @@ html, body, #root {
 	padding: 0;
 }
 body {
-	background: #101;
+	background: #012;
 	color: #fff;
-	font: 20px DPComic, Arial, sans-serif;
+	font: 16px Helvetica, Arial, sans-serif;
 }
 h1, h2 {
 	font-weight: 400;
@@ -27,12 +27,6 @@ select {
 	display: block;
 }
 
-/* Font by codeman38 (zone38.net) */
-@font-face {
-	font-family: 'DPComic';
-	src: local('DPComic'), url('../assets/dpcomic.woff') format('woff');
-}
-
 /* Page Containers */
 .container {
 	align-items: center;
@@ -42,7 +36,7 @@ select {
 }
 .container .outer {
 	align-items: center;
-	background: #432;
+	background: #456;
 	display: flex;
 	height: 480px;
 	justify-content: center;
@@ -63,9 +57,9 @@ select {
 
 /* Buttons */
 .button {
-	background: #000;
+	background: #234;
 	border: 0;
-	border-radius: 24px;
+	border-radius: 4px;
 	color: #a86;
 	display: inline-block;
 	font-weight: 400;
@@ -75,11 +69,18 @@ select {
 	min-width: 240px;
 	text-align: center;
 }
+.button:active {
+	background: #012;
+}
 .button.contained {
 	background: #a86;
 	box-shadow: 1px 1px 0 #321, -1px -1px 0 #642 inset, 1px 1px 0 #dcb inset;
 	color: #fff;
 	text-shadow: 2px 2px 0 #864;
+}
+.button.contained:active {
+	background: #864;
+	box-shadow: -1px -1px 0 #642 inset, 1px 1px 0 #321 inset;
 }
 
 /* Text Fields */
@@ -93,9 +94,9 @@ select {
 	text-align: left;
 }
 .input input {
-	background: #321;
+	background: #234;
 	border: 0;
-	color: #d75;
+	color: #fff;
 	display: block;
 	line-height: 48px;
 	margin: 0;
@@ -127,14 +128,16 @@ select {
 fieldset {
 	border: 0;
 	display: flex;
-	line-height: 48px;
 	margin: 0;
 	padding: 0;
 }
 .radio {
-	border-radius: 0;
 	flex: 1;
+	margin-right: 8px;
 	min-width: 0;
+}
+.radio:last-child {
+	margin: 0;
 }
 .radio input {
 	display: none;
@@ -143,8 +146,7 @@ fieldset {
 	display: block;
 }
 .radio.selected {
-	background: #321;
+	background: #234;
 	box-shadow: none;
-	color: #a75;
 	text-shadow: none;
 }

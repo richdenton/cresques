@@ -1,6 +1,6 @@
 {
 	"name": "cresques-server",
-	"version": "1.4.0",
+	"version": "1.4.1",
 	"description": "Node.js backend for the MUD-like game package Cresques.",
 	"main": "server.js",
 	"scripts": {

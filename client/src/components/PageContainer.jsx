@@ -1,6 +1,6 @@
-export default function PageContainer({ children, ...props }) {
+export default function PageContainer({ id, backgroundImage, children }) {
 	return (
-		<div className="container" {...props}>
+		<div id={id} className="container" style={{backgroundImage: backgroundImage ? `url("/images/${backgroundImage}")` : 'none'}}>
 			<div className="outer">
 				<div className="inner">
 					{children}

@@ -1,7 +1,16 @@
 /* Global */
+#game {
+	background-color: #456;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
 #game .outer, #game .inner {
 	height: 100%;
 	width: 100%;
+}
+#game .outer {
+	background: none;
 }
 #game .mob {
 	color: #6dd;
@@ -9,7 +18,7 @@
 
 /* Header Stats */
 #game header {
-	font-size: 12px;
+	font-size: 10px;
 	height: 48px;
 	line-height: 48px;
 	text-transform: uppercase;
@@ -24,7 +33,8 @@
 	margin-left: 8px;
 }
 #game header .stat .value {
-	font-size: 20px;
+	font-size: 14px;
+	font-weight: 700;
 	margin-left: 4px;
 }
 .meter {
@@ -61,28 +71,36 @@
 	width: 100%;
 }
 #game .tab {
-	background: #a86;
-	box-shadow: 0 -1px 0 #642 inset, 0 1px 0 #dcb inset;
-	color: #fff;
+	background: #345;
+	box-shadow: 0 1px 0 #678 inset;
+	color: #678;
 	display: table-cell;
 	margin: 0;
 	padding: 0;
 	width: 33%;
 }
+#game .tab:active {
+	background: #123;
+	box-shadow: 0 1px 0 #012 inset;
+}
 #game .tab.selected {
-	background: #864;
-	box-shadow: 0 -1px 0 #420 inset, 0 1px 0 #ba9 inset;
+	color: #fff;
 }
 
 /* Explore Tab */
 #tabpanel-explore section {
 	height: calc(100% - 120px);
-	overflow-x: hidden;
-	overflow-y: auto;
+	overflow: hidden;
+	position: relative;
 	text-align: center;
 }
+#tabpanel-explore article {
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
 
-/* Explore Tab > Room/Zone Info */
+/* Explore Tab > Room Info */
 #tabpanel-explore .world .description {
 	display: flex;
 	align-items: center;
@@ -90,21 +108,27 @@
 	height: 50%;
 }
 #tabpanel-explore .world .button {
+	background: rgba(0,0,0,.5);
 	display: block;
 	margin: 0 16px 16px;
 }
-#tabpanel-explore nav {
-	background: #000;
-	height: 120px;
+#tabpanel-explore .world .button:active {
+	background: rgba(0,0,0,.8);
 }
 
 /* Explore Tab > Chat */
 #tabpanel-explore .chat {
+	background: rgba(0,0,0,.5);
 	color: #fff;
-	height: 120px;
+	height: 116px;
+	font-size: 10px;
 	overflow-x: hidden;
 	overflow-y: auto;
+	padding: 2px 0;
 	text-align: left;
+}
+#tabpanel-explore .chat .message {
+	margin: 4px 8px;
 }
 .chat .threat_0 {
 	color: lightgreen;
@@ -130,52 +154,52 @@
 
 /* Explore Tab > Movement Controls */
 #tabpanel-explore .exits {
-	display: table;
-	float: right;
-	margin: 0 auto;
+	bottom: 8px;
+	height: 100px;
+	position: absolute;
+	right: 8px;
 	text-align: center;
-	width: 144px;
+	width: 100px;
 }
-#tabpanel-explore .exits .cell {
-	display: table-cell;
-	vertical-align: middle;
-	width: 33%;
-}
-#tabpanel-explore .exits .cell:first-child {
-	padding-left: 4px;
-}
-#tabpanel-explore .exits .cell:last-child {
-	padding-right: 4px;
-}
-#tabpanel-explore .exits a {
-	background: #ba9;
+#tabpanel-explore .exit {
+	background: rgba(0,0,0,.5);
 	border-radius: 24px;
-	color: #000;
 	display: block;
 	line-height: 48px;
-	margin: 8px 0;
+	position: absolute;
 	width: 48px;
 }
-#tabpanel-explore .exits .disabled {
-	background: #765;
+#tabpanel-explore .exit:not(.disabled):active {
+	background: rgba(0,0,0,.8);
 }
-.arrow {
-	border: solid black;
-	border-width: 0 3px 3px 0;
-	display: inline-block;
-	padding: 3px;
-}
-.arrow.east {
-	transform: rotate(-45deg);
-}
-.arrow.west {
-	transform: rotate(135deg);
-}
-.arrow.north {
+#tabpanel-explore .exit.north {
+	bottom: 80px;
+	right: 40px;
 	transform: rotate(-135deg);
 }
-.arrow.south {
+#tabpanel-explore .exit.west {
+	bottom: 40px;
+	right: 80px;
+	transform: rotate(135deg);
+}
+#tabpanel-explore .exit.east {
+	bottom: 40px;
+	right: 0;
+	transform: rotate(-45deg);
+}
+#tabpanel-explore .exit.south {
+	bottom: 0;
+	right: 40px;
 	transform: rotate(45deg);
+}
+#tabpanel-explore .exit .arrow {
+	border: solid #fff;
+	border-width: 0 4px 4px 0;
+	display: inline-block;
+	padding: 4px;
+}
+#tabpanel-explore .disabled {
+	opacity: .2;
 }
 
 /* Sheet Component */
