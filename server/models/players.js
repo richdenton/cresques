@@ -32,6 +32,7 @@ class Players extends Entities {
 				player.intelligenceBase = playerRace.intelligence;
 				player.healthBase = playerRace.health;
 				player.level = player.getExperienceLevel();
+				player.healthMax = player.getMaxHealth();
 				this.add(player);
 			});
 		});

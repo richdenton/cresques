@@ -13,9 +13,10 @@ class Rooms extends Entities {
 
 	/**
 	 * Initialize the Room map with data from the database.
-	 * @param {Doors} doors - Map of all Doors loaded from the database.
+	* @param {Zones} zones - Map of all Zones loaded from the database. 
+	* @param {Doors} doors - Map of all Doors loaded from the database.
 	 */
-	async load(doors) {
+	async load(zones, doors) {
 
 		// Remove old data
 		this.map.clear();
@@ -23,8 +24,18 @@ class Rooms extends Entities {
 		// Retrieve all Rooms from the database
 		await super.load('room', (results) => {
 			results.forEach(result => {
-				const room = new Room(result);
-				this.add(room);
+				let room = new Room(result);
+
+				// Ensure Zone exists
+				const zone = zones.map.get(room.zoneId);
+				if (zone) {
+
+					// Fallback to Zone image if Room does not have its own
+					if (!room.image) {
+						room.image = zone.image;
+					}
+					this.add(room);
+				}
 			});
 		});
 

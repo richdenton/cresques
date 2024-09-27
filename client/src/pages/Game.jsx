@@ -384,7 +384,7 @@ export default function Game() {
 				<span className="stat health">
 					<span className="label">{strings.health}</span>
 					<span className="meter">
-						<span className="fill" style={{width: thisPlayer.health / thisPlayer.healthBase * 100 + '%'}}/>
+						<span className="fill" style={{width: thisPlayer.health / thisPlayer.healthMax * 100 + '%'}}/>
 					</span>
 				</span>
 				<span className="stat level">

@@ -120,7 +120,7 @@ class Game {
 
 					// Reset Mob stats
 					mob.killTime = 0;
-					mob.health = mob.getMaxHealth();
+					mob.health = mob.healthMax;
 				}
 			}
 

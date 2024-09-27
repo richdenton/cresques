@@ -304,7 +304,7 @@ class GameController {
 
 			// Reset Player stats
 			player.killTime = 0;
-			player.health = player.getMaxHealth();
+			player.health = player.healthMax;
 		}
 	}
 

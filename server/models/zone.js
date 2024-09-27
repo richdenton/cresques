@@ -12,6 +12,7 @@ class Zone extends Entity {
 		if (data) {
 			this.id = parseInt(data.id);
 			this.name = data.name;
+			this.image = data.image;
 		}
 	}
 }

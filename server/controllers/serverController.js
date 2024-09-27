@@ -25,7 +25,7 @@ class ServerController {
 		await this.gameController.game.items.load();
 		await this.gameController.game.zones.load();
 		await this.gameController.game.doors.load();
-		await this.gameController.game.rooms.load(this.gameController.game.doors);
+		await this.gameController.game.rooms.load(this.gameController.game.zones, this.gameController.game.doors);
 		await this.gameController.game.shops.load();
 		await this.gameController.game.shopInventories.load(this.gameController.game.shops, this.gameController.game.items);
 		await this.gameController.game.races.load();

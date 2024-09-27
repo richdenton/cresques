@@ -5,7 +5,7 @@ export default function CombatSection({ isActive, mob }) {
 	return (
 		<section className="combat">
 			<div className="meter">
-				<div className="fill" style={{width: mob.health / mob.healthBase * 100}}/>
+				<div className="fill" style={{width: mob.health / mob.healthMax * 100}}/>
 			</div>
 		</section>
 	);
