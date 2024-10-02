@@ -1,6 +1,5 @@
 import { createContext, useRef, useState, useMemo, useCallback, useEffect, useContext } from 'react';
 import { flushSync } from 'react-dom';
-import clientConfig from '../config/clientConfig';
 
 const SocketContext = createContext();
 
@@ -40,7 +39,7 @@ export default function SocketProvider({ children }) {
 	// Open the WebSocket connection
 	useEffect(() => {
 		if (!webSocketRef.current || webSocketRef.current.readyState === WebSocket.CLOSED) {
-			webSocketRef.current = new WebSocket(clientConfig.webSocketServer);
+			webSocketRef.current = new WebSocket(process.env.REACT_APP_WS_SERVER);
 			webSocketRef.current.onmessage = (message) => {
 				flushSync(() => setLastMessage(message));
 			};

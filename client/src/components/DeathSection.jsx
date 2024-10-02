@@ -2,7 +2,7 @@ import { useWebSocket } from '../hooks/SocketProvider';
 import gameConfig from '../config/gameConfig';
 import strings from '../config/strings';
 
-export default function DeathSection({ isActive }) {
+export default function DeathSection({ isActive, onClose }) {
 	if (!isActive) {
 		return null;
 	}
@@ -16,6 +16,7 @@ export default function DeathSection({ isActive }) {
 		sendJsonMessage({
 			action: gameConfig.messageActions.RESPAWN
 		});
+		onClose();
 	};
 
 	return (

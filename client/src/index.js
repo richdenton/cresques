@@ -9,12 +9,9 @@ import Logout from './pages/Logout';
 import Create from './pages/Create';
 import Select from './pages/Select';
 import Game from './pages/Game';
-import strings from './config/strings';
 import './assets/index.css';
 import AuthProvider from './hooks/AuthProvider';
 import SocketProvider from './hooks/SocketProvider';
-
-document.title = strings.title;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 	<React.StrictMode>

@@ -1,5 +1,5 @@
 const strings = {
-	title: 'Cresques Client',
+	version: 'Version {0}',
 	login: 'Login',
 	loginTitle: 'Welcome back!',
 	loginGoToSignup: 'Don\'t have an account?',
@@ -17,8 +17,9 @@ const strings = {
 	createPlayerName: 'Enter a Name',
 	createPlayerRace: 'Select a Race',
 	createPlayerDone: 'Done',
-	chatAttack: 'You hit {0} for {1} damage.',
-	chatDefend: '{0} hit you for {1} damage.',
+	chatAttackYou: 'You hit {0} for {1} damage.',
+	chatAttackOther: '{0} hit {1} for {2} damage.',
+	chatDefendYou: '{0} hit you for {1} damage.',
 	chatConsider: '{0} {1} -- {2}',
 	chatConsiderFactions: [
 		'scowls at you ready to attack',

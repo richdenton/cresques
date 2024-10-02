@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useFetcher, useLocation } from 'react-router-dom';
 import { useWebSocket } from '../hooks/SocketProvider';
 import PageContainer from '../components/PageContainer';
 import WorldSection from '../components/WorldSection';
@@ -15,10 +15,16 @@ import '../assets/game.css';
 
 export default function Game() {
 
-	// Get the selected player
+	// Initialize the current player
 	const location = useLocation();
 	const [thisPlayer, setThisPlayer] = useState(location.state.player);
-	const [thisPlayerAttacking, setThisPlayerAttacking] = useState(false);
+	const [thisPlayerInCombat, setThisPlayerInCombat] = useState(false);
+	const [thisPlayerHealth, setThisPlayerHealth] = useState(thisPlayer.health);
+	const [thisPlayerHealthMax, setThisPlayerHealthMax] = useState(thisPlayer.healthMax);
+	const [thisPlayerLevel, setThisPlayerLevel] = useState(thisPlayer.level);
+	const [thisPlayerMoney, setThisPlayerMoney] = useState(thisPlayer.money);
+	const [thisPlayerEncumbered, setThisPlayerEncumbered] = useState(thisPlayer.encumbered);
+	const [thisPlayerLastZoneId, setThisPlayerLastZoneId] = useState(thisPlayer.lastZoneId);
 	
 	// Watch for game state changes
 	const [chatMessages, setChatMessages] = useState([]);
@@ -66,6 +72,8 @@ export default function Game() {
 	// Handle Mob action sheet visibility
 	const [isMobSheetOpen, setIsMobSheetOpen] = useState(false);
 	const [activeMob, setActiveMob] = useState(null);
+	const [activeMobHealth, setActiveMobHealth] = useState(0);
+	const [activeMobHealthMax, setActiveMobHealthMax] = useState(0);
 	const openMobSheet = (event, mob) => {
 		event.preventDefault();
 		setActiveMob(mob);
@@ -85,9 +93,9 @@ export default function Game() {
 
 	// Move the current player
 	const movePlayer = (direction) => {
-		if (thisPlayerAttacking) {
+		if (thisPlayerInCombat) {
 			appendChatMessage(strings.chatErrorCombat, 'error combat');
-		} else if (thisPlayer.encumbered) {
+		} else if (thisPlayerEncumbered) {
 			appendChatMessage(strings.chatErrorEncumbered, 'error encumbered');
 		} else {
 			sendJsonMessage({
@@ -95,6 +103,12 @@ export default function Game() {
 				direction: direction
 			});
 		}
+	};
+
+	// Respawn the current player
+	const respawnPlayer = () => {
+		setThisPlayerHealth(thisPlayerHealthMax);
+		setActiveSection('world');
 	};
 
 	// Listen for new messages
@@ -110,10 +124,9 @@ export default function Game() {
 				case gameConfig.messageActions.MOVE:
 
 					// Display when the player enters a new Zone
-					if (thisPlayer.lastZoneId !== message.room.zoneId || activeSection !== 'world') {
-						setActiveSection('world');
+					if (thisPlayerLastZoneId !== message.room.zoneId || activeSection !== 'world') {
 						appendChatMessage(strings.chatEnterYou.replace('{0}', message.zone.name), 'zone');
-						thisPlayer.lastZoneId = message.room.zoneId;
+						setThisPlayerLastZoneId(message.room.zoneId);
 					}
 
 					// Store Room information
@@ -126,7 +139,11 @@ export default function Game() {
 					setRoomMobs(roomMobsRef.current);
 					roomPlayersRef.current = message.room.players;
 					setRoomPlayers(roomPlayersRef.current);
-					thisPlayer.roomId = message.room.id;
+
+					// Open the world section, if applicable
+					if (thisPlayerHealth > 0) {
+						setActiveSection('world');
+					}
 					break;
 				case gameConfig.messageActions.ENTER:
 					if (message.player) {
@@ -252,18 +269,18 @@ export default function Game() {
 					} else {
 
 						// Otherwise, find the speaker
-						let player = null;
+						let speaker = null;
 						targets = roomPlayersRef.current;
 						for (i = 0; i < targets.length; i++) {
 							if (targets[i].id === message.playerId) {
-								player = targets[i];
+								speaker = targets[i];
 								break;
 							}
 						}
 
 						// Write message to the chat panel
-						if (player.name) {
-							appendChatMessage(strings.chatHailYou.replace('{0}', player.name).replace('{1}', target.text), 'hail');
+						if (speaker.name) {
+							appendChatMessage(strings.chatHailYou.replace('{0}', speaker.name).replace('{1}', target.text), 'hail');
 						}
 					}
 					break;
@@ -277,14 +294,28 @@ export default function Game() {
 					targets = message.defender.type === gameConfig.entityTypes.PLAYER ? roomPlayersRef.current : roomMobsRef.current;
 					defender = targets.find(d => d.id === message.defender.id);
 
+					// Update the current player, if applicable
+					if (message.defender.type === gameConfig.entityTypes.PLAYER && defender.id === thisPlayer.id) {
+						setThisPlayerHealth(Math.max(0, thisPlayerHealth - message.defender.damage));
+					}
+
+					// Update the active mob, if applicable
+					if (message.defender.type === gameConfig.entityTypes.MOB && defender.id === activeMob.id) {
+						setActiveMobHealth(Math.max(0, activeMobHealth - message.defender.damage));
+					}
+
 					// Write message to the chat panel
 					if (attacker.name && defender.name) {
-						const isThisPlayerAttacking = message.attacker.type === gameConfig.entityTypes.PLAYER && attacker.id === thisPlayer.id;
-						setThisPlayerAttacking(isThisPlayerAttacking);
-						appendChatMessage(isThisPlayerAttacking
-							? strings.chatAttack.replace('{0}', defender.name).replace('{1}', message.defender.damage)
-							: strings.chatDefend.replace('{0}', attacker.name).replace('{1}', message.defender.damage),
-						'attack ' + (isThisPlayerAttacking ? 'you' : 'other'));
+						const thisPlayerAttacked = message.attacker.type === gameConfig.entityTypes.PLAYER && attacker.id === thisPlayer.id,
+							thisPlayerDefended = message.defender.type === gameConfig.entityTypes.PLAYER && defender.id === thisPlayer.id;
+						setThisPlayerInCombat(thisPlayerAttacked || thisPlayerDefended);
+						if (thisPlayerAttacked) {
+							appendChatMessage(strings.chatAttackYou.replace('{0}', defender.name).replace('{1}', message.defender.damage), 'attack you');
+						} else if (thisPlayerDefended) {
+							appendChatMessage(strings.chatDefendYou.replace('{0}', attacker.name).replace('{1}', message.defender.damage), 'defend you');
+						} else {
+							appendChatMessage(strings.chatAttackOther.replace('{0}', attacker.name).replace('{1}', defender.name).replace('{2}', message.defender.damage), 'attack other');
+						}
 					}
 					break;
 				case gameConfig.messageActions.DIE:
@@ -321,12 +352,12 @@ export default function Game() {
 						if (attacker.name) {
 							appendChatMessage(thisPlayerAttacked ? strings.chatKillYou.replace('{0}', corpse.name) : strings.chatKillOther.replace('{0}', attacker.name).replace('{1}', corpse.name), 'die');
 							if (thisPlayerAttacked) {
-								setThisPlayerAttacking(false);
+								setThisPlayerInCombat(false);
 							}
 						} else {
 							appendChatMessage(thisPlayerDied ? strings.chatDieYou : strings.chatDieOther.replace('{0}', corpse.name), 'die');
 							if (thisPlayerDied) {
-								setThisPlayerAttacking(false);
+								setThisPlayerInCombat(false);
 							}
 						}
 					}
@@ -384,16 +415,16 @@ export default function Game() {
 				<span className="stat health">
 					<span className="label">{strings.health}</span>
 					<span className="meter">
-						<span className="fill" style={{width: thisPlayer.health / thisPlayer.healthMax * 100 + '%'}}/>
+						<span className="fill" style={{width: thisPlayerHealth / thisPlayerHealthMax * 100 + '%'}}/>
 					</span>
 				</span>
 				<span className="stat level">
 					<span className="label">{strings.level}</span>
-					<span className="value">{thisPlayer.level}</span>
+					<span className="value">{thisPlayerLevel}</span>
 				</span>
 				<span className="stat money">
 					<span className="label">{strings.money}</span>
-					<span className="value">{thisPlayer.money}</span>
+					<span className="value">{thisPlayerMoney}</span>
 				</span>
 			</header>
 			<Tabs defaultSelectedTab="explore">
@@ -413,10 +444,12 @@ export default function Game() {
 					/>
 					<CombatSection
 						isActive={activeSection === 'combat'}
-						mob={activeMob}
+						mobHealth={activeMobHealth}
+						mobHealthMax={activeMobHealthMax}
 					/>
 					<DeathSection
 						isActive={activeSection === 'death'}
+						onClose={respawnPlayer}
 					/>
 					<div className="chat">
 						{chatMessages.map(message => (

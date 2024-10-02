@@ -1,11 +1,10 @@
 const clientConfig = {
-	emailMinLength: 0,
+	emailMinLength: 5,
 	emailMaxLength: 100,
-	passwordMinLength: 0,
+	passwordMinLength: 8,
 	passwordMaxLength: 16,
-	nameMinLength: 0,
+	nameMinLength: 5,
 	nameMaxLength: 100,
-	playerSlotLimit: 3,
-	webSocketServer: 'ws://localhost:3001/ws'
+	playerSlotLimit: 3
 };
 export default clientConfig;

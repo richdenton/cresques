@@ -20,6 +20,9 @@ export default function useSwipe({ ref, threshold }) {
 	// Apply touch/mouse listeners
 	useEffect(() => {
 		const currentElement = ref.current;
+		if (!currentElement) {
+			return;
+		}
 		if (supportsTouch) {
 			currentElement.addEventListener('touchstart', handleTouchStart);
 			currentElement.addEventListener('touchmove', handleTouchMove);
