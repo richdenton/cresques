@@ -27,9 +27,8 @@ class Entities {
 	 * @param {Entity} entity - The Entity to add.
 	 */
 	add(entity) {
-		const id = this.findOpenId();
-		entity.id = id;
-		this.map.set(id, entity);
+		entity.id = entity.id || this.findOpenId();
+		this.map.set(entity.id, entity);
 	}
 
 	/**
@@ -43,7 +42,7 @@ class Entities {
 
 	/**
 	 * Find the next available index in the map.
-	 * @return {Number} The next avaiable ID.
+	 * @return {Number} The next available ID.
 	 */
 	findOpenId() {
 		let previousId = 0;
